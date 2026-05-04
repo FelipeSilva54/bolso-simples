@@ -92,9 +92,8 @@ Um app minimalista onde o usuário entra com um clique (Google ou modo anônimo)
 Uma carteira representa uma conta financeira do usuário (ex: carteira física, conta corrente, poupança, cartão de crédito).
 
 **Criar carteira:**
-- Campos: nome (obrigatório), cor (obrigatório — o usuário escolhe de uma paleta)
-- Saldo começa em zero
-- Não há saldo inicial configurável — o saldo é sempre calculado pelas transações
+- Campos: nome (obrigatório), cor (obrigatório — o usuário escolhe de uma paleta) e saldo da carteira.
+- O saldo pode ser setado pelo usuário, que irá variar com a adição de receitas e despesas ao longo do tempo.
 
 **Visualizar carteiras (Home):**
 - Lista de todas as carteiras do usuário
@@ -102,6 +101,7 @@ Uma carteira representa uma conta financeira do usuário (ex: carteira física, 
 - Saldo total de todas as carteiras exibido no topo
 - Ícone de olho para ocultar/revelar valores (saldo total e saldo de cada carteira ficam borrados)
 - Estado vazio quando não há carteiras cadastradas
+- Ícone de notificações no topo para futuras notificações (Dentro do próprio app somente, não terá push notifications)
 
 **Editar carteira:**
 - Permite alterar nome e cor
@@ -119,16 +119,15 @@ Uma transação é um registro financeiro dentro de uma carteira.
 - **Despesa:** dinheiro que sai da carteira
 
 **Campos de uma transação:**
-- Título (obrigatório)
 - Valor (obrigatório — sempre positivo, o tipo define se é entrada ou saída)
 - Tipo: receita ou despesa (obrigatório)
 - Categoria (obrigatório — selecionada de uma lista)
 - Data (obrigatório — padrão: data atual)
+- Observação (opcional)
 - Status:
   - Para despesas: **Pago** ou **Não pago**
   - Para receitas: **Recebido** ou **Não recebido**
-- Recorrente: sim ou não (campo informativo — não gera repetição automática)
-- Descrição (opcional)
+- Tipo de pagamento: A vísta, parcelado e recorrente (Isso serve para definir se aquela transação irá se repetir e por quanto tempo irá, se for parcelados, irá repetir "X" vezes, e recorrente, irá repetir sempre)
 
 **Regras de saldo:**
 - Despesas **pagas** subtraem do saldo
@@ -142,7 +141,7 @@ Uma transação é um registro financeiro dentro de uma carteira.
 - Excluir (confirmação obrigatória)
 
 #### 6.4 Visualização por mês
-Dentro de cada carteira, as transações são organizadas por mês.
+Dentro de cada carteira, é possível ver o saldo da carteira e as transações, que são organizadas por mês.
 
 **Resumo mensal:**
 - Total de receitas do mês (somando apenas as recebidas)
@@ -153,17 +152,19 @@ Dentro de cada carteira, as transações são organizadas por mês.
 **Histórico de transações do mês:**
 - Lista cronológica de todas as transações do mês selecionado
 - Cada item exibe: ícone da categoria, título, valor, data e status (pago/recebido/pendente)
-- Ação rápida de marcar como pago/recebido diretamente na lista
+- Ação rápida de marcar como pago/recebido ao clicar em uma transação
 
 **Tela de Receitas do mês:**
 - Acessada ao clicar no card de receitas
-- Exibe todas as receitas do mês divididas em duas seções: Recebidas e Não recebidas
+- Exibe todas as receitas do mês, com o compilado do valor pago e não pago, e  a porcentagem de despesas do mês
 - Total de cada seção
+- Também é possível navegar por meses, dentro dos detalhes das despesas
 
 **Tela de Despesas do mês:**
 - Acessada ao clicar no card de despesas
-- Exibe todas as despesas do mês divididas em duas seções: Pagas e Não pagas
+- Exibe todas as receitas do mês, com o compilado do valor pago e não pago, e  a porcentagem de despesas do mês
 - Total de cada seção
+- Também é possível navegar por meses, dentro dos detalhes das receitas
 
 ### Prioridade P1 — Importante
 
@@ -183,7 +184,7 @@ Usadas para classificar as transações.
 Tela acessada pela tab bar.
 
 **Conteúdo:**
-- Foto, nome e e-mail do usuário (ou "Usuário anônimo" se sem conta)
+- Foto, nome e e-mail do usuário (ou "Usuário anônimo" se sem conta, e opção para entrar com o google)
 - Atalho para Categorias
 - Preferências (ex: ocultar saldo por padrão)
 - Notificações in-app (sem push notifications)
@@ -198,6 +199,7 @@ Tela acessada pela tab bar.
 - Exportação de dados (PDF ou CSV)
 - Gráficos de evolução mensal
 - Tema escuro
+- Transferência entre carteiras
 
 ---
 
@@ -217,9 +219,10 @@ Abrir app
 ```
 Home (estado vazio ou com carteiras)
   └── Botão "+ Adicionar carteira"
-        └── Modal/Tela de nova carteira
+        └── Tela de nova carteira
               ├── Preenche nome
               ├── Escolhe cor
+              ├── Insere saldo inicial          
               └── Confirma → Salva no Firestore → Volta para Home com nova carteira
 ```
 
@@ -229,9 +232,9 @@ Detalhe da Carteira
   └── Botão "+ Nova transação"
         └── Tela de adicionar transação
               ├── Seleciona tipo (receita / despesa)
-              ├── Preenche título, valor, categoria, data
-              ├── Define status (pago/recebido)
-              ├── (Opcional) Descrição, recorrente
+              ├── Preenche categoria, data, observação
+              ├── Define status (pago/recebido) ou (recebido/não recebido)
+              ├── Informa tipo de pagamento (à vista, parcelado e recorrente)
               └── Confirma → Salva no Firestore → Volta para Detalhe da Carteira
 ```
 
@@ -243,7 +246,7 @@ Detalhe da Carteira
   ├── Card de Despesas do mês → Tela de Despesas (pagas / não pagas)
   └── Lista de transações do mês
         └── Clique em transação → Detalhe da Transação
-              ├── Marcar como pago/recebido
+              ├── Marcar como pago ou recebido (dependendo da transação)
               ├── Editar
               └── Excluir
 ```
