@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "552079077785",
+    "project_id": "bolso-simples",
+    "storage_bucket": "bolso-simples.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:552079077785:android:a88b10258f493a42dd6308",
+        "android_client_info": {
+          "package_name": "com.bolsosimples.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "552079077785-fienoalfospe047s005rl29nq0c2s046.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDt6uAeb-Px8gj5aJduGfA2WSxaYIqXtw4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "552079077785-fienoalfospe047s005rl29nq0c2s046.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
