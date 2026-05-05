@@ -1,10 +1,18 @@
-import { Box } from '@/src/components/ui/box';
-import { Text } from '@/src/components/ui/text';
+import { View, Text, StyleSheet } from 'react-native';
 
 export default function LoginRoute() {
   return (
-    <Box className="flex-1 items-center justify-center bg-background-0">
+    <View style={styles.container}>
       <Text>Login</Text>
-    </Box>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#ffffff',
+  },
+});

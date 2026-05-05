@@ -1,10 +1,18 @@
-import { Box } from '@/src/components/ui/box';
-import { Text } from '@/src/components/ui/text';
+import { View, Text, StyleSheet } from 'react-native';
 
 export default function HomeRoute() {
   return (
-    <Box className="flex-1 items-center justify-center bg-background-50">
+    <View style={styles.container}>
       <Text>Home</Text>
-    </Box>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#f5f5f5',
+  },
+});

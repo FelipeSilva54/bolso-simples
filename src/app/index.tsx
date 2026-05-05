@@ -1,18 +1,28 @@
-import { Redirect } from 'expo-router';
+import { useEffect } from 'react';
+import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
 import { useAuth } from '@/src/store/AuthContext';
-import { Spinner } from '@/src/components/ui/spinner';
-import { Box } from '@/src/components/ui/box';
 
 export default function Index() {
   const { user, loading } = useAuth();
+  const router = useRouter();
 
-  if (loading) {
-    return (
-      <Box className="flex-1 items-center justify-center bg-background-0">
-        <Spinner size="large" />
-      </Box>
-    );
-  }
+  useEffect(() => {
+    if (loading) return;
+    router.replace(user ? '/(tabs)' : '/login');
+  }, [loading, user]);
 
-  return <Redirect href={user ? '/(tabs)' : '/login'} />;
+  return (
+    <View style={styles.container}>
+      <ActivityIndicator size="large" />
+    </View>
+  );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
