@@ -7,10 +7,7 @@ import { FAB } from '@/components/FAB';
 import { TabBar } from '@/components/TabBar';
 import { StatusBadge } from '@/components/StatusBadge';
 import { InfoAlert } from '@/components/InfoAlert';
-import { TextInput } from '@/components/TextInput';
-import { TransactionItem } from '@/components/TransactionItem';
-import { Car } from 'phosphor-react-native';
-import { BalanceDisplay } from '@/components/BalanceDisplay';
+import { Dialog } from '@/components/Dialog';
 
 import { colors, fontWeight as fw } from '@/constants';
 
@@ -18,9 +15,8 @@ export default function HomeRoute() {
   const [ativo, setAtivo] = useState(false);
   const [marcado, setMarcado] = useState(false);
   const [activeTab, setActiveTab] = useState('comum');
-  const [nome, setNome] = useState('');
-  const [type, setType] = useState<'expense' | 'income'>('expense');
-  const [hide, setHide] = useState(false);
+  const [dialogVisible, setDialogVisible] = useState(false);
+
 
   return (
     <View style={styles.container}>
@@ -61,30 +57,13 @@ export default function HomeRoute() {
       <StatusBadge variant="danger" label="Não pago" />
       <StatusBadge variant="info" label="Recorrente" />
       <StatusBadge variant="success" label="Pago" />
-      <TextInput
-        label="Apelido da carteira"
-        placeholder="Ex: Carteira do Thiago"
-        value={nome}
-        onChangeText={setNome}
-        helperText="Esse nome aparece na sua lista de carteiras"
-      />
-      <TransactionItem
-        icon={Car}
-        iconColor="#D4832A"
-        title="Categoria"
-        description="Teste de descrição"
-        amount={-30}
-        badgeVariant="danger"
-        badgeLabel="Não pago"
-        onPress={() => {}}
-      />
-      <BalanceDisplay
-        variant="wallet"
-        subtitle="Saldo da carteira:"
-        balance={1250}
-        hideBalance={hide}
-        onToggleVisibility={() => setHide(!hide)}
-        onTodayPress={() => {/* navega para o mês atual */}}
+      <Button onPress={() => setDialogVisible(true)}>Abrir dialog</Button>
+      <Dialog
+        visible={dialogVisible}
+        title="Excluir carteira?"
+        description="Tem certeza que deseja excluir essa carteira? Essa ação é permanente e não pode ser desfeita."
+        onConfirm={() => setDialogVisible(false)}
+        onCancel={() => setDialogVisible(false)}
       />
     </View>
   );
