@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Check } from 'phosphor-react-native';
-import { colors, fontSize as fs, fontWeight as fw, spacing } from '@/constants';
+import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
 
 type CheckboxProps = {
   value: boolean;
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
   box: {
     width: BOX_SIZE,
     height: BOX_SIZE,
-    borderRadius: spacing.xs, // Quadrado com cantos levemente arredondados
+    borderRadius: radius.sm,
     alignItems: 'center',
     justifyContent: 'center',
   },

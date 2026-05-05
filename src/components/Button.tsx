@@ -6,7 +6,7 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import { colors, fontSize as fs, fontWeight as fw, spacing } from '@/constants';
+import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
 
 type Variant = 'primary' | 'outlined' | 'danger' | 'dangerLight';
 type Size = 'lg' | 'sm';
@@ -77,8 +77,8 @@ const variantStyles = StyleSheet.create({
 });
 
 const sizeStyles = StyleSheet.create({
-  lg: { height: 48, paddingHorizontal: spacing.xl, borderRadius: spacing.xs },
-  sm: { height: 36, paddingHorizontal: spacing.lg, borderRadius: spacing.xs },
+  lg: { height: 48, paddingHorizontal: spacing.xl, borderRadius: radius.sm },
+  sm: { height: 36, paddingHorizontal: spacing.lg, borderRadius: radius.sm },
 });
 
 const textSizeStyles = StyleSheet.create({
