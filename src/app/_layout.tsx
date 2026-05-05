@@ -1,5 +1,5 @@
 import { Stack } from 'expo-router';
-import { AuthProvider } from '@/src/store/AuthContext';
+import { AuthProvider } from '@/store/AuthContext';
 
 export default function RootLayout() {
   return (

@@ -5,7 +5,7 @@ import {
   signOut as firebaseSignOut,
   onAuthStateChanged,
 } from 'firebase/auth';
-import { auth } from '@/src/services/firebase';
+import { auth } from '@/services/firebase';
 
 type AuthContextValue = {
   user: User | null;
