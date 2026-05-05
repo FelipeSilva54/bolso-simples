@@ -10,33 +10,35 @@ import { colors, fontSize as fs, fontWeight as fw, spacing } from '@/constants';
 
 type TextInputProps = RNTextInputProps & {
   label?: string;
-  helperText?: string;   // Texto de apoio abaixo do input — boolean implícito pela presença
+  helperText?: string;
+  error?: string;      // Mensagem de erro — presença ativa o estado de erro
   disabled?: boolean;
 };
 
 export function TextInput({
   label,
   helperText,
+  error,
   disabled = false,
   value,
   ...rest
 }: TextInputProps) {
   const [focused, setFocused] = useState(false);
 
-  // Define a espessura e cor da linha com base no estado atual
   const isFilled = value != null && value.length > 0;
-  const borderColor = focused ? colors.content : colors.border;
-  const borderWidth = focused ? 2 : 1;
+  const hasError = error != null && error.length > 0;
+
+  // Erro sempre vence — linha vermelha independente de foco
+  const borderColor = hasError ? colors.danger : focused ? colors.content : colors.border;
+  const borderWidth = hasError || focused ? 2 : 1;
 
   return (
     <View style={[styles.wrapper, disabled && styles.disabled]}>
 
-      {/* Label — só renderiza se foi passada */}
       {label != null && (
         <Text style={styles.label}>{label}</Text>
       )}
 
-      {/* Campo de texto com linha inferior */}
       <RNTextInput
         {...rest}
         value={value}
@@ -55,15 +57,16 @@ export function TextInput({
           {
             borderBottomColor: borderColor,
             borderBottomWidth: borderWidth,
-            // Texto preenchido usa content; placeholder é controlado por placeholderTextColor
             color: isFilled ? colors.content : colors.muted,
           },
         ]}
       />
 
-      {/* Helper text — só renderiza se foi passado */}
-      {helperText != null && (
-        <Text style={styles.helperText}>{helperText}</Text>
+      {/* Erro tem prioridade sobre helperText quando os dois forem passados */}
+      {(hasError || helperText != null) && (
+        <Text style={[styles.helperText, hasError && styles.errorText]}>
+          {error ?? helperText}
+        </Text>
       )}
 
     </View>
@@ -78,22 +81,25 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   label: {
-    fontSize: fs.md,           // 16px
+    fontSize: fs.md,
     fontWeight: fw.regular,
     color: colors.content,
     marginBottom: 6,           // 6px — não existe token para esse valor
   },
   input: {
-    fontSize: fs.md,           // 16px
+    fontSize: fs.md,
     fontWeight: fw.regular,
-    paddingVertical: spacing.sm, // 8px
-    paddingHorizontal: 0,        // Sem padding horizontal — linha vai de ponta a ponta
+    paddingVertical: spacing.sm,
+    paddingHorizontal: 0,
   },
   helperText: {
-    fontSize: fs.sm,           // 12px — texto de apoio menor que o input
+    fontSize: fs.sm,
     fontWeight: fw.regular,
     color: colors.muted,
     marginTop: 6,              // 6px — mesma distância da label ao input
     textAlign: 'left',
+  },
+  errorText: {
+    color: colors.danger,
   },
 });

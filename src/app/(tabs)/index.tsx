@@ -8,6 +8,9 @@ import { TabBar } from '@/components/TabBar';
 import { StatusBadge } from '@/components/StatusBadge';
 import { InfoAlert } from '@/components/InfoAlert';
 import { TextInput } from '@/components/TextInput';
+import { TransactionItem } from '@/components/TransactionItem';
+import { Car } from 'phosphor-react-native';
+import { BalanceDisplay } from '@/components/BalanceDisplay';
 
 import { colors, fontWeight as fw } from '@/constants';
 
@@ -16,6 +19,8 @@ export default function HomeRoute() {
   const [marcado, setMarcado] = useState(false);
   const [activeTab, setActiveTab] = useState('comum');
   const [nome, setNome] = useState('');
+  const [type, setType] = useState<'expense' | 'income'>('expense');
+  const [hide, setHide] = useState(false);
 
   return (
     <View style={styles.container}>
@@ -62,6 +67,24 @@ export default function HomeRoute() {
         value={nome}
         onChangeText={setNome}
         helperText="Esse nome aparece na sua lista de carteiras"
+      />
+      <TransactionItem
+        icon={Car}
+        iconColor="#D4832A"
+        title="Categoria"
+        description="Teste de descrição"
+        amount={-30}
+        badgeVariant="danger"
+        badgeLabel="Não pago"
+        onPress={() => {}}
+      />
+      <BalanceDisplay
+        variant="wallet"
+        subtitle="Saldo da carteira:"
+        balance={1250}
+        hideBalance={hide}
+        onToggleVisibility={() => setHide(!hide)}
+        onTodayPress={() => {/* navega para o mês atual */}}
       />
     </View>
   );
