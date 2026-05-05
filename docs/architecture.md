@@ -23,8 +23,8 @@ O usuário entra no app, cria suas carteiras e adiciona transações manualmente
 | Framework mobile | React Native + Expo | SDK gerenciado |
 | Linguagem | TypeScript | Obrigatório em todos os arquivos |
 | Roteamento | Expo Router | File-based routing dentro de `src/app/` |
-| UI / Componentes | Gluestack UI v2 | Componentes gerados localmente via CLI |
-| Estilização | NativeWind (Tailwind CSS) | Nunca usar valores hardcoded |
+| UI / Componentes | React Native puro | Componentes construídos do zero com StyleSheet |
+| Estilização | StyleSheet.create() | Sempre via tokens de `src/constants/` |
 | Autenticação | Firebase Authentication | Google OAuth + Anônimo |
 | Banco de dados | Firebase Firestore | Região: southamerica-east1 |
 | Persistência local | AsyncStorage | Sessão do Firebase Auth |
@@ -66,11 +66,10 @@ bolso-simples/
 │   │       └── PreferencesScreen.tsx
 │   │
 │   ├── components/               # Componentes reutilizáveis do projeto
-│   │   ├── ui/                   # Componentes gerados pelo Gluestack CLI
-│   │   │   ├── button/
-│   │   │   ├── input/
-│   │   │   ├── card/
-│   │   │   └── ...               # Outros componentes do Gluestack
+│   │   ├── Button.tsx            # Botão padrão com variantes
+│   │   ├── Toggle.tsx            # Switch on/off
+│   │   ├── Checkbox.tsx          # Checkbox com label opcional
+│   │   ├── FAB.tsx               # Floating Action Button
 │   │   ├── WalletCard.tsx        # Card de carteira (nome, cor, saldo)
 │   │   ├── TransactionItem.tsx   # Item de lista de transação
 │   │   ├── SummaryCard.tsx       # Card de resumo receita/despesa do mês
@@ -104,9 +103,11 @@ bolso-simples/
 │   │   └── colors.ts             # Geração/validação de cores de carteira
 │   │
 │   ├── constants/                # Valores fixos do projeto
-│   │   ├── categories.ts         # Categorias padrão pré-cadastradas
-│   │   ├── colors.ts             # Paleta de cores disponíveis para carteiras
-│   │   └── routes.ts             # Nomes das rotas de navegação
+│   │   ├── colors.ts             # Paleta de cores e tokens de cor
+│   │   ├── typography.ts         # Tamanhos e pesos de fonte
+│   │   ├── spacing.ts            # Escala de espaçamento
+│   │   ├── index.ts              # Barrel export de todas as constants
+│   │   └── categories.ts         # Categorias padrão pré-cadastradas
 │   │
 │   └── types/                    # Tipagem TypeScript do domínio
 │       ├── user.ts               # User, UserProfile
@@ -122,15 +123,12 @@ bolso-simples/
 │   ├── ARCHITECTURE.md           # Este arquivo
 │   ├── PRD.md                    # Product Requirements Document
 │   ├── DESIGN.md                 # Sistema de design e tokens
-│   ├── FIREBASE.md               # Estrutura do Firestore e regras
-│   └── SCREENS.md                # Mapa de telas e fluxos
+│   └── FLOWS.md                  # Fluxos de navegação entre telas
 │
 ├── .env.local                    # Variáveis de ambiente (não commitado)
 ├── .env.example                  # Template de variáveis de ambiente
 ├── app.json                      # Configuração do Expo
 ├── babel.config.js               # Configuração do Babel
-├── metro.config.js               # Configuração do Metro Bundler
-├── tailwind.config.js            # Configuração do NativeWind/Tailwind
 ├── tsconfig.json                 # Configuração do TypeScript
 └── package.json                  # Dependências do projeto
 ```
@@ -256,7 +254,7 @@ users/
 - **Componentes funcionais** — sem class components
 - **Lógica de negócio nos hooks** — telas são apenas apresentação
 - **Nunca acessar Firestore direto nas telas** — sempre via `services/` e `hooks/`
-- **Nunca usar cores hardcoded** — sempre tokens do Gluestack ou variáveis do `constants/colors.ts`
+- **Nunca usar cores, fontes ou espaçamentos hardcoded** — sempre via tokens de `src/constants/`
 - **Formatação de moeda e data** sempre via `utils/currency.ts` e `utils/date.ts`
 
 ### Nomenclatura
@@ -265,10 +263,10 @@ users/
 - Services: `nomeDoServico.ts` (camelCase)
 - Tipos: interfaces com nome no singular (`Wallet`, `Transaction`, `Category`)
 
-### Componentes Gluestack
-- Componentes do Gluestack ficam em `src/components/ui/` (gerados via CLI)
-- Componentes customizados do projeto ficam em `src/components/` (raiz)
-- Para adicionar um componente Gluestack: `npx gluestack-ui add [nome]`
+### Componentes
+- Todos os componentes ficam em `src/components/` (raiz)
+- Construídos com React Native puro — sem bibliotecas de UI externas
+- Sempre importar tokens de `src/constants/` para cores, tipografia e espaçamento
 
 ---
 

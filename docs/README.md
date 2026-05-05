@@ -25,10 +25,10 @@ Toda a documentação do projeto está na pasta `docs/`:
 
 - **React Native + Expo** (SDK gerenciado)
 - **TypeScript**
-- **Gluestack UI v2** + NativeWind
+- **React Native puro** — componentes construídos do zero com StyleSheet
 - **Firebase** (Authentication + Firestore)
-- **React Navigation**
-- **Phosphor React Native**
+- **Expo Router** (file-based routing)
+- **Phosphor React Native** (ícones)
 
 ---
 
@@ -68,13 +68,12 @@ Escanear o QR code no Expo Go.
 src/
 ├── app/          → rotas (Expo Router)
 ├── screens/      → telas completas
-├── components/   → componentes do projeto
-│   └── ui/       → componentes do Gluestack
+├── components/   → componentes do projeto (React Native puro)
 ├── services/     → Firebase
 ├── hooks/        → hooks customizados
 ├── store/        → contexto global
 ├── utils/        → formatadores
-├── constants/    → valores fixos
+├── constants/    → tokens de design (cores, tipografia, espaçamento)
 └── types/        → tipagem TypeScript
 ```
 
@@ -94,15 +93,3 @@ EXPO_PUBLIC_FIREBASE_APP_ID=
 ```
 
 > `.env.local` nunca é commitado — está no `.gitignore`.
-
----
-
-## Design System (dev only)
-
-Em modo de desenvolvimento, acesse a tela de Design System para visualizar e testar os componentes:
-
-```
-/design-system
-```
-
-Disponível apenas com `__DEV__ === true`. Não aparece no app publicado.
