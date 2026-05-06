@@ -88,7 +88,6 @@ const styles = StyleSheet.create({
   },
   // Ambos os lados têm largura fixa para o título centralizar corretamente no variant screen
   side: {
-    width: 24,
     alignItems: 'flex-start',
   },
   sideRight: {
@@ -102,7 +101,7 @@ const styles = StyleSheet.create({
   // Home: título encosta no ícone esquerdo com gap de 16px
   titleLeft: {
     textAlign: 'left',
-    marginLeft: spacing.lg,        // 16px de distância do ícone esquerdo
+    marginLeft: 0,        // 16px de distância do ícone esquerdo
   },
   // Screen: título fica centralizado entre os dois lados
   titleCenter: {

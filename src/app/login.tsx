@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
-import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { colors, fontSize as fs, fontWeight as fw, spacing, radius, lineHeight as lh } from '@/constants';
 import { Button } from '@/components/Button';
 
 export default function LoginRoute() {
@@ -26,11 +27,11 @@ export default function LoginRoute() {
   };
 
   return (
-    <View style={styles.screen}>
+    <SafeAreaView style={styles.screen}>
       <View style={styles.banner} />
 
       <View style={styles.card}>
-        <Text style={styles.title}>Seja bem-vindo ao Bolso Simples!</Text>
+        <Text style={styles.title}>Olá! Seja bem-vindo ao Bolso Simples!</Text>
 
         <View style={styles.gapSm} />
 
@@ -52,7 +53,7 @@ export default function LoginRoute() {
           disabled={loadingAnonymous}
           leftIcon={
             <Image
-              source={require('@/assets/images/Logo-Icon.png')}
+              source={require('@/assets/images/Logo-Google.png')}
               style={styles.googleIcon}
               accessibilityLabel="Logo do Google"
             />
@@ -76,7 +77,7 @@ export default function LoginRoute() {
           Entrar sem cadastro
         </Button>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -91,29 +92,29 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: colors.white,
-    borderTopLeftRadius: radius.lg,
-    borderTopRightRadius: radius.lg,
     paddingHorizontal: spacing.xl,
     paddingVertical: spacing.xl,
   },
   title: {
-    fontSize: fs.xxl,
-    fontWeight: fw.bold,
+    fontSize: fs.xxxl,
+    fontWeight: fw.semibold,
+    lineHeight: lh.md(fs.xxxl),
     color: colors.content,
   },
   gapSm: {
-    height: spacing.sm,
+    height: spacing.md,
   },
   gapXl: {
-    height: spacing.xl,
+    height: spacing.xxl,
   },
   subtitle: {
-    fontSize: fs.sm,
+    fontSize: fs.md,
+    lineHeight: lh.md(fs.md),
     color: colors.subcontent,
   },
   bold: {
     fontWeight: fw.bold,
-    color: colors.subcontent,
+    color: colors.content,
   },
   googleIcon: {
     width: 20,
@@ -122,7 +123,7 @@ const styles = StyleSheet.create({
   separator: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: spacing.md,
+    marginVertical: spacing.lg,
   },
   separatorLine: {
     flex: 1,

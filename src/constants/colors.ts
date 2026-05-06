@@ -5,7 +5,7 @@ export const colors = {
   muted: '#8C8C8C',
   border: '#DBDBDB',
   white: '#FFFFFF',
-  offwhite: '#F5F5F5',
+  offwhite: '#ffffffcb',
   dangerLight: '#FEF1F1',
   danger: '#DC2626',
   success: '#348352',
