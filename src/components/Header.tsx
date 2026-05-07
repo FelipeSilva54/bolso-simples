@@ -92,6 +92,7 @@ const styles = StyleSheet.create({
   },
   sideRight: {
     alignItems: 'flex-end',
+    width: spacing.xl, // Largura suficiente para o ícone de ação, mantendo o título centralizado
   },
   title: {
     flex: 1,

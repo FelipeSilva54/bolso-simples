@@ -82,12 +82,12 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: fs.md,
-    fontWeight: fw.regular,
+    fontWeight: fw.medium,
     color: colors.content,
     marginBottom: 6,           // 6px — não existe token para esse valor
   },
   input: {
-    fontSize: fs.md,
+    fontSize: fs.lg,
     fontWeight: fw.regular,
     paddingVertical: spacing.sm,
     paddingHorizontal: 0,

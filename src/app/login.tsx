@@ -92,8 +92,8 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: colors.white,
-    paddingHorizontal: spacing.xl,
-    paddingVertical: spacing.xl,
+    paddingHorizontal: spacing.xxl,
+    paddingVertical: spacing.xxl,
   },
   title: {
     fontSize: fs.xxxl,

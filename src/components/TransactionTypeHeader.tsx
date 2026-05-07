@@ -82,7 +82,7 @@ export function TransactionTypeHeader({
         onTypeChange={handleTypeChange}
       />
 
-      <View style={{ height: spacing.xl }} />
+      <View style={{ height: spacing.xxl }} />
 
       <Text style={styles.valueLabel}>Valor</Text>
 

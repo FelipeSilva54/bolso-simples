@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
   },
   totalPadding: {
     paddingHorizontal: 20,
-    paddingVertical: spacing.xl,   // 24px
+    paddingVertical: spacing.xxl,   // 24px
   },
   walletPadding: {
     paddingHorizontal: 20,

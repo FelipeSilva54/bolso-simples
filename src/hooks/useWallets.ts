@@ -1,9 +1,16 @@
 import { useState, useEffect } from 'react';
 import { Wallet } from '@/types/wallet';
 
+type CreateWalletInput = {
+  name: string;
+  color: string;
+  initialBalance: number;
+};
+
 type UseWalletsResult = {
   wallets: Wallet[];
   loading: boolean;
+  createWallet: (input: CreateWalletInput) => Promise<void>;
 };
 
 export function useWallets(): UseWalletsResult {
@@ -15,5 +22,9 @@ export function useWallets(): UseWalletsResult {
     setLoading(false);
   }, []);
 
-  return { wallets, loading };
+  async function createWallet(_input: CreateWalletInput): Promise<void> {
+    // TODO: create wallet in Firestore
+  }
+
+  return { wallets, loading, createWallet };
 }

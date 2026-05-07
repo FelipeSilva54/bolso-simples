@@ -48,7 +48,7 @@ export function FAB({
 
 const styles = StyleSheet.create({
   base: {
-    height: spacing.xxxl,          // 48px
+    height: spacing.xxxxl,          // 48px
     backgroundColor: colors.primary,
     flexDirection: 'row',
     alignItems: 'center',

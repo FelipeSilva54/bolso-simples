@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     fontSize: fs.lg,
     fontWeight: fw.bold,
     color: colors.content,
-    paddingHorizontal: spacing.lg,
+    paddingHorizontal: 20,
     paddingTop: spacing.xl,
     paddingBottom: spacing.sm,
   },
@@ -117,13 +117,13 @@ const styles = StyleSheet.create({
     marginTop: spacing.xxl,
   },
   list: {
-    paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.xxxl + spacing.xl,
+    paddingHorizontal: 20,
+    paddingBottom: spacing.xxxl + spacing.xxl,
     gap: spacing.md,
   },
   fab: {
     position: 'absolute',
-    bottom: spacing.xl,
-    right: spacing.lg,
+    bottom: spacing.xxl,
+    right: 20,
   },
 });
