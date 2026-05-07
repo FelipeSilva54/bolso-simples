@@ -10,10 +10,13 @@ import { CaretRight, Check } from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing } from '@/constants';
 import { BottomSheet } from '@/components/BottomSheet';
 import { TextInput } from '@/components/TextInput';
+import { AvatarIcon } from '@/components/AvatarIcon';
 
 export type SelectOption = {
   label: string;
   value: string;
+  icon?: React.ComponentType<{ size?: number; color?: string; weight?: string }>;
+  iconColor?: string;
 };
 
 type SelectInputProps = {
@@ -28,7 +31,6 @@ type SelectInputProps = {
   searchable?: boolean;
   accessibilityLabel?: string;
   sheetTitle?: string;
-  sheetHeight?: number;
 };
 
 export function SelectInput({
@@ -43,7 +45,6 @@ export function SelectInput({
   searchable = false,
   accessibilityLabel,
   sheetTitle,
-  sheetHeight,
 }: SelectInputProps) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
@@ -98,6 +99,9 @@ export function SelectInput({
           },
         ]}
       >
+        {selectedOption?.icon != null && selectedOption.iconColor != null && (
+          <AvatarIcon icon={selectedOption.icon} iconColor={selectedOption.iconColor} size={24} />
+        )}
         <Text style={[styles.valueText, !selectedOption && styles.placeholder]}>
           {selectedOption ? selectedOption.label : placeholder}
         </Text>
@@ -111,7 +115,7 @@ export function SelectInput({
       )}
 
       <BottomSheet visible={open} onClose={handleClose}>
-        <View style={[styles.sheet, { maxHeight: sheetHeight ?? 420 }]}>
+        <View style={styles.sheet}>
 
           {sheetTitle != null && (
             <Text style={styles.sheetTitle}>{sheetTitle}</Text>
@@ -145,6 +149,9 @@ export function SelectInput({
                   accessibilityLabel={item.label}
                   style={styles.option}
                 >
+                  {item.icon != null && item.iconColor != null && (
+                    <AvatarIcon icon={item.icon} iconColor={item.iconColor} size={36} />
+                  )}
                   <Text style={[styles.optionLabel, isSelected && styles.optionLabelSelected]}>
                     {item.label}
                   </Text>
@@ -182,6 +189,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: spacing.md,
     paddingHorizontal: 0,
+    gap: spacing.md,
   },
   valueText: {
     fontSize: fs.md,
@@ -204,6 +212,7 @@ const styles = StyleSheet.create({
   },
   sheet: {
     paddingHorizontal: spacing.lg,
+    maxHeight: 520,
   },
   sheetTitle: {
     fontSize: fs.lg,
@@ -218,7 +227,7 @@ const styles = StyleSheet.create({
     flexGrow: 0,
   },
   listFlex: {
-    flex: 1,
+    flexGrow: 0,
   },
   option: {
     flexDirection: 'row',
@@ -227,6 +236,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
+    gap: spacing.md,
   },
   optionLabel: {
     fontSize: fs.md,

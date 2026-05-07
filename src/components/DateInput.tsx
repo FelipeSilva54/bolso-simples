@@ -93,7 +93,7 @@ export function DateInput({
         <Text style={styles.valueText}>
           {formatDateLabel(value)}
         </Text>
-        <CalendarBlank size={20} color={colors.muted} weight="regular" />
+        <CalendarBlank size={24} color={colors.content} weight="regular" />
       </TouchableOpacity>
 
       {(hasError || helperText != null) && (

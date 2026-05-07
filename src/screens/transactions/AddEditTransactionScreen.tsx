@@ -3,7 +3,6 @@ import {
   View,
   Text,
   ScrollView,
-  Dimensions,
   KeyboardAvoidingView,
   Platform,
   Alert,
@@ -12,6 +11,8 @@ import {
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter, useLocalSearchParams } from 'expo-router';
+import { Tag } from 'phosphor-react-native';
+import * as Phosphor from 'phosphor-react-native';
 
 import { colors, fontSize as fs, fontWeight as fw, spacing } from '@/constants';
 import { Header } from '@/components/Header';
@@ -41,12 +42,18 @@ const RECURRENCE_OPTIONS = [
   { value: 'annually', label: 'Anual' },
 ] as const;
 
+type IconComponent = React.ComponentType<{ size?: number; color?: string; weight?: string }>;
+
+function getIconComponent(name: string | undefined): IconComponent {
+  if (!name) return Tag as unknown as IconComponent;
+  const Icon = (Phosphor as unknown as Record<string, unknown>)[name];
+  return (Icon ?? Tag) as unknown as IconComponent;
+}
+
 function statusFor(type: TxType, on: boolean): TransactionStatus {
   if (type === 'expense') return on ? 'paid' : 'unpaid';
   return on ? 'received' : 'unreceived';
 }
-
-const CATEGORY_SHEET_HEIGHT = Dimensions.get('window').height * 0.8;
 
 export function AddEditTransactionScreen() {
   const router = useRouter();
@@ -88,7 +95,12 @@ export function AddEditTransactionScreen() {
   );
 
   const categoryOptions: SelectOption[] = useMemo(
-    () => categoriesForType.map((c) => ({ label: c.name, value: c.id })),
+    () => categoriesForType.map((c) => ({
+      label: c.name,
+      value: c.id,
+      icon: getIconComponent(c.icon),
+      iconColor: c.color,
+    })),
     [categoriesForType],
   );
 
@@ -197,8 +209,7 @@ export function AddEditTransactionScreen() {
               value={categoryId}
               onChange={setCategoryId}
               searchable
-              sheetHeight={CATEGORY_SHEET_HEIGHT}
-              disabled={categoriesForType.length === 0}
+disabled={categoriesForType.length === 0}
               helperText={
                 categoriesForType.length === 0
                   ? `Nenhuma categoria de ${type === 'expense' ? 'despesa' : 'receita'} cadastrada`
@@ -351,10 +362,10 @@ const styles = StyleSheet.create({
     color: colors.content,
   },
   sectionLabel: {
-    fontSize: fs.sm,
+    fontSize: fs.md,
     fontWeight: fw.medium,
-    color: colors.subcontent,
-    marginBottom: spacing.sm,
+    color: colors.content,
+    marginBottom: spacing.lg,
   },
   paymentRow: {
     flexDirection: 'row',
