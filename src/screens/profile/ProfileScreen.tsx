@@ -31,6 +31,8 @@ import { ListItem } from '@/components/ListItem';
 import { Dialog } from '@/components/Dialog';
 import { useAuth } from '@/store/AuthContext';
 
+type IconComponent = React.ComponentType<{ size?: number; color?: string; weight?: string }>;
+
 export function ProfileScreen() {
   const router = useRouter();
   const { user, loginWithGoogle, logout } = useAuth();
@@ -65,7 +67,7 @@ export function ProfileScreen() {
         title={`Olá, ${displayName}`}
         variant="home"
         theme="light"
-        rightIcon={Bell}
+        rightIcon={Bell as IconComponent}
         onRightPress={() => router.push('/(stack)/notifications' as never)}
       />
 
@@ -133,13 +135,13 @@ export function ProfileScreen() {
         <View>
           <Text style={styles.sectionLabel}>Outros serviços</Text>
           <ListItem
-            icon={List}
+            icon={List as IconComponent}
             label="Categorias"
             onPress={() => router.push('/(stack)/categories' as never)}
             accessibilityLabel="Categorias"
           />
           <ListItem
-            icon={Heart}
+            icon={Heart as IconComponent}
             label="Preferências do app"
             onPress={() => router.push('/(stack)/preferences' as never)}
             accessibilityLabel="Preferências do app"
@@ -150,13 +152,13 @@ export function ProfileScreen() {
         <View>
           <Text style={styles.sectionLabel}>Configurações da conta</Text>
           <ListItem
-            icon={Lock}
+            icon={Lock as IconComponent}
             label="Segurança"
             onPress={() => router.push('/(stack)/security' as never)}
             accessibilityLabel="Segurança"
           />
           <ListItem
-            icon={Bell}
+            icon={Bell as IconComponent}
             label="Notificações"
             onPress={() => router.push('/(stack)/notifications' as never)}
             accessibilityLabel="Notificações"
@@ -183,25 +185,25 @@ export function ProfileScreen() {
           </TouchableOpacity>
 
           <ListItem
-            icon={Question}
+            icon={Question as IconComponent}
             label="Ajuda"
             onPress={() => router.push('/(stack)/help' as never)}
             accessibilityLabel="Ajuda"
           />
           <ListItem
-            icon={Info}
+            icon={Info as IconComponent}
             label="Sobre o APP"
             onPress={() => router.push('/(stack)/about' as never)}
             accessibilityLabel="Sobre o APP"
           />
           <ListItem
-            icon={ShareNetwork}
+            icon={ShareNetwork as IconComponent}
             label="Compartilhe com um amigo"
             onPress={handleShare}
             accessibilityLabel="Compartilhe com um amigo"
           />
           <ListItem
-            icon={Star}
+            icon={Star as IconComponent}
             label="Avalie nosso app"
             onPress={() => router.push('/(stack)/rate' as never)}
             accessibilityLabel="Avalie nosso app"

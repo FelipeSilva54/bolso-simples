@@ -19,6 +19,8 @@ import { FAB } from '@/components/FAB';
 import { useAuth } from '@/store/AuthContext';
 import { useWallets } from '@/hooks/useWallets';
 
+type IconComponent = React.ComponentType<{ size?: number; color?: string; weight?: string }>;
+
 export function HomeScreen() {
   const router = useRouter();
   const { user } = useAuth();
@@ -38,7 +40,7 @@ export function HomeScreen() {
         title={`Olá, ${displayName}`}
         variant="home"
         theme="dark"
-        rightIcon={Bell}
+        rightIcon={Bell as IconComponent}
         onRightPress={() => router.push('/(stack)/notifications' as never)}
       />
 

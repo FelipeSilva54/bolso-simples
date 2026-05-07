@@ -9,8 +9,8 @@ export default function Index() {
 
   useEffect(() => {
     if (loading) return;
-  router.replace('/(tabs)');
-  }, [loading, user]);
+    router.replace('/(stack)/wallet/teste' as never);
+  }, [loading, user, router]);
 
   return (
     <View style={styles.container}>
