@@ -9,8 +9,8 @@ export default function Index() {
 
   useEffect(() => {
     if (loading) return;
-    router.replace('/(stack)/wallet/teste' as never);
-  }, [loading, user, router]);
+    router.replace(user ? '/(tabs)' : '/login');
+  }, [loading, user]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <View style={styles.container}>

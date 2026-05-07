@@ -64,9 +64,9 @@ const styles = StyleSheet.create({
     elevation: 6, // Android
   },
 
-  // Modo só ícone: quadrado 48x48
+  // Modo só ícone: círculo perfeito 48x48
   iconOnly: {
-    width: spacing.xxxl,
+    width: spacing.xxxxl,
   },
 
   // Modo com label: cresce horizontalmente

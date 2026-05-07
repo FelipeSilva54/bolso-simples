@@ -5,6 +5,7 @@ import {
   Text,
   View,
   StyleSheet,
+  Dimensions,
   ListRenderItem,
 } from 'react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing } from '@/constants';
@@ -22,7 +23,7 @@ type MonthItem = {
 };
 
 const MONTHS_SHORT = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-const ITEM_WIDTH = 56;
+const ITEM_WIDTH = Dimensions.get('window').width / 3;
 const MONTHS_BACK = 24;
 const MONTHS_FORWARD = 12;
 
@@ -44,7 +45,6 @@ function buildMonthList(): MonthItem[] {
 
 // Computed once — list is stable for the app session
 const MONTH_LIST = buildMonthList();
-const CURRENT_YEAR = new Date().getFullYear();
 
 export function MonthFilter({ activeMonth, activeYear, onChange }: MonthFilterProps) {
   const listRef = useRef<FlatList<MonthItem>>(null);
@@ -55,7 +55,6 @@ export function MonthFilter({ activeMonth, activeYear, onChange }: MonthFilterPr
 
   useEffect(() => {
     if (activeIndex < 0 || !listRef.current) return;
-    // Delay ensures layout is complete before scrollToIndex
     const timer = setTimeout(() => {
       listRef.current?.scrollToIndex({
         index: activeIndex,
@@ -69,7 +68,6 @@ export function MonthFilter({ activeMonth, activeYear, onChange }: MonthFilterPr
   const renderItem: ListRenderItem<MonthItem> = useCallback(
     ({ item }) => {
       const isActive = item.month === activeMonth && item.year === activeYear;
-      const showYear = item.year !== CURRENT_YEAR;
 
       return (
         <TouchableOpacity
@@ -81,13 +79,8 @@ export function MonthFilter({ activeMonth, activeYear, onChange }: MonthFilterPr
           accessibilityState={{ selected: isActive }}
         >
           <Text style={[styles.monthText, isActive && styles.monthTextActive]}>
-            {MONTHS_SHORT[item.month]}
+            {MONTHS_SHORT[item.month]}/{item.year}
           </Text>
-          {showYear && (
-            <Text style={[styles.yearText, isActive && styles.yearTextActive]}>
-              {item.year}
-            </Text>
-          )}
           {isActive && <View style={styles.indicator} />}
         </TouchableOpacity>
       );
@@ -112,11 +105,11 @@ export function MonthFilter({ activeMonth, activeYear, onChange }: MonthFilterPr
         keyExtractor={(item) => item.key}
         renderItem={renderItem}
         horizontal
+        scrollEnabled={false}
         showsHorizontalScrollIndicator={false}
         getItemLayout={getItemLayout}
-        initialNumToRender={9}
+        initialNumToRender={3}
         onScrollToIndexFailed={() => {}}
-        contentContainerStyle={styles.listContent}
       />
     </View>
   );
@@ -128,16 +121,12 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
-  listContent: {
-    paddingHorizontal: spacing.md,
-  },
   item: {
     width: ITEM_WIDTH,
     paddingTop: spacing.md,
     paddingBottom: spacing.lg,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: spacing.xs,
   },
   monthText: {
     fontSize: fs.sm,
@@ -148,19 +137,11 @@ const styles = StyleSheet.create({
     fontWeight: fw.semibold,
     color: colors.content,
   },
-  yearText: {
-    fontSize: fs.xs,
-    fontWeight: fw.regular,
-    color: colors.muted,
-  },
-  yearTextActive: {
-    color: colors.subcontent,
-  },
   indicator: {
     position: 'absolute',
     bottom: 0,
-    left: spacing.sm,
-    right: spacing.sm,
+    left: spacing.xl,
+    right: spacing.xl,
     height: 2,
     backgroundColor: colors.primary,
     borderRadius: 1,

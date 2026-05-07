@@ -111,8 +111,8 @@ const styles = StyleSheet.create({
     fontWeight: fw.bold,
     color: colors.content,
     paddingHorizontal: 20,
-    paddingTop: spacing.xl,
-    paddingBottom: spacing.sm,
+    paddingTop: spacing.xxl,
+    paddingBottom: spacing.xxl,
   },
   loader: {
     flex: 1,

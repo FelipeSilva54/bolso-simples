@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
     gap: spacing.xs,             // 4px entre label e valor
   },
   balanceLabel: {
-    fontSize: fs.sm,             // 14px
+    fontSize: fs.md,             // 14px
     fontWeight: fw.regular,
     color: 'rgba(255,255,255,0.8)',
   },
