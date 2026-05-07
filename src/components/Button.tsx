@@ -82,7 +82,7 @@ const sizeStyles = StyleSheet.create({
 });
 
 const textSizeStyles = StyleSheet.create({
-  lg: { fontSize: fs.md },
+  lg: { fontSize: fs.lg },
   sm: { fontSize: fs.sm },
 });
 

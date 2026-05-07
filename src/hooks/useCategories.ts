@@ -1,0 +1,45 @@
+import { useState, useEffect } from 'react';
+import { onSnapshot } from 'firebase/firestore';
+import { Category, CategoryType } from '@/types/category';
+import { getCategoriesRef } from '@/services/categories';
+import { useAuth } from '@/store/AuthContext';
+
+type UseCategoriesResult = {
+  categories: Category[];
+  loading: boolean;
+};
+
+export function useCategories(): UseCategoriesResult {
+  const { user } = useAuth();
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!user) {
+      setCategories([]);
+      setLoading(false);
+      return;
+    }
+
+    const unsubscribe = onSnapshot(getCategoriesRef(user.uid), (snapshot) => {
+      setCategories(
+        snapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            name: data.name as string,
+            icon: data.icon as string,
+            color: data.color as string,
+            type: (data.type as CategoryType) ?? 'expense',
+            isDefault: (data.isDefault as boolean) ?? false,
+          };
+        }),
+      );
+      setLoading(false);
+    });
+
+    return unsubscribe;
+  }, [user]);
+
+  return { categories, loading };
+}

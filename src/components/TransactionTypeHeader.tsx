@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     height: 44,
     borderRadius: radius.full,
-    backgroundColor: 'rgba(0,0,0,0.15)',
+    backgroundColor: 'rgba(0, 0, 0, 0.24)',
     position: 'relative',
     overflow: 'hidden',
   },
@@ -203,9 +203,9 @@ const styles = StyleSheet.create({
     fontWeight: fw.semibold,
   },
   valueLabel: {
-    fontSize: fs.lg,               // 18px
+    fontSize: fs.md,               // 18px
     fontWeight: fw.regular,
-    color: colors.white,
+    color: colors.offwhite,
     marginBottom: spacing.xs,      // 4px
   },
   valueRow: {

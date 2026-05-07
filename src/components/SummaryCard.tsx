@@ -64,12 +64,12 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   label: {
-    fontSize: fs.xs,
+    fontSize: fs.sm,
     fontWeight: fw.regular,
     color: colors.subcontent,
   },
   value: {
-    fontSize: fs.sm,
+    fontSize: fs.md,
     fontWeight: fw.semibold,
   },
 });

@@ -6,6 +6,7 @@ import {
   onAuthStateChanged,
 } from 'firebase/auth';
 import { auth } from '@/services/firebase';
+import { seedDefaultCategories } from '@/services/categories';
 
 type AuthContextValue = {
   user: User | null;
@@ -25,6 +26,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setUser(firebaseUser);
       setLoading(false);
+
+      // Seed das categorias padrão no primeiro acesso. Não bloqueia a UI:
+      // se falhar (ex: offline ou regra do Firestore), só logamos.
+      if (firebaseUser) {
+        seedDefaultCategories(firebaseUser.uid).catch((err) => {
+          console.warn('seedDefaultCategories falhou:', err);
+        });
+      }
     });
     return unsubscribe;
   }, []);

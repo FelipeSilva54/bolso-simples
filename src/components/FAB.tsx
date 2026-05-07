@@ -48,7 +48,6 @@ export function FAB({
 
 const styles = StyleSheet.create({
   base: {
-    height: spacing.xxxxl,          // 48px
     backgroundColor: colors.primary,
     flexDirection: 'row',
     alignItems: 'center',
@@ -64,13 +63,15 @@ const styles = StyleSheet.create({
     elevation: 6, // Android
   },
 
-  // Modo só ícone: círculo perfeito 48x48
+  // Modo só ícone: círculo perfeito 56x56
   iconOnly: {
-    width: spacing.xxxxl,
+    width: 56,
+    height: 56,
   },
 
-  // Modo com label: cresce horizontalmente
+  // Modo com label: 48px de altura, cresce horizontalmente
   withLabel: {
+    height: 48,
     paddingHorizontal: spacing.lg, // 16px
   },
 

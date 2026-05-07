@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: fs.md,
-    fontWeight: fw.regular,
+    fontWeight: fw.medium,
     color: colors.content,
     marginBottom: 6,
   },

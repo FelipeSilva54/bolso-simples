@@ -1,19 +1,23 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { ArrowLeft } from 'phosphor-react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { ArrowLeft, XCircle } from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing } from '@/constants';
 
-type HeaderVariant = 'home' | 'screen';
+type HeaderVariant = 'home' | 'screen' | 'search';
 type HeaderTheme = 'dark' | 'light';
 
 type HeaderProps = {
   title: string;
-  variant?: HeaderVariant;   // 'home' título à esquerda | 'screen' título centralizado
+  variant?: HeaderVariant;   // 'home' título à esquerda | 'screen' centralizado | 'search' campo de busca
   theme?: HeaderTheme;       // 'dark' fundo primary | 'light' fundo white
   showBackButton?: boolean;  // Exibe seta de voltar à esquerda
   onBackPress?: () => void;
   rightIcon?: React.ComponentType<{ size?: number; color?: string; weight?: string }>;
   onRightPress?: () => void;
+  // Search variant — obrigatórios quando variant === 'search'
+  searchValue?: string;
+  onSearchChange?: (text: string) => void;
+  onSearchClose?: () => void;
 };
 
 export function Header({
@@ -24,12 +28,62 @@ export function Header({
   onBackPress,
   rightIcon: RightIcon,
   onRightPress,
+  searchValue,
+  onSearchChange,
+  onSearchClose,
 }: HeaderProps) {
   const isDark = theme === 'dark';
   const isHome = variant === 'home';
+  const isSearch = variant === 'search';
 
   const contentColor = isDark ? colors.white : colors.content;
   const backgroundColor = isDark ? colors.primary : colors.white;
+
+  if (isSearch) {
+    return (
+      <View style={[styles.container, { backgroundColor }]}>
+
+        {/* Lado esquerdo — voltar */}
+        <View style={styles.side}>
+          {showBackButton && (
+            <TouchableOpacity
+              onPress={onBackPress}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              accessibilityRole="button"
+              accessibilityLabel="Voltar"
+            >
+              <ArrowLeft size={24} color={contentColor} weight="regular" />
+            </TouchableOpacity>
+          )}
+        </View>
+
+        {/* Campo de busca expandido */}
+        <TextInput
+          value={searchValue}
+          onChangeText={onSearchChange}
+          autoFocus
+          placeholder="Buscar categoria"
+          placeholderTextColor={isDark ? 'rgba(255,255,255,0.6)' : colors.muted}
+          selectionColor={isDark ? colors.white : colors.primary}
+          style={[styles.searchInput, { color: contentColor }]}
+          accessibilityLabel="Campo de busca"
+        />
+
+        {/* Lado direito — limpar busca / fechar */}
+        <View style={[styles.side, styles.sideRight]}>
+          <TouchableOpacity
+            onPress={onSearchClose}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            accessibilityRole="button"
+            accessibilityLabel="Fechar busca"
+          >
+            <XCircle size={24} color={contentColor} weight="regular" />
+          </TouchableOpacity>
+        </View>
+
+      </View>
+    );
+  }
 
   return (
     <View style={[styles.container, { backgroundColor }]}>
@@ -107,5 +161,13 @@ const styles = StyleSheet.create({
   // Screen: título fica centralizado entre os dois lados
   titleCenter: {
     textAlign: 'center',
+  },
+  // Search: campo ocupa o espaço entre os ícones, sem padding nativo
+  searchInput: {
+    flex: 1,
+    fontSize: fs.md,
+    fontWeight: fw.regular,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 0,
   },
 });

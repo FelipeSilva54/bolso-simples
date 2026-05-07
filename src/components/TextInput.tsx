@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,           // 6px — não existe token para esse valor
   },
   input: {
-    fontSize: fs.lg,
+    fontSize: fs.md,
     fontWeight: fw.regular,
     paddingVertical: spacing.sm,
     paddingHorizontal: 0,

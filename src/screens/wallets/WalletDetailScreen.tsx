@@ -5,7 +5,7 @@ import {
   ActivityIndicator,
   StyleSheet,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { CalendarBlank, ArrowUp, ArrowDown, ArrowsLeftRight } from 'phosphor-react-native';
@@ -110,6 +110,7 @@ function formatGroupDate(date: Date): string {
 export function WalletDetailScreen() {
   const router = useRouter();
   const { walletId } = useLocalSearchParams<{ walletId: string }>();
+  const insets = useSafeAreaInsets();
   const [hideBalance, setHideBalance] = useState(false);
 
   const today = new Date();
@@ -251,7 +252,11 @@ export function WalletDetailScreen() {
             params: { walletId },
           })
         }
-        style={styles.fab}
+        style={{
+          position: 'absolute',
+          bottom: spacing.xl + insets.bottom,
+          right: spacing.lg,
+        }}
       />
     </SafeAreaView>
   );
@@ -282,10 +287,5 @@ const styles = StyleSheet.create({
   },
   list: {
     paddingBottom: spacing.xxxl,
-  },
-  fab: {
-    position: 'absolute',
-    bottom: spacing.xl,
-    right: spacing.lg,
   },
 });

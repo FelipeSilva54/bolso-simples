@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: fs.md,
-    fontWeight: fw.regular,
+    fontWeight: fw.medium,
     color: colors.content,
     marginBottom: 6,
   },
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: spacing.sm,
+    paddingVertical: spacing.md,
     paddingHorizontal: 0,
   },
   valueText: {

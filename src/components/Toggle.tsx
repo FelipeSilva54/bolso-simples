@@ -9,10 +9,10 @@ import { colors, spacing } from '@/constants';
 
 // Dimensões do toggle definidas em constantes locais para fácil manutenção.
 // Seguindo a regra do projeto: sem valores numéricos hardcoded no StyleSheet.
-const TOGGLE_WIDTH = 51;
-const TOGGLE_HEIGHT = 31;
-const THUMB_SIZE = 27; // O círculo interno ("polegar")
-const THUMB_OFFSET = 2; // Distância da borda quando está em off
+const TOGGLE_WIDTH = 50;
+const TOGGLE_HEIGHT = 26;
+const THUMB_SIZE = 20; // O círculo interno ("polegar")
+const THUMB_OFFSET = 4; // Distância da borda quando está em off
 
 type ToggleProps = {
   value: boolean;
