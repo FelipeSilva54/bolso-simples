@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   View,
   Text,
   ScrollView,
+  Dimensions,
   KeyboardAvoidingView,
   Platform,
   Alert,
@@ -23,7 +24,6 @@ import { SelectInput, SelectOption } from '@/components/SelectInput';
 import { useAuth } from '@/store/AuthContext';
 import { useCategories } from '@/hooks/useCategories';
 import { addTransaction } from '@/services/transactions';
-import { Category } from '@/types/category';
 import { TransactionStatus } from '@/types/transaction';
 import { parseCurrency, formatCurrency } from '@/utils/currency';
 
@@ -46,6 +46,8 @@ function statusFor(type: TxType, on: boolean): TransactionStatus {
   return on ? 'received' : 'unreceived';
 }
 
+const CATEGORY_SHEET_HEIGHT = Dimensions.get('window').height * 0.8;
+
 export function AddEditTransactionScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -56,7 +58,7 @@ export function AddEditTransactionScreen() {
   const [type, setType] = useState<TxType>('expense');
   const [valueText, setValueText] = useState('');
   const [statusOn, setStatusOn] = useState(false);
-  const [category, setCategory] = useState<Category | null>(null);
+  const [categoryId, setCategoryId] = useState<string | null>(null);
   const [date, setDate] = useState<Date>(new Date());
   const [observation, setObservation] = useState('');
   const [paymentType, setPaymentType] = useState<PaymentType>('cash');
@@ -80,13 +82,28 @@ export function AddEditTransactionScreen() {
       ? `${installmentsCount}x de ${formatCurrency(installmentValue)}`
       : undefined;
 
+  const categoriesForType = useMemo(
+    () => categories.filter((c) => c.type === type),
+    [categories, type],
+  );
+
+  const categoryOptions: SelectOption[] = useMemo(
+    () => categoriesForType.map((c) => ({ label: c.name, value: c.id })),
+    [categoriesForType],
+  );
+
+  const recurrenceOptions: SelectOption[] = RECURRENCE_OPTIONS.map((o) => ({
+    label: o.label,
+    value: o.value,
+  }));
+
   function validate(): boolean {
     const next: typeof errors = {};
 
     if (numericValue <= 0) {
       next.value = 'Informe um valor maior que R$ 0,00';
     }
-    if (category == null) {
+    if (!categoryId) {
       next.category = 'Selecione uma categoria';
     }
     if (paymentType === 'installment') {
@@ -104,16 +121,17 @@ export function AddEditTransactionScreen() {
 
   async function handleSave() {
     if (!validate()) return;
-    if (!user || !walletId || !category) return;
+    const selectedCategory = categories.find((c) => c.id === categoryId);
+    if (!user || !walletId || !selectedCategory) return;
 
     setSaving(true);
     try {
       await addTransaction(user.uid, walletId, {
         type,
-        title: category.name,
+        title: selectedCategory.name,
         description: observation,
         amount: numericValue,
-        categoryId: category.id,
+        categoryId: selectedCategory.id,
         status: statusFor(type, statusOn),
         isRecurring: paymentType === 'recurring',
         date,
@@ -125,19 +143,6 @@ export function AddEditTransactionScreen() {
       setSaving(false);
     }
   }
-
-  // Categorias filtradas pelo tipo da transação atual
-  const categoriesForType = categories.filter((c) => c.type === type);
-
-  const categoryOptions: SelectOption[] = categoriesForType.map((c) => ({
-    label: c.name,
-    value: c.id,
-  }));
-
-  const recurrenceOptions: SelectOption[] = RECURRENCE_OPTIONS.map((o) => ({
-    label: o.label,
-    value: o.value,
-  }));
 
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
@@ -165,11 +170,11 @@ export function AddEditTransactionScreen() {
             type={type}
             onTypeChange={(t) => {
               setType(t);
-              // Reset toggle quando alterna entre despesa/receita — o significado muda
               setStatusOn(false);
-              // Limpa categoria se ela não pertence ao novo tipo
-              if (category != null && category.type !== t) {
-                setCategory(null);
+              // Clear category if it doesn't belong to the new type
+              if (categoryId != null) {
+                const cat = categories.find((c) => c.id === categoryId);
+                if (cat && cat.type !== t) setCategoryId(null);
               }
             }}
             value={valueText}
@@ -189,17 +194,17 @@ export function AddEditTransactionScreen() {
               placeholder="Selecionar categoria"
               sheetTitle="Selecionar categoria"
               options={categoryOptions}
-              value={category?.id ?? null}
-              onChange={(id) =>
-                setCategory(categoriesForType.find((c) => c.id === id) ?? null)
-              }
-              error={errors.category}
+              value={categoryId}
+              onChange={setCategoryId}
+              searchable
+              sheetHeight={CATEGORY_SHEET_HEIGHT}
+              disabled={categoriesForType.length === 0}
               helperText={
                 categoriesForType.length === 0
                   ? `Nenhuma categoria de ${type === 'expense' ? 'despesa' : 'receita'} cadastrada`
                   : undefined
               }
-              disabled={categoriesForType.length === 0}
+              error={errors.category}
               accessibilityLabel="Selecionar categoria"
             />
 
@@ -300,18 +305,11 @@ export function AddEditTransactionScreen() {
         </ScrollView>
       </KeyboardAvoidingView>
 
-      {/* Botão fixo de salvar — paddingBottom dinâmico para evitar barra do Android */}
-      <View
-        style={[
-          styles.footer,
-          { paddingBottom: spacing.lg + insets.bottom },
-        ]}
-      >
+      <View style={[styles.footer, { paddingBottom: spacing.lg + insets.bottom }]}>
         <Button variant="primary" onPress={handleSave} loading={saving}>
           Salvar valor
         </Button>
       </View>
-
     </SafeAreaView>
   );
 }
@@ -342,55 +340,6 @@ const styles = StyleSheet.create({
     paddingTop: spacing.xl,
     gap: spacing.xl,
   },
-  fieldWrapper: {
-    width: '100%',
-  },
-  fieldLabel: {
-    fontSize: fs.sm,
-    fontWeight: fw.medium,
-    color: colors.subcontent,
-    marginBottom: 6,
-  },
-  fieldInput: {
-    minHeight: 44,
-    paddingVertical: spacing.sm,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  fieldInputError: {
-    borderBottomColor: colors.danger,
-  },
-  fieldInputContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    flex: 1,
-  },
-  fieldValue: {
-    fontSize: fs.md,
-    fontWeight: fw.regular,
-    color: colors.content,
-    flex: 1,
-  },
-  placeholder: {
-    color: colors.muted,
-  },
-  observationInput: {
-    fontSize: fs.md,
-    fontWeight: fw.regular,
-    color: colors.content,
-    minHeight: 44,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: 0,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  inputError: {
-    borderBottomColor: colors.danger,
-  },
   toggleRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -414,12 +363,6 @@ const styles = StyleSheet.create({
   paymentItem: {
     flex: 1,
   },
-  helperText: {
-    fontSize: fs.sm,
-    fontWeight: fw.regular,
-    color: colors.subcontent,
-    marginTop: 6,
-  },
   errorText: {
     fontSize: fs.sm,
     fontWeight: fw.regular,
@@ -432,43 +375,5 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderTopWidth: 1,
     borderTopColor: colors.border,
-  },
-  sheet: {
-    paddingHorizontal: spacing.lg,
-    maxHeight: 480,
-  },
-  sheetTitle: {
-    fontSize: fs.lg,
-    fontWeight: fw.semibold,
-    color: colors.content,
-    marginBottom: spacing.md,
-  },
-  sheetList: {
-    flexGrow: 0,
-  },
-  sheetOption: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    paddingVertical: spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  sheetOptionLabel: {
-    fontSize: fs.md,
-    fontWeight: fw.regular,
-    color: colors.content,
-    flex: 1,
-  },
-  sheetOptionLabelSelected: {
-    fontWeight: fw.semibold,
-    color: colors.success,
-  },
-  emptyText: {
-    fontSize: fs.md,
-    fontWeight: fw.regular,
-    color: colors.muted,
-    textAlign: 'center',
-    paddingVertical: spacing.xl,
   },
 });

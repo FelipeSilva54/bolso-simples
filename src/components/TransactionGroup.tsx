@@ -57,6 +57,7 @@ export function TransactionGroup({
 const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.white,
+    marginTop: spacing.xl,
   },
   dateHeader: {
     paddingHorizontal: 20,         // 20px — sem token entre spacing.lg (16) e spacing.xl (24)

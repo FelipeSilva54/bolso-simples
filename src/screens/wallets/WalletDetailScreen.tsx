@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   View,
   ScrollView,
@@ -8,7 +8,8 @@ import {
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { CalendarBlank, ArrowUp, ArrowDown, ArrowsLeftRight } from 'phosphor-react-native';
+import { CalendarBlank, ArrowUp, ArrowDown, ArrowsLeftRight, Tag } from 'phosphor-react-native';
+import * as Phosphor from 'phosphor-react-native';
 import { colors, spacing } from '@/constants';
 import { Header } from '@/components/Header';
 import { BalanceDisplay } from '@/components/BalanceDisplay';
@@ -19,7 +20,9 @@ import { EmptyState } from '@/components/EmptyState';
 import { FAB } from '@/components/FAB';
 import { useWallets } from '@/hooks/useWallets';
 import { useTransactions } from '@/hooks/useTransactions';
+import { useCategories } from '@/hooks/useCategories';
 import { Transaction, TransactionStatus } from '@/types/transaction';
+import { Category } from '@/types/category';
 
 type IconComponent = React.ComponentType<{ size?: number; color?: string; weight?: string }>;
 
@@ -42,16 +45,31 @@ const BADGE_LABEL: Record<TransactionStatus, string> = {
   unreceived: 'Não recebido',
 };
 
-function transformTransaction(t: Transaction): GroupTransaction {
-  const icon = (
-    t.type === 'income' ? ArrowUp
-    : t.type === 'expense' ? ArrowDown
-    : ArrowsLeftRight
-  ) as IconComponent;
+// Resolve o nome do ícone (string salvo na categoria) para o componente Phosphor.
+// Cai para Tag se o nome não existir.
+function getIconComponent(name: string | undefined): IconComponent {
+  if (!name) return Tag as unknown as IconComponent;
+  const Icon = (Phosphor as unknown as Record<string, unknown>)[name];
+  return ((Icon ?? Tag) as unknown) as IconComponent;
+}
 
-  const iconColor =
-    t.type === 'income' ? colors.success
-    : t.type === 'expense' ? colors.danger
+function transformTransaction(t: Transaction, category?: Category): GroupTransaction {
+  // Avatar segue a categoria selecionada quando ela existe.
+  // Fallback: ícone/cor genéricos por tipo (transação cuja categoria foi excluída).
+  const icon: IconComponent = category
+    ? getIconComponent(category.icon)
+    : ((t.type === 'income'
+        ? ArrowUp
+        : t.type === 'expense'
+        ? ArrowDown
+        : ArrowsLeftRight) as IconComponent);
+
+  const iconColor = category
+    ? category.color
+    : t.type === 'income'
+    ? colors.success
+    : t.type === 'expense'
+    ? colors.danger
     : colors.primary;
 
   // Expenses are stored as positive values but displayed as negative
@@ -72,7 +90,10 @@ function transformTransaction(t: Transaction): GroupTransaction {
   };
 }
 
-function groupByDate(transactions: Transaction[]): { date: string; transactions: GroupTransaction[] }[] {
+function groupByDate(
+  transactions: Transaction[],
+  categoriesById: Map<string, Category>,
+): { date: string; transactions: GroupTransaction[] }[] {
   const map = new Map<string, { date: string; transactions: GroupTransaction[] }>();
 
   for (const t of transactions) {
@@ -88,7 +109,9 @@ function groupByDate(transactions: Transaction[]): { date: string; transactions:
     if (!map.has(key)) {
       map.set(key, { date: formatGroupDate(d), transactions: [] });
     }
-    map.get(key)!.transactions.push(transformTransaction(t));
+    map.get(key)!.transactions.push(
+      transformTransaction(t, categoriesById.get(t.categoryId)),
+    );
   }
 
   // Sort by ISO key descending — most recent group first
@@ -126,6 +149,14 @@ export function WalletDetailScreen() {
     year: activeYear,
   });
 
+  const { categories } = useCategories();
+
+  // Index das categorias por id para resolver o avatar de cada transação em O(1).
+  const categoriesById = useMemo(
+    () => new Map(categories.map((c) => [c.id, c])),
+    [categories],
+  );
+
   const totalIncome = transactions
     .filter((t) => t.type === 'income' && t.status === 'received')
     .reduce((sum, t) => sum + t.amount, 0);
@@ -135,7 +166,11 @@ export function WalletDetailScreen() {
     .reduce((sum, t) => sum + t.amount, 0);
 
   const monthBalance = totalIncome - totalExpense;
-  const groupedTransactions = groupByDate(transactions);
+
+  const groupedTransactions = useMemo(
+    () => groupByDate(transactions, categoriesById),
+    [transactions, categoriesById],
+  );
 
   const handleTodayPress = () => {
     setActiveMonth(today.getMonth());

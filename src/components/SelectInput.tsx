@@ -28,6 +28,7 @@ type SelectInputProps = {
   searchable?: boolean;
   accessibilityLabel?: string;
   sheetTitle?: string;
+  sheetHeight?: number;
 };
 
 export function SelectInput({
@@ -42,6 +43,7 @@ export function SelectInput({
   searchable = false,
   accessibilityLabel,
   sheetTitle,
+  sheetHeight,
 }: SelectInputProps) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
@@ -109,7 +111,7 @@ export function SelectInput({
       )}
 
       <BottomSheet visible={open} onClose={handleClose}>
-        <View style={styles.sheet}>
+        <View style={[styles.sheet, { maxHeight: sheetHeight ?? 420 }]}>
 
           {sheetTitle != null && (
             <Text style={styles.sheetTitle}>{sheetTitle}</Text>
@@ -121,7 +123,6 @@ export function SelectInput({
                 placeholder="Buscar..."
                 value={search}
                 onChangeText={setSearch}
-                autoFocus
                 accessibilityLabel="Buscar opção"
               />
             </View>
@@ -132,7 +133,7 @@ export function SelectInput({
             keyExtractor={(item) => item.value}
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}
-            style={styles.list}
+            style={styles.listFlex}
             renderItem={({ item }) => {
               const isSelected = item.value === value;
               return (
@@ -203,7 +204,6 @@ const styles = StyleSheet.create({
   },
   sheet: {
     paddingHorizontal: spacing.lg,
-    maxHeight: 420,
   },
   sheetTitle: {
     fontSize: fs.lg,
@@ -216,6 +216,9 @@ const styles = StyleSheet.create({
   },
   list: {
     flexGrow: 0,
+  },
+  listFlex: {
+    flex: 1,
   },
   option: {
     flexDirection: 'row',
