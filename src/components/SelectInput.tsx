@@ -9,8 +9,8 @@ import {
 import { CaretRight, Check } from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing } from '@/constants';
 import { BottomSheet } from '@/components/BottomSheet';
-import { TextInput } from '@/components/TextInput';
 import { AvatarIcon } from '@/components/AvatarIcon';
+import { SearchInput } from '@/components/SearchInput';
 
 export type SelectOption = {
   label: string;
@@ -115,55 +115,52 @@ export function SelectInput({
       )}
 
       <BottomSheet visible={open} onClose={handleClose}>
-        <View style={styles.sheet}>
+        {sheetTitle != null && (
+          <Text style={styles.sheetTitle}>{sheetTitle}</Text>
+        )}
 
-          {sheetTitle != null && (
-            <Text style={styles.sheetTitle}>{sheetTitle}</Text>
-          )}
+        {searchable && (
+          <View style={styles.searchWrapper}>
+            <SearchInput
+              value={search}
+              onChangeText={setSearch}
+              onClear={() => setSearch('')}
+              accessibilityLabel="Buscar opção"
+            />
+          </View>
+        )}
 
-          {searchable && (
-            <View style={styles.searchWrapper}>
-              <TextInput
-                placeholder="Buscar..."
-                value={search}
-                onChangeText={setSearch}
-                accessibilityLabel="Buscar opção"
-              />
-            </View>
-          )}
-
-          <FlatList
-            data={filteredOptions}
-            keyExtractor={(item) => item.value}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-            style={styles.listFlex}
-            renderItem={({ item }) => {
-              const isSelected = item.value === value;
-              return (
-                <TouchableOpacity
-                  onPress={() => handleSelect(item.value)}
-                  activeOpacity={0.7}
-                  accessibilityRole="radio"
-                  accessibilityState={{ selected: isSelected }}
-                  accessibilityLabel={item.label}
-                  style={styles.option}
-                >
-                  {item.icon != null && item.iconColor != null && (
-                    <AvatarIcon icon={item.icon} iconColor={item.iconColor} size={36} />
-                  )}
-                  <Text style={[styles.optionLabel, isSelected && styles.optionLabelSelected]}>
-                    {item.label}
-                  </Text>
-                  {isSelected && (
-                    <Check size={18} color={colors.success} weight="bold" />
-                  )}
-                </TouchableOpacity>
-              );
-            }}
-          />
-
-        </View>
+        <FlatList
+          data={filteredOptions}
+          keyExtractor={(item) => item.value}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+          style={styles.listFlex}
+          contentContainerStyle={styles.listContent}
+          renderItem={({ item }) => {
+            const isSelected = item.value === value;
+            return (
+              <TouchableOpacity
+                onPress={() => handleSelect(item.value)}
+                activeOpacity={0.7}
+                accessibilityRole="radio"
+                accessibilityState={{ selected: isSelected }}
+                accessibilityLabel={item.label}
+                style={styles.option}
+              >
+                {item.icon != null && item.iconColor != null && (
+                  <AvatarIcon icon={item.icon} iconColor={item.iconColor} size={36} />
+                )}
+                <Text style={[styles.optionLabel, isSelected && styles.optionLabelSelected]}>
+                  {item.label}
+                </Text>
+                {isSelected && (
+                  <Check size={18} color={colors.success} weight="bold" />
+                )}
+              </TouchableOpacity>
+            );
+          }}
+        />
       </BottomSheet>
 
     </View>
@@ -210,18 +207,16 @@ const styles = StyleSheet.create({
   errorText: {
     color: colors.danger,
   },
-  sheet: {
-    paddingHorizontal: spacing.lg,
-    maxHeight: 520,
-  },
   sheetTitle: {
     fontSize: fs.lg,
     fontWeight: fw.semibold,
     color: colors.content,
-    marginBottom: spacing.md,
+    marginBottom: spacing.xl,
+    paddingHorizontal: spacing.lg,
   },
   searchWrapper: {
-    marginBottom: spacing.sm,
+    marginBottom: spacing.lg,
+    paddingHorizontal: spacing.lg,
   },
   list: {
     flexGrow: 0,
@@ -229,13 +224,17 @@ const styles = StyleSheet.create({
   listFlex: {
     flexGrow: 0,
   },
+  listContent: {
+    paddingHorizontal: spacing.lg,
+    paddingBottom: spacing.xl,
+  },
   option: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: spacing.md,
+    paddingVertical: spacing.lg,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: colors.borderLight,
     gap: spacing.md,
   },
   optionLabel: {

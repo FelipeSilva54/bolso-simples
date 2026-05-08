@@ -60,7 +60,7 @@ export function AddWalletScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
+    <SafeAreaView style={styles.screen} edges={['top']}>
       <StatusBar style="dark" />
       <Header
         title="Criar carteira"
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
   footer: {
     paddingHorizontal: 20,
     paddingTop: spacing.md,
-    paddingBottom: spacing.xxl,
+    paddingBottom: spacing.lg,
     gap: spacing.md,
     backgroundColor: colors.white,
   },

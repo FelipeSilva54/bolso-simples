@@ -8,7 +8,7 @@ import {
   Alert,
   StyleSheet,
 } from 'react-native';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Tag } from 'phosphor-react-native';
@@ -57,7 +57,6 @@ function statusFor(type: TxType, on: boolean): TransactionStatus {
 
 export function AddEditTransactionScreen() {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
   const { walletId } = useLocalSearchParams<{ walletId: string }>();
   const { user } = useAuth();
   const { categories } = useCategories();
@@ -316,7 +315,7 @@ disabled={categoriesForType.length === 0}
         </ScrollView>
       </KeyboardAvoidingView>
 
-      <View style={[styles.footer, { paddingBottom: spacing.lg + insets.bottom }]}>
+      <View style={[styles.footer, { paddingBottom: spacing.xl }]}>
         <Button variant="primary" onPress={handleSave} loading={saving}>
           Salvar valor
         </Button>

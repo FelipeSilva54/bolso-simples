@@ -94,7 +94,6 @@ export function BottomSheet({ visible, onClose, children }: BottomSheetProps) {
       visible={visible}
       transparent
       animationType="none"
-      statusBarTranslucent
       onRequestClose={onClose}
     >
       {/* Backdrop */}
@@ -139,12 +138,13 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderTopLeftRadius: radius.lg,
     borderTopRightRadius: radius.lg,
-    paddingBottom: spacing.xl,
+    paddingBottom: spacing.xs,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.08,
     shadowRadius: 8,
     elevation: 8,
+    height: SCREEN_HEIGHT * 0.85,
   },
   handleWrapper: {
     alignItems: 'center',

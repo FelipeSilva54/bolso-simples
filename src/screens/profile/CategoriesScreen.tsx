@@ -11,7 +11,6 @@ import {
   ActivityIndicator,
   StyleSheet,
 } from 'react-native';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import { MagnifyingGlass, Tag } from 'phosphor-react-native';
@@ -42,7 +41,6 @@ function normalize(text: string): string {
 
 export function CategoriesScreen() {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
   const { categories, loading } = useCategories();
 
   const [activeTab, setActiveTab] = useState<CategoryType>('expense');
@@ -125,7 +123,7 @@ export function CategoriesScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.screen} edges={['top']}>
+    <View style={styles.screen}>
       <StatusBar style="dark" backgroundColor={colors.white} />
 
       {searchMode ? (
@@ -278,13 +276,13 @@ export function CategoriesScreen() {
             // Sem teclado: só insets.bottom basta para escapar da bottom bar.
             bottom:
               keyboardHeight > 0
-                ? keyboardHeight + insets.bottom + spacing.xl
-                : spacing.lg + insets.bottom,
+                ? keyboardHeight + spacing.xl
+                : spacing.xl,
             right: spacing.lg,
           }}
         />
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 

@@ -61,7 +61,7 @@ export function ProfileScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
-      <StatusBar style="dark" backgroundColor={colors.white}/>
+      <StatusBar style="dark" backgroundColor={colors.white} />
 
       <Header
         title={`Olá, ${displayName}`}
@@ -75,7 +75,6 @@ export function ProfileScreen() {
         contentContainerStyle={styles.scroll}
         showsVerticalScrollIndicator={false}
       >
-        {/* Profile block */}
         {!user?.isAnonymous ? (
           <TouchableOpacity
             style={styles.profileCard}
@@ -131,7 +130,6 @@ export function ProfileScreen() {
           </View>
         )}
 
-        {/* Outros serviços */}
         <View>
           <Text style={styles.sectionLabel}>Outros serviços</Text>
           <ListItem
@@ -148,7 +146,6 @@ export function ProfileScreen() {
           />
         </View>
 
-        {/* Configurações da conta */}
         <View>
           <Text style={styles.sectionLabel}>Configurações da conta</Text>
           <ListItem
@@ -165,11 +162,8 @@ export function ProfileScreen() {
           />
         </View>
 
-        {/* Suporte */}
         <View>
           <Text style={styles.sectionLabel}>Suporte</Text>
-
-          {/* "Apoie o bolsosimples" — inline, cor success */}
           <TouchableOpacity
             onPress={() => router.push('/(stack)/support' as never)}
             activeOpacity={0.7}
@@ -183,7 +177,6 @@ export function ProfileScreen() {
             </Text>
             <CaretRight size={16} color={colors.muted} weight="regular" />
           </TouchableOpacity>
-
           <ListItem
             icon={Question as IconComponent}
             label="Ajuda"
@@ -210,7 +203,6 @@ export function ProfileScreen() {
           />
         </View>
 
-        {/* Footer */}
         <View style={styles.footer}>
           <Text style={styles.version}>
             Versão {appVersion} ({buildVersion})
@@ -246,8 +238,6 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.xxl,
     gap: spacing.xl,
   },
-
-  // Profile card
   profileCard: {
     backgroundColor: colors.white,
     borderRadius: radius.md,
@@ -304,8 +294,6 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
   },
-
-  // Section labels
   sectionLabel: {
     fontSize: fs.sm,
     fontWeight: fw.regular,
@@ -314,8 +302,6 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.lg,
     backgroundColor: colors.white,
   },
-
-  // Inline list item (mirrors ListItem layout)
   listItem: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -333,8 +319,6 @@ const styles = StyleSheet.create({
   listItemLabelSuccess: {
     color: colors.success,
   },
-
-  // Footer
   footer: {
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.sm,
