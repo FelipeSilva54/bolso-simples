@@ -78,12 +78,12 @@ const variantStyles = StyleSheet.create({
 
 const sizeStyles = StyleSheet.create({
   lg: { height: 48, paddingHorizontal: spacing.xl, borderRadius: radius.sm },
-  sm: { height: 36, paddingHorizontal: spacing.lg, borderRadius: radius.sm },
+  sm: { height: 40, paddingHorizontal: spacing.lg, borderRadius: radius.sm },
 });
 
 const textSizeStyles = StyleSheet.create({
   lg: { fontSize: fs.lg },
-  sm: { fontSize: fs.sm },
+  sm: { fontSize: fs.md },
 });
 
 const styles = StyleSheet.create({

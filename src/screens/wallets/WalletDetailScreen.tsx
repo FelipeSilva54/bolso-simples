@@ -16,6 +16,7 @@ import { BalanceDisplay } from '@/components/BalanceDisplay';
 import { MonthFilter } from '@/components/MonthFilter';
 import { SummaryCard } from '@/components/SummaryCard';
 import { TransactionGroup } from '@/components/TransactionGroup';
+import { TransactionDetailSheet } from '@/components/TransactionDetailSheet';
 import { EmptyState } from '@/components/EmptyState';
 import { FAB } from '@/components/FAB';
 import { useWallets } from '@/hooks/useWallets';
@@ -26,7 +27,6 @@ import { Category } from '@/types/category';
 
 type IconComponent = React.ComponentType<{ size?: number; color?: string; weight?: string }>;
 
-// Shape expected by TransactionGroup/TransactionItem
 type GroupTransaction = {
   id: string;
   icon: IconComponent;
@@ -45,8 +45,6 @@ const BADGE_LABEL: Record<TransactionStatus, string> = {
   unreceived: 'Não recebido',
 };
 
-// Resolve o nome do ícone (string salvo na categoria) para o componente Phosphor.
-// Cai para Tag se o nome não existir.
 function getIconComponent(name: string | undefined): IconComponent {
   if (!name) return Tag as unknown as IconComponent;
   const Icon = (Phosphor as unknown as Record<string, unknown>)[name];
@@ -54,8 +52,6 @@ function getIconComponent(name: string | undefined): IconComponent {
 }
 
 function transformTransaction(t: Transaction, category?: Category): GroupTransaction {
-  // Avatar segue a categoria selecionada quando ela existe.
-  // Fallback: ícone/cor genéricos por tipo (transação cuja categoria foi excluída).
   const icon: IconComponent = category
     ? getIconComponent(category.icon)
     : ((t.type === 'income'
@@ -72,7 +68,6 @@ function transformTransaction(t: Transaction, category?: Category): GroupTransac
     ? colors.danger
     : colors.primary;
 
-  // Expenses are stored as positive values but displayed as negative
   const amount = t.type === 'expense' ? -t.amount : t.amount;
 
   const badgeVariant: 'success' | 'danger' =
@@ -97,13 +92,11 @@ function groupByDate(
   const map = new Map<string, { date: string; transactions: GroupTransaction[] }>();
 
   for (const t of transactions) {
-    // Handle both JS Date and Firestore Timestamp (which has .toDate())
     const d =
       t.date instanceof Date
         ? t.date
         : (t.date as unknown as { toDate: () => Date }).toDate();
 
-    // ISO key YYYY-MM-DD used for deterministic sort
     const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 
     if (!map.has(key)) {
@@ -114,7 +107,6 @@ function groupByDate(
     );
   }
 
-  // Sort by ISO key descending — most recent group first
   return Array.from(map.entries())
     .sort(([a], [b]) => b.localeCompare(a))
     .map(([, group]) => group);
@@ -130,6 +122,10 @@ function formatGroupDate(date: Date): string {
   return `${WEEKDAYS[date.getDay()]}, ${date.getDate()} de ${MONTHS[date.getMonth()]}`;
 }
 
+function toJsDate(date: Date | { toDate: () => Date }): Date {
+  return date instanceof Date ? date : date.toDate();
+}
+
 export function WalletDetailScreen() {
   const router = useRouter();
   const { walletId } = useLocalSearchParams<{ walletId: string }>();
@@ -137,7 +133,10 @@ export function WalletDetailScreen() {
 
   const today = new Date();
   const [activeYear, setActiveYear] = useState(today.getFullYear());
-  const [activeMonth, setActiveMonth] = useState(today.getMonth()); // 0-indexed
+  const [activeMonth, setActiveMonth] = useState(today.getMonth());
+
+  const [detailSheetVisible, setDetailSheetVisible] = useState(false);
+  const [selectedTransactionId, setSelectedTransactionId] = useState<string | null>(null);
 
   const { wallets } = useWallets();
   const wallet = wallets.find((w) => w.id === walletId);
@@ -150,7 +149,6 @@ export function WalletDetailScreen() {
 
   const { categories } = useCategories();
 
-  // Index das categorias por id para resolver o avatar de cada transação em O(1).
   const categoriesById = useMemo(
     () => new Map(categories.map((c) => [c.id, c])),
     [categories],
@@ -171,6 +169,24 @@ export function WalletDetailScreen() {
     [transactions, categoriesById],
   );
 
+  const selectedTransaction = useMemo(() => {
+    const t = transactions.find((t) => t.id === selectedTransactionId);
+    if (!t) return null;
+    const category = categoriesById.get(t.categoryId);
+    return {
+      id: t.id,
+      title: t.title,
+      description: t.description || undefined,
+      amount: t.amount,
+      type: t.type as 'expense' | 'income',
+      status: t.status,
+      date: toJsDate(t.date as Date | { toDate: () => Date }),
+      isRecurring: t.isRecurring,
+      icon: getIconComponent(category?.icon),
+      iconColor: category?.color ?? colors.primary,
+    };
+  }, [selectedTransactionId, transactions, categoriesById]);
+
   const handleTodayPress = () => {
     setActiveMonth(today.getMonth());
     setActiveYear(today.getFullYear());
@@ -179,6 +195,16 @@ export function WalletDetailScreen() {
   const handleMonthChange = (month: number, year: number) => {
     setActiveMonth(month);
     setActiveYear(year);
+  };
+
+  const handleTransactionPress = (id: string) => {
+    setSelectedTransactionId(id);
+    setDetailSheetVisible(true);
+  };
+
+  const handleDetailClose = () => {
+    setDetailSheetVisible(false);
+    setSelectedTransactionId(null);
   };
 
   return (
@@ -266,12 +292,7 @@ export function WalletDetailScreen() {
                 key={group.date}
                 date={group.date}
                 transactions={group.transactions}
-                onTransactionPress={(id) =>
-                  router.push({
-                    pathname: '/(stack)/transaction-detail' as never,
-                    params: { walletId, transactionId: id },
-                  })
-                }
+                onTransactionPress={handleTransactionPress}
               />
             ))}
           </ScrollView>
@@ -290,6 +311,21 @@ export function WalletDetailScreen() {
           position: 'absolute',
           bottom: spacing.xl,
           right: spacing.lg,
+        }}
+      />
+
+      <TransactionDetailSheet
+        visible={detailSheetVisible}
+        onClose={handleDetailClose}
+        transaction={selectedTransaction}
+        onDelete={(id) => {
+          // TODO: implementar exclusão
+        }}
+        onEdit={(id) => {
+          // TODO: implementar edição
+        }}
+        onStatusChange={(id, newStatus) => {
+          // TODO: implementar atualização de status
         }}
       />
     </SafeAreaView>

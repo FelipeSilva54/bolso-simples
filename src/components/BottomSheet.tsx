@@ -3,31 +3,27 @@ import {
   Animated,
   Dimensions,
   Keyboard,
-  KeyboardAvoidingView,
   Modal,
   PanResponder,
-  Platform,
   Pressable,
   StyleSheet,
   View,
 } from 'react-native';
 import { colors, radius, spacing } from '@/constants';
 
-// Off-screen baseline — usar a altura da tela garante que sheets altas (até 90%)
-// também animem entrando completamente de baixo, em vez de aparecerem já visíveis.
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 
 type BottomSheetProps = {
   visible: boolean;
   onClose: () => void;
   children: React.ReactNode;
+  height?: number;
 };
 
-export function BottomSheet({ visible, onClose, children }: BottomSheetProps) {
+export function BottomSheet({ visible, onClose, children, height }: BottomSheetProps) {
   const translateY = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
   const opacity = useRef(new Animated.Value(0)).current;
 
-  // Keep a stable ref so PanResponder (created once) always calls the latest onClose.
   const onCloseRef = useRef(onClose);
   useEffect(() => { onCloseRef.current = onClose; }, [onClose]);
 
@@ -96,31 +92,28 @@ export function BottomSheet({ visible, onClose, children }: BottomSheetProps) {
       animationType="none"
       onRequestClose={onClose}
     >
-      {/* Backdrop */}
       <Animated.View style={[styles.backdrop, { opacity }]}>
         <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
       </Animated.View>
 
-      {/* Sheet */}
-      <KeyboardAvoidingView
+      <View
         style={styles.container}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         pointerEvents="box-none"
       >
         <Animated.View
           style={[
             styles.sheet,
+            height != null ? { height } : styles.sheetAuto,
             { transform: [{ translateY }] },
           ]}
         >
-          {/* Handle — drag zone for swipe-to-close */}
           <View style={styles.handleWrapper} {...panResponder.panHandlers}>
             <View style={styles.handle} />
           </View>
 
           {children}
         </Animated.View>
-      </KeyboardAvoidingView>
+      </View>
     </Modal>
   );
 }
@@ -144,7 +137,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.08,
     shadowRadius: 8,
     elevation: 8,
-    height: SCREEN_HEIGHT * 0.85,
+  },
+  sheetAuto: {
+    maxHeight: SCREEN_HEIGHT * 0.90,
   },
   handleWrapper: {
     alignItems: 'center',

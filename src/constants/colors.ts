@@ -13,7 +13,7 @@ export const colors = {
   successLight: '#E4FFF4',
   infoLight: '#EBF8FE',
   info: '#075A83',
-  background: '#F6F6F6',
+  background: '#f3f3f3',
 } as const;
 
 export const walletColors = [

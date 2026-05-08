@@ -5,12 +5,15 @@ import {
   TouchableOpacity,
   FlatList,
   StyleSheet,
+  Dimensions,
 } from 'react-native';
 import { CaretRight, Check } from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing } from '@/constants';
 import { BottomSheet } from '@/components/BottomSheet';
 import { AvatarIcon } from '@/components/AvatarIcon';
 import { SearchInput } from '@/components/SearchInput';
+
+const SCREEN_HEIGHT = Dimensions.get('window').height;
 
 export type SelectOption = {
   label: string;
@@ -114,7 +117,7 @@ export function SelectInput({
         </Text>
       )}
 
-      <BottomSheet visible={open} onClose={handleClose}>
+      <BottomSheet visible={open} onClose={handleClose} height={SCREEN_HEIGHT * 0.85}>
         {sheetTitle != null && (
           <Text style={styles.sheetTitle}>{sheetTitle}</Text>
         )}
@@ -134,6 +137,7 @@ export function SelectInput({
           data={filteredOptions}
           keyExtractor={(item) => item.value}
           keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
           showsVerticalScrollIndicator={false}
           style={styles.listFlex}
           contentContainerStyle={styles.listContent}
