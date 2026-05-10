@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { onSnapshot, query, where, orderBy, Timestamp } from 'firebase/firestore';
 import { Transaction, TransactionType, TransactionStatus } from '@/types/transaction';
+import { Period, periodToRange } from '@/types/period';
 import { getTransactionsRef } from '@/services/transactions';
 import { useAuth } from '@/store/AuthContext';
 
 type UseTransactionsParams = {
   walletId: string;
-  month: number; // 0-indexed (0 = Janeiro, 11 = Dezembro)
-  year: number;
+  period: Period;
 };
 
 type UseTransactionsResult = {
@@ -15,10 +15,16 @@ type UseTransactionsResult = {
   loading: boolean;
 };
 
-export function useTransactions({ walletId, month, year }: UseTransactionsParams): UseTransactionsResult {
+export function useTransactions({ walletId, period }: UseTransactionsParams): UseTransactionsResult {
   const { user } = useAuth();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const range = periodToRange(period);
+  // Chave estável para o useEffect: muda apenas quando o intervalo muda de fato.
+  const rangeKey = range
+    ? `${range.start.getTime()}-${range.end.getTime()}`
+    : 'all';
 
   useEffect(() => {
     if (!user || !walletId) {
@@ -29,15 +35,15 @@ export function useTransactions({ walletId, month, year }: UseTransactionsParams
 
     setLoading(true);
 
-    const start = new Date(year, month, 1, 0, 0, 0, 0);
-    const end = new Date(year, month + 1, 0, 23, 59, 59, 999);
-
-    const q = query(
-      getTransactionsRef(user.uid, walletId),
-      where('date', '>=', Timestamp.fromDate(start)),
-      where('date', '<=', Timestamp.fromDate(end)),
-      orderBy('date', 'desc'),
-    );
+    const baseRef = getTransactionsRef(user.uid, walletId);
+    const q = range == null
+      ? query(baseRef, orderBy('date', 'desc'))
+      : query(
+          baseRef,
+          where('date', '>=', Timestamp.fromDate(range.start)),
+          where('date', '<=', Timestamp.fromDate(range.end)),
+          orderBy('date', 'desc'),
+        );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       setTransactions(
@@ -56,6 +62,8 @@ export function useTransactions({ walletId, month, year }: UseTransactionsParams
             date: data.date instanceof Timestamp ? data.date.toDate() : new Date(),
             createdAt:
               data.createdAt instanceof Timestamp ? data.createdAt.toDate() : new Date(),
+            installmentIndex: data.installmentIndex as number | undefined,
+            installmentTotal: data.installmentTotal as number | undefined,
           };
         }),
       );
@@ -63,7 +71,8 @@ export function useTransactions({ walletId, month, year }: UseTransactionsParams
     });
 
     return unsubscribe;
-  }, [user, walletId, month, year]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, walletId, rangeKey]);
 
   return { transactions, loading };
 }

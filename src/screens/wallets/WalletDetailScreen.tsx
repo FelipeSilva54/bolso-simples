@@ -1,29 +1,46 @@
 import React, { useMemo, useState } from 'react';
 import {
   View,
+  Text,
   ScrollView,
-  ActivityIndicator,
+  TouchableOpacity,
+  Platform,
   StyleSheet,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { CalendarBlank, ArrowUp, ArrowDown, ArrowsLeftRight, Tag } from 'phosphor-react-native';
+import {
+  CalendarBlank,
+  ArrowUp,
+  ArrowDown,
+  ArrowsLeftRight,
+  Tag,
+  CaretLeft,
+  CaretRight,
+} from 'phosphor-react-native';
 import * as Phosphor from 'phosphor-react-native';
-import { colors, spacing } from '@/constants';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
 import { Header } from '@/components/Header';
+import { Skeleton } from '@/components/Skeleton';
 import { BalanceDisplay } from '@/components/BalanceDisplay';
 import { MonthFilter } from '@/components/MonthFilter';
 import { SummaryCard } from '@/components/SummaryCard';
 import { TransactionGroup } from '@/components/TransactionGroup';
 import { TransactionDetailSheet } from '@/components/TransactionDetailSheet';
+import { PeriodPickerSheet } from '@/components/PeriodPickerSheet';
 import { EmptyState } from '@/components/EmptyState';
 import { FAB } from '@/components/FAB';
+import { useAuth } from '@/store/AuthContext';
 import { useWallets } from '@/hooks/useWallets';
+import { useWalletsBalance } from '@/hooks/useWalletsBalance';
 import { useTransactions } from '@/hooks/useTransactions';
 import { useCategories } from '@/hooks/useCategories';
+import { updateTransaction } from '@/services/transactions';
 import { Transaction, TransactionStatus } from '@/types/transaction';
 import { Category } from '@/types/category';
+import { Period, PeriodMode } from '@/types/period';
 
 type IconComponent = React.ComponentType<{ size?: number; color?: string; weight?: string }>;
 
@@ -36,6 +53,8 @@ type GroupTransaction = {
   amount: number;
   badgeVariant: 'danger' | 'success' | 'info';
   badgeLabel: string;
+  installmentIndex?: number;
+  installmentTotal?: number;
 };
 
 const BADGE_LABEL: Record<TransactionStatus, string> = {
@@ -82,6 +101,8 @@ function transformTransaction(t: Transaction, category?: Category): GroupTransac
     amount,
     badgeVariant,
     badgeLabel: BADGE_LABEL[t.status],
+    installmentIndex: t.installmentIndex,
+    installmentTotal: t.installmentTotal,
   };
 }
 
@@ -112,39 +133,96 @@ function groupByDate(
     .map(([, group]) => group);
 }
 
+function groupByMonth(
+  transactions: Transaction[],
+  categoriesById: Map<string, Category>,
+): { date: string; transactions: GroupTransaction[] }[] {
+  const map = new Map<string, { date: string; transactions: GroupTransaction[] }>();
+
+  for (const t of transactions) {
+    const d =
+      t.date instanceof Date
+        ? t.date
+        : (t.date as unknown as { toDate: () => Date }).toDate();
+
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+
+    if (!map.has(key)) {
+      const label = `${capitalize(MONTHS[d.getMonth()])} de ${d.getFullYear()}`;
+      map.set(key, { date: label, transactions: [] });
+    }
+    map.get(key)!.transactions.push(
+      transformTransaction(t, categoriesById.get(t.categoryId)),
+    );
+  }
+
+  return Array.from(map.entries())
+    .sort(([a], [b]) => b.localeCompare(a))
+    .map(([, group]) => group);
+}
+
 const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 const MONTHS = [
   'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
   'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro',
 ];
 
+function capitalize(text: string): string {
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
 function formatGroupDate(date: Date): string {
   return `${WEEKDAYS[date.getDay()]}, ${date.getDate()} de ${MONTHS[date.getMonth()]}`;
+}
+
+function formatDayLabel(date: Date): string {
+  return `${WEEKDAYS[date.getDay()]}, ${date.getDate()} de ${MONTHS[date.getMonth()]} de ${date.getFullYear()}`;
+}
+
+function formatShortDate(date: Date): string {
+  const d = String(date.getDate()).padStart(2, '0');
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  return `${d}/${m}/${date.getFullYear()}`;
 }
 
 function toJsDate(date: Date | { toDate: () => Date }): Date {
   return date instanceof Date ? date : date.toDate();
 }
 
+function addDays(date: Date, days: number): Date {
+  const next = new Date(date);
+  next.setDate(next.getDate() + days);
+  return next;
+}
+
 export function WalletDetailScreen() {
   const router = useRouter();
   const { walletId } = useLocalSearchParams<{ walletId: string }>();
+  const { user } = useAuth();
   const [hideBalance, setHideBalance] = useState(false);
 
   const today = new Date();
-  const [activeYear, setActiveYear] = useState(today.getFullYear());
-  const [activeMonth, setActiveMonth] = useState(today.getMonth());
+  const [period, setPeriod] = useState<Period>({
+    mode: 'monthly',
+    month: today.getMonth(),
+    year: today.getFullYear(),
+  });
+  const [periodSheetVisible, setPeriodSheetVisible] = useState(false);
+  const [pickerStep, setPickerStep] = useState<'none' | 'customStart' | 'customEnd'>('none');
+  const [pendingCustomStart, setPendingCustomStart] = useState<Date | null>(null);
 
   const [detailSheetVisible, setDetailSheetVisible] = useState(false);
   const [selectedTransactionId, setSelectedTransactionId] = useState<string | null>(null);
 
   const { wallets } = useWallets();
   const wallet = wallets.find((w) => w.id === walletId);
+  const walletList = useMemo(() => (wallet ? [wallet] : []), [wallet]);
+  const { balanceByWallet } = useWalletsBalance(walletList);
+  const calculatedBalance = walletId ? balanceByWallet[walletId] ?? 0 : 0;
 
   const { transactions, loading } = useTransactions({
     walletId: walletId ?? '',
-    month: activeMonth,
-    year: activeYear,
+    period,
   });
 
   const { categories } = useCategories();
@@ -165,8 +243,11 @@ export function WalletDetailScreen() {
   const monthBalance = totalIncome - totalExpense;
 
   const groupedTransactions = useMemo(
-    () => groupByDate(transactions, categoriesById),
-    [transactions, categoriesById],
+    () =>
+      period.mode === 'yearly'
+        ? groupByMonth(transactions, categoriesById)
+        : groupByDate(transactions, categoriesById),
+    [transactions, categoriesById, period.mode],
   );
 
   const selectedTransaction = useMemo(() => {
@@ -184,17 +265,80 @@ export function WalletDetailScreen() {
       isRecurring: t.isRecurring,
       icon: getIconComponent(category?.icon),
       iconColor: category?.color ?? colors.primary,
+      installmentIndex: t.installmentIndex,
+      installmentTotal: t.installmentTotal,
     };
   }, [selectedTransactionId, transactions, categoriesById]);
 
   const handleTodayPress = () => {
-    setActiveMonth(today.getMonth());
-    setActiveYear(today.getFullYear());
+    setPeriod({
+      mode: 'monthly',
+      month: today.getMonth(),
+      year: today.getFullYear(),
+    });
   };
 
   const handleMonthChange = (month: number, year: number) => {
-    setActiveMonth(month);
-    setActiveYear(year);
+    setPeriod({ mode: 'monthly', month, year });
+  };
+
+  const handleSelectPeriodMode = (mode: PeriodMode) => {
+    setPeriodSheetVisible(false);
+    if (mode === 'monthly') {
+      setPeriod({ mode: 'monthly', month: today.getMonth(), year: today.getFullYear() });
+    } else if (mode === 'daily') {
+      setPeriod({ mode: 'daily', date: today });
+    } else if (mode === 'yearly') {
+      setPeriod({ mode: 'yearly', year: today.getFullYear() });
+    } else if (mode === 'all') {
+      setPeriod({ mode: 'all' });
+    } else if (mode === 'custom') {
+      // Abre o seletor nativo: primeiro a data inicial, depois a final
+      setPendingCustomStart(null);
+      setPickerStep('customStart');
+    }
+  };
+
+  const handleCustomDateChange = (
+    event: { type?: string },
+    selectedDate?: Date,
+  ) => {
+    // No Android o picker é dispensado automaticamente; em ambos os casos
+    // o "dismiss" ou ausência de data cancela o fluxo.
+    if (event.type === 'dismissed' || !selectedDate) {
+      setPickerStep('none');
+      setPendingCustomStart(null);
+      return;
+    }
+
+    if (pickerStep === 'customStart') {
+      setPendingCustomStart(selectedDate);
+      setPickerStep('customEnd');
+    } else if (pickerStep === 'customEnd' && pendingCustomStart != null) {
+      setPeriod({ mode: 'custom', start: pendingCustomStart, end: selectedDate });
+      setPickerStep('none');
+      setPendingCustomStart(null);
+    }
+  };
+
+  const handlePrevDay = () => {
+    if (period.mode !== 'daily') return;
+    setPeriod({ mode: 'daily', date: addDays(period.date, -1) });
+  };
+
+  const handleNextDay = () => {
+    if (period.mode !== 'daily') return;
+    setPeriod({ mode: 'daily', date: addDays(period.date, 1) });
+  };
+
+  const handlePrevYear = () => {
+    if (period.mode !== 'yearly') return;
+    setPeriod({ mode: 'yearly', year: period.year - 1 });
+  };
+
+  const handleNextYear = () => {
+    if (period.mode !== 'yearly') return;
+    setPeriod({ mode: 'yearly', year: period.year + 1 });
   };
 
   const handleTransactionPress = (id: string) => {
@@ -205,6 +349,11 @@ export function WalletDetailScreen() {
   const handleDetailClose = () => {
     setDetailSheetVisible(false);
     setSelectedTransactionId(null);
+  };
+
+  const handleStatusChange = async (id: string, newStatus: TransactionStatus) => {
+    if (!user || !walletId) return;
+    await updateTransaction(user.uid, walletId, id, { status: newStatus });
   };
 
   return (
@@ -218,26 +367,94 @@ export function WalletDetailScreen() {
         showBackButton
         onBackPress={() => router.back()}
         rightIcon={CalendarBlank as IconComponent}
-        onRightPress={() => {
-          // TODO: abrir filtro por data
-        }}
+        onRightPress={() => setPeriodSheetVisible(true)}
       />
 
       <BalanceDisplay
         variant="wallet"
         subtitle="Saldo da carteira:"
-        balance={wallet?.balance ?? 0}
+        balance={calculatedBalance}
         hideBalance={hideBalance}
         onToggleVisibility={() => setHideBalance((v) => !v)}
         onTodayPress={handleTodayPress}
       />
 
       <View style={styles.body}>
-        <MonthFilter
-          activeMonth={activeMonth}
-          activeYear={activeYear}
-          onChange={handleMonthChange}
-        />
+        {period.mode === 'monthly' && (
+          <MonthFilter
+            activeMonth={period.month}
+            activeYear={period.year}
+            onChange={handleMonthChange}
+          />
+        )}
+
+        {period.mode === 'daily' && (
+          <View style={styles.periodNav}>
+            <TouchableOpacity
+              onPress={handlePrevDay}
+              style={styles.periodNavButton}
+              accessibilityLabel="Dia anterior"
+              accessibilityRole="button"
+            >
+              <CaretLeft size={20} color={colors.subcontent} weight="bold" />
+            </TouchableOpacity>
+            <Text style={styles.periodNavLabel} numberOfLines={1}>
+              {formatDayLabel(period.date)}
+            </Text>
+            <TouchableOpacity
+              onPress={handleNextDay}
+              style={styles.periodNavButton}
+              accessibilityLabel="Próximo dia"
+              accessibilityRole="button"
+            >
+              <CaretRight size={20} color={colors.subcontent} weight="bold" />
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {period.mode === 'yearly' && (
+          <View style={styles.periodNav}>
+            <TouchableOpacity
+              onPress={handlePrevYear}
+              style={styles.periodNavButton}
+              accessibilityLabel="Ano anterior"
+              accessibilityRole="button"
+            >
+              <CaretLeft size={20} color={colors.subcontent} weight="bold" />
+            </TouchableOpacity>
+            <Text style={styles.periodNavLabel}>{period.year}</Text>
+            <TouchableOpacity
+              onPress={handleNextYear}
+              style={styles.periodNavButton}
+              accessibilityLabel="Próximo ano"
+              accessibilityRole="button"
+            >
+              <CaretRight size={20} color={colors.subcontent} weight="bold" />
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {period.mode === 'all' && (
+          <View style={styles.periodNav}>
+            <Text style={styles.periodNavLabel}>Todas as transações</Text>
+          </View>
+        )}
+
+        {period.mode === 'custom' && (
+          <TouchableOpacity
+            onPress={() => {
+              setPendingCustomStart(null);
+              setPickerStep('customStart');
+            }}
+            style={styles.periodNav}
+            accessibilityLabel="Editar intervalo personalizado"
+            accessibilityRole="button"
+          >
+            <Text style={styles.periodNavLabel} numberOfLines={1}>
+              {formatShortDate(period.start)}  →  {formatShortDate(period.end)}
+            </Text>
+          </TouchableOpacity>
+        )}
 
         <View style={styles.summaryRow}>
           <SummaryCard
@@ -248,7 +465,7 @@ export function WalletDetailScreen() {
             onPress={() =>
               router.push({
                 pathname: '/(stack)/transaction-list' as never,
-                params: { walletId, type: 'income', month: activeMonth, year: activeYear },
+                params: { walletId, type: 'income' },
               })
             }
           />
@@ -260,7 +477,7 @@ export function WalletDetailScreen() {
             onPress={() =>
               router.push({
                 pathname: '/(stack)/transaction-list' as never,
-                params: { walletId, type: 'expense', month: activeMonth, year: activeYear },
+                params: { walletId, type: 'expense' },
               })
             }
           />
@@ -273,8 +490,27 @@ export function WalletDetailScreen() {
         </View>
 
         {loading ? (
-          <View style={styles.loadingWrapper}>
-            <ActivityIndicator color={colors.primary} />
+          <View style={styles.skeletonContainer}>
+            {[0, 1].map((g) => (
+              <View key={g} style={styles.skeletonGroup}>
+                <View style={styles.skeletonDateHeader}>
+                  <Skeleton height={12} width="40%" borderRadius={radius.sm} />
+                </View>
+                {[0, 1, 2].map((r) => (
+                  <View key={r} style={styles.skeletonRow}>
+                    <Skeleton width={36} height={36} borderRadius={radius.full} />
+                    <View style={styles.skeletonRowInfo}>
+                      <Skeleton height={16} width="50%" borderRadius={radius.sm} />
+                      <Skeleton height={12} width="35%" borderRadius={radius.sm} />
+                    </View>
+                    <View style={styles.skeletonRowRight}>
+                      <Skeleton height={16} width={60} borderRadius={radius.sm} />
+                      <Skeleton height={20} width={48} borderRadius={radius.full} />
+                    </View>
+                  </View>
+                ))}
+              </View>
+            ))}
           </View>
         ) : transactions.length === 0 ? (
           <EmptyState
@@ -324,10 +560,33 @@ export function WalletDetailScreen() {
         onEdit={(id) => {
           // TODO: implementar edição
         }}
-        onStatusChange={(id, newStatus) => {
-          // TODO: implementar atualização de status
-        }}
+        onStatusChange={handleStatusChange}
       />
+
+      <PeriodPickerSheet
+        visible={periodSheetVisible}
+        onClose={() => setPeriodSheetVisible(false)}
+        currentMode={period.mode}
+        onSelectMode={handleSelectPeriodMode}
+      />
+
+      {pickerStep !== 'none' && (
+        <DateTimePicker
+          value={
+            pickerStep === 'customEnd' && pendingCustomStart != null
+              ? pendingCustomStart
+              : new Date()
+          }
+          mode="date"
+          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+          minimumDate={
+            pickerStep === 'customEnd' && pendingCustomStart != null
+              ? pendingCustomStart
+              : undefined
+          }
+          onChange={handleCustomDateChange}
+        />
+      )}
     </SafeAreaView>
   );
 }
@@ -350,10 +609,52 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
-  loadingWrapper: {
-    flex: 1,
+  periodNav: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    gap: spacing.md,
+    backgroundColor: colors.white,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
+  periodNavButton: {
+    padding: spacing.xs,
+  },
+  periodNavLabel: {
+    flex: 1,
+    fontSize: fs.sm,
+    fontWeight: fw.medium,
+    color: colors.content,
+    textAlign: 'center',
+  },
+  skeletonContainer: {
+    flex: 1,
+  },
+  skeletonGroup: {
+    backgroundColor: colors.white,
+    marginTop: spacing.xl,
+  },
+  skeletonDateHeader: {
+    paddingHorizontal: 20,
+    paddingVertical: spacing.md,
+  },
+  skeletonRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: spacing.md,
+    paddingHorizontal: 20,
+    gap: spacing.lg,
+  },
+  skeletonRowInfo: {
+    flex: 1,
+    gap: spacing.xs,
+  },
+  skeletonRowRight: {
+    alignItems: 'flex-end',
+    gap: spacing.xs,
   },
   list: {
     paddingBottom: 100,

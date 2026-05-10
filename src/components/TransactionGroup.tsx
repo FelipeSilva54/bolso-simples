@@ -14,6 +14,8 @@ type Transaction = {
   amount: number;
   badgeVariant: BadgeVariant;
   badgeLabel: string;
+  installmentIndex?: number;
+  installmentTotal?: number;
 };
 
 type TransactionGroupProps = {
@@ -46,6 +48,8 @@ export function TransactionGroup({
           amount={transaction.amount}
           badgeVariant={transaction.badgeVariant}
           badgeLabel={transaction.badgeLabel}
+          installmentIndex={transaction.installmentIndex}
+          installmentTotal={transaction.installmentTotal}
           onPress={() => onTransactionPress(transaction.id)}
         />
       ))}

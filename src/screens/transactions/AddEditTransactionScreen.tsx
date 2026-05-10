@@ -137,16 +137,45 @@ export function AddEditTransactionScreen() {
 
     setSaving(true);
     try {
-      await addTransaction(user.uid, walletId, {
-        type,
-        title: selectedCategory.name,
-        description: observation,
-        amount: numericValue,
-        categoryId: selectedCategory.id,
-        status: statusFor(type, statusOn),
-        isRecurring: paymentType === 'recurring',
-        date,
-      });
+      if (paymentType === 'installment' && installmentsCount > 1) {
+        // Cada parcela vira uma transação com data deslocada em N meses.
+        // Apenas a primeira herda o status do toggle — futuras nascem pendentes.
+        const perInstallment = numericValue / installmentsCount;
+        const pendingStatus: TransactionStatus = type === 'expense' ? 'unpaid' : 'unreceived';
+
+        const promises: Promise<string>[] = [];
+        for (let i = 0; i < installmentsCount; i++) {
+          const installmentDate = new Date(date);
+          installmentDate.setMonth(installmentDate.getMonth() + i);
+
+          promises.push(
+            addTransaction(user.uid, walletId, {
+              type,
+              title: selectedCategory.name,
+              description: observation,
+              amount: perInstallment,
+              categoryId: selectedCategory.id,
+              status: i === 0 ? statusFor(type, statusOn) : pendingStatus,
+              isRecurring: false,
+              date: installmentDate,
+              installmentIndex: i + 1,
+              installmentTotal: installmentsCount,
+            }),
+          );
+        }
+        await Promise.all(promises);
+      } else {
+        await addTransaction(user.uid, walletId, {
+          type,
+          title: selectedCategory.name,
+          description: observation,
+          amount: numericValue,
+          categoryId: selectedCategory.id,
+          status: statusFor(type, statusOn),
+          isRecurring: paymentType === 'recurring',
+          date,
+        });
+      }
       router.back();
     } catch {
       Alert.alert('Erro ao salvar', 'Não foi possível salvar a transação. Tente novamente.');

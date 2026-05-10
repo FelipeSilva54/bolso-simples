@@ -8,9 +8,9 @@ import {
   Animated,
   Keyboard,
   Platform,
-  ActivityIndicator,
   StyleSheet,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import { MagnifyingGlass, Tag } from 'phosphor-react-native';
@@ -20,6 +20,7 @@ import { Header } from '@/components/Header';
 import { FAB } from '@/components/FAB';
 import { AvatarIcon } from '@/components/AvatarIcon';
 import { EmptyState } from '@/components/EmptyState';
+import { Skeleton } from '@/components/Skeleton';
 import { useCategories } from '@/hooks/useCategories';
 import { Category, CategoryType } from '@/types/category';
 
@@ -123,7 +124,7 @@ export function CategoriesScreen() {
   };
 
   return (
-    <View style={styles.screen}>
+    <SafeAreaView style={styles.screen} edges={['top']}>
       <StatusBar style="dark" backgroundColor={colors.white} />
 
       {searchMode ? (
@@ -218,8 +219,13 @@ export function CategoriesScreen() {
 
         {/* Lista */}
         {loading ? (
-          <View style={styles.loadingWrapper}>
-            <ActivityIndicator size="large" color={colors.primary} />
+          <View style={styles.skeletonList}>
+            {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
+              <View key={i} style={[styles.row, i < 7 && styles.rowDivider]}>
+                <Skeleton width={40} height={40} borderRadius={radius.full} />
+                <Skeleton height={16} width="55%" borderRadius={radius.sm} />
+              </View>
+            ))}
           </View>
         ) : filteredCategories.length === 0 ? (
           <EmptyState
@@ -282,7 +288,7 @@ export function CategoriesScreen() {
           }}
         />
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -380,9 +386,8 @@ const styles = StyleSheet.create({
     color: colors.content,
   },
 
-  loadingWrapper: {
+  skeletonList: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: colors.white,
   },
 });

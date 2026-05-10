@@ -21,6 +21,8 @@ export type AddTransactionInput = {
   status: TransactionStatus;
   isRecurring: boolean;
   date: Date;
+  installmentIndex?: number;
+  installmentTotal?: number;
 };
 
 export function getTransactionsRef(
@@ -35,7 +37,7 @@ export async function addTransaction(
   walletId: string,
   input: AddTransactionInput,
 ): Promise<string> {
-  const ref = await addDoc(getTransactionsRef(userId, walletId), {
+  const data: Record<string, unknown> = {
     type: input.type,
     title: input.title,
     description: input.description,
@@ -45,7 +47,10 @@ export async function addTransaction(
     isRecurring: input.isRecurring,
     date: Timestamp.fromDate(input.date),
     createdAt: serverTimestamp(),
-  });
+  };
+  if (input.installmentIndex != null) data.installmentIndex = input.installmentIndex;
+  if (input.installmentTotal != null) data.installmentTotal = input.installmentTotal;
+  const ref = await addDoc(getTransactionsRef(userId, walletId), data);
   return ref.id;
 }
 

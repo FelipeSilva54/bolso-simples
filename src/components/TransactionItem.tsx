@@ -13,6 +13,8 @@ type TransactionItemProps = {
   amount: number;       // Valor da transação — positivo ou negativo
   badgeVariant: BadgeVariant;
   badgeLabel: string;
+  installmentIndex?: number;
+  installmentTotal?: number;
   onPress: () => void;
 };
 
@@ -24,6 +26,8 @@ export function TransactionItem({
   amount,
   badgeVariant,
   badgeLabel,
+  installmentIndex,
+  installmentTotal,
   onPress,
 }: TransactionItemProps) {
   const isNegative = amount < 0;
@@ -32,19 +36,24 @@ export function TransactionItem({
     .replace('.', ',')
     .replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
 
+  const displayTitle =
+    installmentTotal != null && installmentTotal > 1 && installmentIndex != null
+      ? `${title} ${installmentIndex}/${installmentTotal}`
+      : title;
+
   return (
     <TouchableOpacity
       onPress={onPress}
       activeOpacity={0.7}
       accessibilityRole="button"
-      accessibilityLabel={`${title}, ${formattedAmount}`}
+      accessibilityLabel={`${displayTitle}, ${formattedAmount}`}
       style={styles.container}
     >
       <AvatarIcon icon={IconComponent} iconColor={iconColor} size={36} />
 
       {/* Título e descrição — flex: 1 para não colidir com o lado direito */}
       <View style={styles.info}>
-        <Text style={styles.title} numberOfLines={1}>{title}</Text>
+        <Text style={styles.title} numberOfLines={1}>{displayTitle}</Text>
         {description != null && (
           <Text style={styles.description} numberOfLines={1}>{description}</Text>
         )}

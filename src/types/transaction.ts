@@ -13,4 +13,6 @@ export type Transaction = {
   isRecurring: boolean;
   date: Date;
   createdAt: Date;
+  installmentIndex?: number;  // 1, 2, 3... — só presente em transações parceladas
+  installmentTotal?: number;  // total de parcelas (>1 para indicar parcelamento)
 };
