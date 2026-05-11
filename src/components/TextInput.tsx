@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
   input: {
     fontSize: fs.md,
     fontWeight: fw.regular,
-    paddingVertical: spacing.sm,
+    paddingVertical: spacing.md,
     paddingHorizontal: 0,
   },
   helperText: {

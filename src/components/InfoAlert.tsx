@@ -12,7 +12,7 @@ export function InfoAlert({ children }: InfoAlertProps) {
     <View style={styles.container}>
       {/* Ícone alinhado ao topo para não centralizar quando o texto tem múltiplas linhas */}
       <Info
-        size={20}
+        size={18}
         color={colors.info}
         weight="fill"
         style={styles.icon}
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
   },
   text: {
     flex: 1, // Ocupa o espaço restante e quebra linha corretamente
-    fontSize: fs.md,           // 14px
+    fontSize: fs.sm,           // 14px
     fontWeight: fw.regular,
     color: colors.info,
     lineHeight: 20,
