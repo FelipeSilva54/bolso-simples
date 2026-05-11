@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Trash, PencilSimple } from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
@@ -8,6 +8,7 @@ import { StatusBadge } from '@/components/StatusBadge';
 import { Button } from '@/components/Button';
 import { Toggle } from '@/components/Toggle';
 import { InfoAlert } from '@/components/InfoAlert';
+import { Dialog } from '@/components/Dialog';
 import { formatCurrency } from '@/utils/currency';
 import { formatDate } from '@/utils/date';
 
@@ -59,6 +60,8 @@ export function TransactionDetailSheet({
   onEdit,
   onStatusChange,
 }: TransactionDetailSheetProps) {
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
   return (
     <BottomSheet visible={visible} onClose={onClose}>
       {transaction == null ? null : (
@@ -161,7 +164,7 @@ export function TransactionDetailSheet({
                   variant="dangerLight"
                   size="sm"
                   leftIcon={<Trash size={18} color={colors.danger} weight="fill" />}
-                  onPress={() => onDelete(transaction.id)}
+                  onPress={() => setShowDeleteDialog(true)}
                 >
                   Excluir
                 </Button>
@@ -180,6 +183,21 @@ export function TransactionDetailSheet({
           </View>
 
         </View>
+      )}
+
+      {transaction != null && (
+        <Dialog
+          visible={showDeleteDialog}
+          title="Excluir transação?"
+          description="Essa ação não pode ser desfeita. A transação será removida permanentemente."
+          confirmLabel="Excluir"
+          cancelLabel="Cancelar"
+          onCancel={() => setShowDeleteDialog(false)}
+          onConfirm={() => {
+            onDelete(transaction.id);
+            setShowDeleteDialog(false);
+          }}
+        />
       )}
     </BottomSheet>
   );

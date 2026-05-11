@@ -1,6 +1,7 @@
 import {
   collection,
   doc,
+  getDoc,
   addDoc,
   updateDoc,
   deleteDoc,
@@ -10,7 +11,7 @@ import {
   DocumentData,
 } from 'firebase/firestore';
 import { db } from '@/services/firebase';
-import { TransactionType, TransactionStatus } from '@/types/transaction';
+import { Transaction, TransactionType, TransactionStatus } from '@/types/transaction';
 
 export type AddTransactionInput = {
   type: TransactionType;

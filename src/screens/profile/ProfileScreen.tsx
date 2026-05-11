@@ -8,7 +8,7 @@ import {
   Share,
   StyleSheet,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import * as Application from 'expo-application';
@@ -34,6 +34,7 @@ import { useAuth } from '@/store/AuthContext';
 type IconComponent = React.ComponentType<{ size?: number; color?: string; weight?: string }>;
 
 export function ProfileScreen() {
+  const { top } = useSafeAreaInsets();
   const router = useRouter();
   const { user, loginWithGoogle, logout } = useAuth();
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
@@ -61,6 +62,7 @@ export function ProfileScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
+      <View style={[styles.statusBarFill, { height: top }]} />
       <StatusBar style="dark" backgroundColor={colors.white} />
 
       <Header
@@ -233,6 +235,14 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: colors.background,
+  },
+  statusBarFill: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: colors.white,
+    zIndex: 1,
   },
   scroll: {
     paddingBottom: spacing.xxl,

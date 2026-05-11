@@ -79,7 +79,7 @@ export function WalletCard({
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: radius.md,     // 8px
+    borderRadius: radius.lg,     // 8px
     padding: 20,                 // 20px — sem token entre spacing.lg (16) e spacing.xl (24)
     overflow: 'hidden',          // Corta os círculos decorativos nas bordas do card
     minHeight: 180,
@@ -135,13 +135,13 @@ const styles = StyleSheet.create({
     height: 130,
     borderRadius: 65,
     backgroundColor: 'rgba(255,255,255,0.03)',
-    bottom: 3,
+    bottom: 2,
     right: 15,
   },
   decorCircleFront: {
     position: 'absolute',
-    width: 110,
-    height: 110,
+    width: 100,
+    height: 100,
     borderRadius: 55,
     backgroundColor: 'rgba(255,255,255,0.03)',
     bottom: 0,

@@ -37,7 +37,7 @@ import { useWallets } from '@/hooks/useWallets';
 import { useWalletsBalance } from '@/hooks/useWalletsBalance';
 import { useTransactions } from '@/hooks/useTransactions';
 import { useCategories } from '@/hooks/useCategories';
-import { updateTransaction } from '@/services/transactions';
+import { updateTransaction, deleteTransaction } from '@/services/transactions';
 import { Transaction, TransactionStatus } from '@/types/transaction';
 import { Category } from '@/types/category';
 import { Period, PeriodMode } from '@/types/period';
@@ -554,8 +554,10 @@ export function WalletDetailScreen() {
         visible={detailSheetVisible}
         onClose={handleDetailClose}
         transaction={selectedTransaction}
-        onDelete={(id) => {
-          // TODO: implementar exclusão
+        onDelete={async (id) => {
+          if (!user || !walletId) return;
+          await deleteTransaction(user.uid, walletId, id);
+          handleDetailClose();
         }}
         onEdit={(id) => {
           // TODO: implementar edição
@@ -607,7 +609,7 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
     backgroundColor: colors.white,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: colors.offwhite,
   },
   periodNav: {
     flexDirection: 'row',

@@ -1,17 +1,20 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Animated,
   Dimensions,
   Keyboard,
-  Modal,
   PanResponder,
   Pressable,
   StyleSheet,
   View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Portal } from '@/components/PortalProvider';
 import { colors, radius, spacing } from '@/constants';
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;
+
+let _nextId = 0;
 
 type BottomSheetProps = {
   visible: boolean;
@@ -21,8 +24,11 @@ type BottomSheetProps = {
 };
 
 export function BottomSheet({ visible, onClose, children, height }: BottomSheetProps) {
+  const { bottom: bottomInset } = useSafeAreaInsets();
+  const id = useRef(`bs-${_nextId++}`).current;
   const translateY = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
   const opacity = useRef(new Animated.Value(0)).current;
+  const [interactive, setInteractive] = useState(false);
 
   const onCloseRef = useRef(onClose);
   useEffect(() => { onCloseRef.current = onClose; }, [onClose]);
@@ -55,6 +61,7 @@ export function BottomSheet({ visible, onClose, children, height }: BottomSheetP
 
   useEffect(() => {
     if (visible) {
+      setInteractive(true);
       Keyboard.dismiss();
       Animated.parallel([
         Animated.spring(translateY, {
@@ -70,6 +77,7 @@ export function BottomSheet({ visible, onClose, children, height }: BottomSheetP
         }),
       ]).start();
     } else {
+      setInteractive(false);
       Animated.parallel([
         Animated.timing(translateY, {
           toValue: SCREEN_HEIGHT,
@@ -83,38 +91,31 @@ export function BottomSheet({ visible, onClose, children, height }: BottomSheetP
         }),
       ]).start();
     }
-  }, [visible]);
+  }, [visible, opacity, translateY]);
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="none"
-      onRequestClose={onClose}
-    >
-      <Animated.View style={[styles.backdrop, { opacity }]}>
+    <Portal id={id}>
+      <Animated.View
+        style={[styles.backdrop, { opacity }]}
+        pointerEvents={interactive ? 'auto' : 'none'}
+      >
         <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
       </Animated.View>
-
-      <View
-        style={styles.container}
-        pointerEvents="box-none"
-      >
+      <View style={styles.container} pointerEvents={interactive ? 'box-none' : 'none'}>
         <Animated.View
           style={[
             styles.sheet,
             height != null ? { height } : styles.sheetAuto,
-            { transform: [{ translateY }] },
+            { transform: [{ translateY }], paddingBottom: bottomInset},
           ]}
         >
           <View style={styles.handleWrapper} {...panResponder.panHandlers}>
             <View style={styles.handle} />
           </View>
-
           {children}
         </Animated.View>
       </View>
-    </Modal>
+    </Portal>
   );
 }
 
@@ -131,7 +132,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderTopLeftRadius: radius.lg,
     borderTopRightRadius: radius.lg,
-    paddingBottom: spacing.xs,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.08,
