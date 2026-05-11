@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: fs.lg,
-    fontWeight: fw.bold,
+    fontWeight: fw.semibold,
     color: colors.content,
     paddingHorizontal: 20,
     paddingTop: spacing.xxl,

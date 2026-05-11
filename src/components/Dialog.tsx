@@ -41,7 +41,7 @@ export function Dialog({
         <Pressable style={styles.card} onPress={(e) => e.stopPropagation()}>
 
           <View style={styles.iconCircle}>
-            <Trash size={24} color={colors.danger} weight="regular" />
+            <Trash size={32} color={colors.danger} weight="regular" />
           </View>
 
           <View style={styles.content}>
@@ -51,12 +51,12 @@ export function Dialog({
 
           <View style={styles.actions}>
             <View style={styles.actionButton}>
-              <Button variant="outlined" onPress={onCancel}>
+              <Button variant="outlined" size='sm' onPress={onCancel}>
                 {cancelLabel}
               </Button>
             </View>
             <View style={styles.actionButton}>
-              <Button variant="danger" onPress={onConfirm}>
+              <Button variant="danger" size='sm' onPress={onConfirm}>
                 {confirmLabel}
               </Button>
             </View>
@@ -84,9 +84,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   iconCircle: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    width: 64,
+    height: 64,
+    borderRadius: 36,
     backgroundColor: colors.dangerLight,
     alignItems: 'center',
     justifyContent: 'center',
@@ -98,21 +98,21 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xl,       // 20px entre conteúdo e botões
   },
   title: {
-    fontSize: fs.lg,                // 18px
-    fontWeight: fw.bold,
+    fontSize: fs.xl,                // 18px
+    fontWeight: fw.semibold,
     color: colors.content,
     textAlign: 'center',
   },
   description: {
-    fontSize: fs.sm,                // 14px
+    fontSize: fs.md,                // 14px
     fontWeight: fw.regular,
     color: colors.subcontent,
     textAlign: 'center',
-    lineHeight: 20,
+    lineHeight: 24,
   },
   actions: {
     flexDirection: 'row',
-    gap: spacing.sm,                // 8px entre botões
+    gap: spacing.md,                // 8px entre botões
     width: '100%',
   },
   actionButton: {

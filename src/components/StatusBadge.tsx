@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { WarningCircle, ArrowsClockwise, Check } from 'phosphor-react-native';
+import { X, ArrowsClockwise, Check } from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
 
 type BadgeVariant = 'danger' | 'success' | 'info';
@@ -17,11 +17,11 @@ const variantConfig: Record<BadgeVariant, { background: string; color: string }>
   info:    { background: colors.infoLight,    color: colors.info    },
 };
 
-// Mapa de ícones por variante — todos 16x16 conforme especificado
+// Mapa de ícones por variante — todos 12x12 conforme especificado
 function BadgeIcon({ variant, color }: { variant: BadgeVariant; color: string }) {
-  const props = { size: 16, color, weight: 'bold' } as const;
+  const props = { size: 12, color, weight: 'bold' } as const;
 
-  if (variant === 'danger')  return <WarningCircle {...props} />;
+  if (variant === 'danger')  return <X {...props} />;
   if (variant === 'info')    return <ArrowsClockwise {...props} />;
   return <Check {...props} />;
 }
@@ -50,8 +50,8 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xs,     // 4px
   },
   label: {
-    fontSize: fs.xs,        // 12px
-    fontWeight: fw.bold,
+    fontSize: fs.xxs,        // 12px
+    fontWeight: fw.semibold,
     letterSpacing: 0.5,     // Leve tracking em caixa alta melhora legibilidade
   },
 });

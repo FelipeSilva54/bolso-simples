@@ -316,7 +316,7 @@ disabled={categoriesForType.length === 0}
             {/* Parcelas */}
             {paymentType === 'installment' && (
               <TextInput
-                label="Parcelas"
+                label="Quantidade de parcelas"
                 value={installments}
                 onChangeText={(t) => setInstallments(t.replace(/\D/g, ''))}
                 keyboardType="numeric"
@@ -330,8 +330,8 @@ disabled={categoriesForType.length === 0}
             {/* Recorrência */}
             {paymentType === 'recurring' && (
               <SelectInput
-                label="Recorrência"
-                placeholder="Selecionar"
+                label="Tipo de recorrência"
+                placeholder="Selecionar tipo"
                 sheetTitle="Tipo de recorrência"
                 options={recurrenceOptions}
                 value={recurrenceType}

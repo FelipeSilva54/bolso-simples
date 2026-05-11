@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { Eye, EyeSlash } from 'phosphor-react-native';
+import { Eye, EyeClosedIcon } from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
 
 type BalanceDisplayVariant = 'total' | 'wallet';
@@ -61,7 +61,7 @@ export function BalanceDisplay({
           accessibilityRole="button"
         >
           {hideBalance
-            ? <EyeSlash size={22} color={colors.white} weight="regular" />
+            ? <EyeClosedIcon size={22} color={colors.white} weight="regular" />
             : <Eye size={22} color={colors.white} weight="regular" />
           }
         </TouchableOpacity>
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   subtitle: {
-    fontSize: fs.lg,               // 18px
+    fontSize: fs.md,               // 18px
     fontWeight: fw.regular,
     color: colors.offwhite,
   },
