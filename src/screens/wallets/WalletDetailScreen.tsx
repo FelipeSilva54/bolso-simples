@@ -19,7 +19,7 @@ import {
   CaretLeft,
   CaretRight,
   Eye,
-  EyeSlash,
+  EyeClosed,
 } from 'phosphor-react-native';
 import * as Phosphor from 'phosphor-react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -368,7 +368,7 @@ export function WalletDetailScreen() {
         theme="dark"
         showBackButton
         onBackPress={() => router.back()}
-        secondaryRightIcon={(hideBalance ? EyeSlash : Eye) as IconComponent}
+        secondaryRightIcon={(hideBalance ? EyeClosed : Eye) as IconComponent}
         onSecondaryRightPress={() => setHideBalance((v) => !v)}
         secondaryRightIconLabel={hideBalance ? 'Mostrar saldo' : 'Ocultar saldo'}
         rightIcon={CalendarBlank as IconComponent}

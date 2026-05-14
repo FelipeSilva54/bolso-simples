@@ -96,6 +96,7 @@ export function TransactionTypeHeader({
           ref={valueInputRef}
           value={value}
           onChangeText={(text) => onValueChange(formatCurrency(text))}
+          autoFocus={true}
           keyboardType="numeric"
           style={styles.valueInput}
           placeholderTextColor="rgba(255,255,255,0.6)"

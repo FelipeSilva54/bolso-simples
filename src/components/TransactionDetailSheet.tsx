@@ -5,6 +5,7 @@ import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/con
 import { BottomSheet } from '@/components/BottomSheet';
 import { AvatarIcon } from '@/components/AvatarIcon';
 import { StatusBadge } from '@/components/StatusBadge';
+import { PaymentTypeBadge } from '@/components/PaymentTypeBadge';
 import { Button } from '@/components/Button';
 import { Toggle } from '@/components/Toggle';
 import { InfoAlert } from '@/components/InfoAlert';
@@ -114,8 +115,10 @@ export function TransactionDetailSheet({
               <View style={styles.infoRow}>
                 <Text style={styles.infoLabel}>Tipo de pagamento:</Text>
                 {transaction.isRecurring
-                  ? <StatusBadge variant="info" label="RECORRENTE" />
-                  : <StatusBadge variant="success" label="À VISTA" />
+                  ? <PaymentTypeBadge variant="recurring" />
+                  : transaction.installmentTotal != null && transaction.installmentTotal > 1
+                  ? <PaymentTypeBadge variant="installment" />
+                  : <PaymentTypeBadge variant="cash" />
                 }
               </View>
 

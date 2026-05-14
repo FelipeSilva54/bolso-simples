@@ -120,6 +120,18 @@ export function AddEditCategoryScreen() {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
+        {/* Preview — topo, centralizado */}
+        <View style={styles.previewContainer}>
+          <View style={[styles.previewCircle, { backgroundColor: selectedColor ?? colors.border }]}>
+            {PreviewIcon && (
+              <PreviewIcon size={28} color={colors.white} weight="fill" />
+            )}
+          </View>
+          <Text style={styles.previewName} numberOfLines={1}>
+            {name.trim().length > 0 ? name.trim() : 'Nome da categoria'}
+          </Text>
+        </View>
+
         {/* Nome */}
         <View style={styles.field}>
           <TextInput
@@ -136,28 +148,25 @@ export function AddEditCategoryScreen() {
         <View style={styles.field}>
           <Text style={styles.label}>Tipo</Text>
           <View style={styles.typeRow}>
-            <TouchableOpacity
-              onPress={() => setType('expense')}
-              accessibilityLabel="Tipo Despesa"
-              accessibilityRole="button"
-              accessibilityState={{ selected: type === 'expense' }}
-              style={[styles.typePill, type === 'expense' && styles.typePillActive]}
-            >
-              <Text style={[styles.typePillText, type === 'expense' && styles.typePillTextActive]}>
-                Despesa
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => setType('income')}
-              accessibilityLabel="Tipo Receita"
-              accessibilityRole="button"
-              accessibilityState={{ selected: type === 'income' }}
-              style={[styles.typePill, type === 'income' && styles.typePillActive]}
-            >
-              <Text style={[styles.typePillText, type === 'income' && styles.typePillTextActive]}>
-                Receita
-              </Text>
-            </TouchableOpacity>
+            {(['expense', 'income'] as CategoryType[]).map((t) => {
+              const isChecked = type === t;
+              const label = t === 'expense' ? 'Despesa' : 'Receita';
+              return (
+                <TouchableOpacity
+                  key={t}
+                  onPress={() => setType(t)}
+                  accessibilityLabel={label}
+                  accessibilityRole="radio"
+                  accessibilityState={{ checked: isChecked }}
+                  style={styles.radioOption}
+                >
+                  <View style={styles.radioOuter}>
+                    {isChecked && <View style={styles.radioInner} />}
+                  </View>
+                  <Text style={styles.radioLabel}>{label}</Text>
+                </TouchableOpacity>
+              );
+            })}
           </View>
         </View>
 
@@ -183,7 +192,11 @@ export function AddEditCategoryScreen() {
                       accessibilityRole="button"
                       accessibilityState={{ selected: isSelected }}
                       hitSlop={{ top: 2, bottom: 2, left: 2, right: 2 }}
-                      style={[styles.iconCell, { backgroundColor: bgColor }]}
+                      style={[
+                        styles.iconCell,
+                        { backgroundColor: bgColor },
+                        isSelected && styles.iconCellSelected,
+                      ]}
                     >
                       <IconComp
                         size={24}
@@ -233,30 +246,18 @@ export function AddEditCategoryScreen() {
           ))}
         </View>
 
-        {/* Preview */}
-        <View style={styles.previewContainer}>
-          <View style={[styles.previewCircle, { backgroundColor: selectedColor ?? colors.border }]}>
-            {PreviewIcon && (
-              <PreviewIcon size={22} color={colors.white} weight="fill" />
-            )}
-          </View>
-          <Text style={styles.previewName} numberOfLines={1}>
-            {name.trim().length > 0 ? name.trim() : 'Nome da categoria'}
-          </Text>
-        </View>
-
-        {/* Botão */}
-        <View style={styles.saveButton}>
-          <Button
-            variant="primary"
-            onPress={handleSave}
-            disabled={!isValid}
-            loading={saving}
-          >
-            Salvar categoria
-          </Button>
-        </View>
       </ScrollView>
+
+      <View style={styles.footer}>
+        <Button
+          variant="primary"
+          onPress={handleSave}
+          disabled={!isValid}
+          loading={saving}
+        >
+          Salvar categoria
+        </Button>
+      </View>
 
       <Toast message={toastMessage} variant={toastVariant} />
     </SafeAreaView>
@@ -286,36 +287,42 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
 
-  // Tipo
+  // Tipo — radio buttons
   typeRow: {
     flexDirection: 'row',
-    gap: spacing.sm,
+    gap: spacing.xl,
   },
-  typePill: {
-    flex: 1,
-    height: 44,
+  radioOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    minHeight: 44,
+    paddingVertical: spacing.sm,
+  },
+  radioOuter: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 1.5,
+    borderColor: colors.border,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: radius.full,
-    borderWidth: 1,
-    borderColor: colors.border,
   },
-  typePillActive: {
+  radioInner: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
     backgroundColor: colors.primary,
-    borderColor: colors.primary,
   },
-  typePillText: {
+  radioLabel: {
     fontSize: fs.md,
-    fontWeight: fw.medium,
-    color: colors.subcontent,
-  },
-  typePillTextActive: {
-    color: colors.white,
+    fontWeight: fw.regular,
+    color: colors.content,
   },
 
   // Ícones
   iconGrid: {
-    height: 160,
+    maxHeight: 218,
   },
   iconRow: {
     flexDirection: 'row',
@@ -328,6 +335,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: radius.sm,
+  },
+  iconCellSelected: {
+    borderRadius: radius.full,
   },
 
   // Cores
@@ -358,33 +368,30 @@ const styles = StyleSheet.create({
 
   // Preview
   previewContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.md,
-    marginTop: spacing.xl,
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.lg,
-    backgroundColor: colors.background,
-    borderRadius: radius.md,
+    gap: spacing.sm,
+    paddingTop: spacing.xl,
+    paddingBottom: spacing.md,
   },
   previewCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
     alignItems: 'center',
     justifyContent: 'center',
-    flexShrink: 0,
   },
   previewName: {
-    flex: 1,
     fontSize: fs.md,
     fontWeight: fw.medium,
     color: colors.content,
+    textAlign: 'center',
   },
 
-  // Botão
-  saveButton: {
-    marginTop: spacing.xl,
-    paddingBottom: spacing.xl,
+  footer: {
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.md,
+    backgroundColor: colors.white,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
   },
 });

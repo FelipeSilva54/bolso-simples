@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xs,     // 4px
   },
   label: {
-    fontSize: fs.xxs,        // 12px
+    fontSize: fs.xs,        // 12px
     fontWeight: fw.semibold,
     letterSpacing: 0.5,     // Leve tracking em caixa alta melhora legibilidade
   },

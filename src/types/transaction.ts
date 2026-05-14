@@ -11,6 +11,7 @@ export type Transaction = {
   categoryId: string;
   status: TransactionStatus;
   isRecurring: boolean;
+  recurrenceType?: string;
   date: Date;
   createdAt: Date;
   installmentIndex?: number;  // 1, 2, 3... — só presente em transações parceladas

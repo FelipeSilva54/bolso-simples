@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
   divider: {
     width: 1,
     height: 32,
-    backgroundColor: colors.border,
+    backgroundColor: colors.offwhite,
     alignSelf: 'center',
   },
   value: {

@@ -238,6 +238,15 @@ Todos os componentes ficam em `src/components/`. São construídos com React Nat
 **Uso:** Exibição de saldo com toggle de visibilidade
 **Comportamento:** ícone de olho oculta/revela o valor. Valor oculto exibe `••••••`
 
+### 7.13 PaymentTypeBadge
+**Arquivo:** `src/components/PaymentTypeBadge.tsx`
+**Uso:** Badge de tipo de pagamento na tela de detalhe de transação
+**Variantes:**
+- `cash` — À Vista → ícone `Money`, fundo `#E8F5E9`, texto/ícone `#2E7D32`
+- `installment` — Parcelado → ícone `CreditCard`, fundo `#E3F2FD`, texto/ícone `#1565C0`
+- `recurring` — Recorrente → ícone `ArrowsClockwise`, fundo `#EDE7F6`, texto/ícone `#4527A0`
+**Obs:** cores são hardcoded locais (não existem em `colors.ts`) — declaradas como constantes nomeadas no topo do arquivo
+
 ---
 
 ## 8. Ícones

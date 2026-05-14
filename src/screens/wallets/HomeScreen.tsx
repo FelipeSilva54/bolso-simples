@@ -10,7 +10,7 @@ import { Dialog } from '@/components/Dialog';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
-import { Bell, Eye, EyeSlash } from 'phosphor-react-native';
+import { Bell, Eye, EyeClosed } from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
 import { Header } from '@/components/Header';
 import { BalanceDisplay } from '@/components/BalanceDisplay';
@@ -93,7 +93,7 @@ export function HomeScreen() {
         title={`Olá, ${displayName}`}
         variant="home"
         theme="dark"
-        secondaryRightIcon={(hideBalance ? EyeSlash : Eye) as IconComponent}
+        secondaryRightIcon={(hideBalance ? EyeClosed : Eye) as IconComponent}
         onSecondaryRightPress={() => setHideBalance((h) => !h)}
         secondaryRightIconLabel={hideBalance ? 'Mostrar saldo' : 'Ocultar saldo'}
         rightIcon={Bell as IconComponent}

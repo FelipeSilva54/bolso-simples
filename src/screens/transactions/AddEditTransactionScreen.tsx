@@ -115,6 +115,9 @@ export function AddEditTransactionScreen() {
         if (pt === 'installment' && tx.installmentTotal != null) {
           setInstallments(String(tx.installmentTotal));
         }
+        if (pt === 'recurring') {
+          setRecurrenceType(tx.recurrenceType ?? null);
+        }
       })
       .catch(() => {
         if (!cancelled) {
@@ -172,8 +175,7 @@ export function AddEditTransactionScreen() {
         next.installments = 'Informe um número inteiro maior que 1';
       }
     }
-    // No edit mode we skip recurrence type validation — it's not stored in the document
-    if (paymentType === 'recurring' && !recurrenceType && !isEditing) {
+    if (paymentType === 'recurring' && !recurrenceType) {
       next.recurrence = 'Selecione o tipo de recorrência';
     }
 
@@ -197,6 +199,7 @@ export function AddEditTransactionScreen() {
           categoryId: selectedCategory.id,
           status: statusFor(type, statusOn),
           isRecurring: paymentType === 'recurring',
+          recurrenceType: paymentType === 'recurring' ? (recurrenceType ?? undefined) : undefined,
           date,
         });
       } else if (paymentType === 'installment' && installmentsCount > 1) {
@@ -233,6 +236,7 @@ export function AddEditTransactionScreen() {
           categoryId: selectedCategory.id,
           status: statusFor(type, statusOn),
           isRecurring: paymentType === 'recurring',
+          recurrenceType: paymentType === 'recurring' ? (recurrenceType ?? undefined) : undefined,
           date,
         });
       }

@@ -32,6 +32,7 @@ export async function getTransaction(
     categoryId: d.categoryId,
     status: d.status as TransactionStatus,
     isRecurring: d.isRecurring ?? false,
+    recurrenceType: d.recurrenceType as string | undefined,
     date: (d.date as Timestamp).toDate(),
     createdAt: (d.createdAt as Timestamp)?.toDate() ?? new Date(),
     installmentIndex: d.installmentIndex,
@@ -47,6 +48,7 @@ export type AddTransactionInput = {
   categoryId: string;
   status: TransactionStatus;
   isRecurring: boolean;
+  recurrenceType?: string;
   date: Date;
   installmentIndex?: number;
   installmentTotal?: number;
@@ -75,6 +77,7 @@ export async function addTransaction(
     date: Timestamp.fromDate(input.date),
     createdAt: serverTimestamp(),
   };
+  if (input.recurrenceType != null) data.recurrenceType = input.recurrenceType;
   if (input.installmentIndex != null) data.installmentIndex = input.installmentIndex;
   if (input.installmentTotal != null) data.installmentTotal = input.installmentTotal;
   const ref = await addDoc(getTransactionsRef(userId, walletId), data);

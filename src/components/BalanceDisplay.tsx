@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { CalendarDots } from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
 
 type BalanceDisplayVariant = 'total' | 'wallet';
@@ -47,6 +48,7 @@ export function BalanceDisplay({
             accessibilityLabel="Ir para o mês atual"
             accessibilityRole="button"
           >
+            <CalendarDots size={16} color={colors.primary} weight="fill" />
             <Text style={styles.todayText}>Hoje</Text>
           </TouchableOpacity>
         )}
@@ -79,15 +81,19 @@ const styles = StyleSheet.create({
     color: colors.offwhite,
   },
   todayButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
     backgroundColor: colors.white,
     paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs,
+    paddingVertical: spacing.sm,
     borderRadius: radius.full,
   },
   todayText: {
     fontSize: fs.sm,
     fontWeight: fw.medium,
     color: colors.primary,
+    lineHeight: fs.sm * 1.2,
   },
   balanceRow: {
     flexDirection: 'row',
