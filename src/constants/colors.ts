@@ -10,7 +10,7 @@ export const colors = {
   dangerLight: '#FEF1F1',
   danger: '#DC2626',
   success: '#348352',
-  successLight: '#E4FFF4',
+  successLight: '#edfcf6',
   infoLight: '#EBF8FE',
   info: '#075A83',
   background: '#f3f3f3',

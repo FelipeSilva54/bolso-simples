@@ -8,8 +8,8 @@ import {
 } from 'react-native';
 import { Dialog } from '@/components/Dialog';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { StatusBar } from 'expo-status-bar';
-import { useRouter } from 'expo-router';
+import { StatusBar, setStatusBarStyle } from 'expo-status-bar';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { Bell, Eye, EyeClosed } from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
 import { Header } from '@/components/Header';
@@ -39,6 +39,12 @@ export function HomeScreen() {
   const [walletToDelete, setWalletToDelete] = useState<SelectedWallet>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setStatusBarStyle('light');
+    }, [])
+  );
 
   const displayName =
     user?.isAnonymous || !user?.displayName ? 'Visitante' : user.displayName;

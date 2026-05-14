@@ -9,7 +9,7 @@ export default function Index() {
 
   useEffect(() => {
     if (loading) return;
-    router.replace(user ? '/(tabs)' : '/login');
+    router.replace('/(tabs)');
   }, [loading, user]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (

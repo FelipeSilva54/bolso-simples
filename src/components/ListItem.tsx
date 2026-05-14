@@ -8,6 +8,7 @@ type ListItemProps = {
   label: string;
   onPress: () => void;
   accessibilityLabel?: string;
+  color?: string;
 };
 
 export function ListItem({
@@ -15,6 +16,7 @@ export function ListItem({
   label,
   onPress,
   accessibilityLabel,
+  color,
 }: ListItemProps) {
   return (
     <TouchableOpacity
@@ -24,9 +26,9 @@ export function ListItem({
       accessibilityLabel={accessibilityLabel ?? label}
       style={styles.container}
     >
-      <IconComponent size={24} color={colors.muted} weight="regular" />
+      <IconComponent size={24} color={color ?? colors.primary} weight="regular" />
 
-      <Text style={styles.label} numberOfLines={1}>{label}</Text>
+      <Text style={[styles.label, color ? { color } : undefined]} numberOfLines={1}>{label}</Text>
 
       <CaretRight size={16} color={colors.muted} weight="regular" />
     </TouchableOpacity>

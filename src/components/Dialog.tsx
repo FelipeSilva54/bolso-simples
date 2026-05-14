@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Modal,
   View,
@@ -6,7 +6,7 @@ import {
   StyleSheet,
   Pressable,
 } from 'react-native';
-import { Trash } from 'phosphor-react-native';
+import { Trash, CheckSquare, Square } from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
 import { Button } from '@/components/Button';
 
@@ -16,6 +16,9 @@ type DialogProps = {
   description: string;
   confirmLabel?: string;
   cancelLabel?: string;
+  requireConfirmation?: boolean;
+  confirmationLabel?: string;
+  loading?: boolean;
   onConfirm: () => void;
   onCancel: () => void;
 };
@@ -26,18 +29,33 @@ export function Dialog({
   description,
   confirmLabel = 'Excluir',
   cancelLabel = 'Cancelar',
+  requireConfirmation = false,
+  confirmationLabel = 'Entendo as consequências desta ação',
+  loading = false,
   onConfirm,
   onCancel,
 }: DialogProps) {
+  const [checked, setChecked] = useState(false);
+
+  function handleCancel() {
+    setChecked(false);
+    onCancel();
+  }
+
+  function handleConfirm() {
+    setChecked(false);
+    onConfirm();
+  }
+
   return (
     <Modal
       visible={visible}
       transparent
       animationType="fade"
       statusBarTranslucent
-      onRequestClose={onCancel}
+      onRequestClose={handleCancel}
     >
-      <Pressable style={styles.backdrop} onPress={onCancel}>
+      <Pressable style={styles.backdrop} onPress={handleCancel}>
         <Pressable style={styles.card} onPress={(e) => e.stopPropagation()}>
 
           <View style={styles.iconCircle}>
@@ -49,14 +67,30 @@ export function Dialog({
             <Text style={styles.description}>{description}</Text>
           </View>
 
+          {requireConfirmation && (
+            <Pressable style={styles.checkboxRow} onPress={() => setChecked((v) => !v)}>
+              {checked
+                ? <CheckSquare size={20} color={colors.danger} weight="fill" />
+                : <Square size={20} color={colors.muted} weight="regular" />
+              }
+              <Text style={styles.checkboxLabel}>{confirmationLabel}</Text>
+            </Pressable>
+          )}
+
           <View style={styles.actions}>
             <View style={styles.actionButton}>
-              <Button variant="outlined" size='sm' onPress={onCancel}>
+              <Button variant="outlined" size="sm" onPress={handleCancel}>
                 {cancelLabel}
               </Button>
             </View>
             <View style={styles.actionButton}>
-              <Button variant="danger" size='sm' onPress={onConfirm}>
+              <Button
+                variant="danger"
+                size="sm"
+                disabled={(requireConfirmation && !checked) || loading}
+                loading={loading}
+                onPress={handleConfirm}
+              >
                 {confirmLabel}
               </Button>
             </View>
@@ -79,8 +113,8 @@ const styles = StyleSheet.create({
   card: {
     width: '100%',
     backgroundColor: colors.white,
-    borderRadius: radius.md,        // 8px
-    padding: spacing.xl,            // 24px
+    borderRadius: radius.md,
+    padding: spacing.xl,
     alignItems: 'center',
   },
   iconCircle: {
@@ -90,29 +124,43 @@ const styles = StyleSheet.create({
     backgroundColor: colors.dangerLight,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: spacing.lg,       // 16px entre ícone e conteúdo
+    marginBottom: spacing.lg,
   },
   content: {
     alignItems: 'center',
-    gap: spacing.md,                // 12px entre título e descrição
-    marginBottom: spacing.xl,       // 20px entre conteúdo e botões
+    gap: spacing.md,
+    marginBottom: spacing.lg,
   },
   title: {
-    fontSize: fs.xl,                // 18px
+    fontSize: fs.xl,
     fontWeight: fw.semibold,
     color: colors.content,
     textAlign: 'center',
   },
   description: {
-    fontSize: fs.md,                // 14px
+    fontSize: fs.md,
     fontWeight: fw.regular,
     color: colors.subcontent,
     textAlign: 'center',
     lineHeight: 24,
   },
+  checkboxRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    marginBottom: spacing.xl,
+    alignSelf: 'stretch',
+  },
+  checkboxLabel: {
+    flex: 1,
+    fontSize: fs.sm,
+    fontWeight: fw.regular,
+    color: colors.subcontent,
+    lineHeight: 20,
+  },
   actions: {
     flexDirection: 'row',
-    gap: spacing.md,                // 8px entre botões
+    gap: spacing.md,
     width: '100%',
   },
   actionButton: {

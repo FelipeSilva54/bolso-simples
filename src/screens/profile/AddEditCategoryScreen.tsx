@@ -146,7 +146,7 @@ export function AddEditCategoryScreen() {
 
         {/* Tipo */}
         <View style={styles.field}>
-          <Text style={styles.label}>Tipo</Text>
+          <Text style={styles.label}>Tipo de transação</Text>
           <View style={styles.typeRow}>
             {(['expense', 'income'] as CategoryType[]).map((t) => {
               const isChecked = type === t;
@@ -304,14 +304,14 @@ const styles = StyleSheet.create({
     height: 20,
     borderRadius: 10,
     borderWidth: 1.5,
-    borderColor: colors.border,
+    borderColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
   radioInner: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
+    width: 12,
+    height: 12,
+    borderRadius: 12,
     backgroundColor: colors.primary,
   },
   radioLabel: {
@@ -322,19 +322,19 @@ const styles = StyleSheet.create({
 
   // Ícones
   iconGrid: {
-    maxHeight: 218,
+    maxHeight: 200,
   },
   iconRow: {
     flexDirection: 'row',
-    gap: spacing.xs,
-    marginBottom: spacing.xs,
+    gap: spacing.xl,
+    marginBottom: spacing.sm,
   },
   iconCell: {
     flex: 1,
-    height: 48,
+    height: 44,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: radius.sm,
+    borderRadius: radius.lg,
   },
   iconCellSelected: {
     borderRadius: radius.full,
@@ -369,8 +369,8 @@ const styles = StyleSheet.create({
   // Preview
   previewContainer: {
     alignItems: 'center',
-    gap: spacing.sm,
-    paddingTop: spacing.xl,
+    gap: spacing.md,
+    paddingTop: spacing.xxl,
     paddingBottom: spacing.md,
   },
   previewCircle: {
@@ -392,6 +392,6 @@ const styles = StyleSheet.create({
     paddingTop: spacing.md,
     backgroundColor: colors.white,
     borderTopWidth: 1,
-    borderTopColor: colors.border,
+    borderTopColor: colors.borderLight,
   },
 });

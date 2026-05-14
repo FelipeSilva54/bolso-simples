@@ -103,6 +103,6 @@ const styles = StyleSheet.create({
     marginRight: spacing.sm,
   },
   text: {
-    fontWeight: fw.semibold,
+    fontWeight: fw.medium,
   },
 });

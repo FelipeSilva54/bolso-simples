@@ -1,11 +1,13 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useRef } from 'react';
 import {
   View,
   Text,
   ScrollView,
+  Animated,
   TouchableOpacity,
   Platform,
   StyleSheet,
+  PanResponder,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
@@ -216,6 +218,47 @@ export function WalletDetailScreen() {
   const [detailSheetVisible, setDetailSheetVisible] = useState(false);
   const [selectedTransactionId, setSelectedTransactionId] = useState<string | null>(null);
 
+  const scrollY = useRef(new Animated.Value(0)).current;
+
+  const prevPeriodRef = useRef<() => void>(() => {});
+  const nextPeriodRef = useRef<() => void>(() => {});
+
+  prevPeriodRef.current = () => {
+    if (period.mode === 'monthly') {
+      const newMonth = period.month === 0 ? 11 : period.month - 1;
+      const newYear = period.month === 0 ? period.year - 1 : period.year;
+      setPeriod({ mode: 'monthly', month: newMonth, year: newYear });
+    } else if (period.mode === 'daily') {
+      setPeriod({ mode: 'daily', date: addDays(period.date, -1) });
+    } else if (period.mode === 'yearly') {
+      setPeriod({ mode: 'yearly', year: period.year - 1 });
+    }
+  };
+
+  nextPeriodRef.current = () => {
+    if (period.mode === 'monthly') {
+      const newMonth = period.month === 11 ? 0 : period.month + 1;
+      const newYear = period.month === 11 ? period.year + 1 : period.year;
+      setPeriod({ mode: 'monthly', month: newMonth, year: newYear });
+    } else if (period.mode === 'daily') {
+      setPeriod({ mode: 'daily', date: addDays(period.date, 1) });
+    } else if (period.mode === 'yearly') {
+      setPeriod({ mode: 'yearly', year: period.year + 1 });
+    }
+  };
+
+  const swipePanResponder = useRef(
+    PanResponder.create({
+      onMoveShouldSetPanResponder: (_, { dx, dy }) =>
+        Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy) * 1.5,
+      onPanResponderRelease: (_, { dx, vx }) => {
+        if (Math.abs(dx) < 40 && Math.abs(vx) < 0.3) return;
+        if (dx > 0) prevPeriodRef.current();
+        else nextPeriodRef.current();
+      },
+    }),
+  ).current;
+
   const { wallets } = useWallets();
   const wallet = wallets.find((w) => w.id === walletId);
   const walletList = useMemo(() => (wallet ? [wallet] : []), [wallet]);
@@ -295,7 +338,6 @@ export function WalletDetailScreen() {
     } else if (mode === 'all') {
       setPeriod({ mode: 'all' });
     } else if (mode === 'custom') {
-      // Abre o seletor nativo: primeiro a data inicial, depois a final
       setPendingCustomStart(null);
       setPickerStep('customStart');
     }
@@ -305,8 +347,6 @@ export function WalletDetailScreen() {
     event: { type?: string },
     selectedDate?: Date,
   ) => {
-    // No Android o picker é dispensado automaticamente; em ambos os casos
-    // o "dismiss" ou ausência de data cancela o fluxo.
     if (event.type === 'dismissed' || !selectedDate) {
       setPickerStep('none');
       setPendingCustomStart(null);
@@ -383,7 +423,7 @@ export function WalletDetailScreen() {
         onTodayPress={handleTodayPress}
       />
 
-      <View style={styles.body}>
+      <View style={styles.body} {...swipePanResponder.panHandlers}>
         {period.mode === 'monthly' && (
           <MonthFilter
             activeMonth={period.month}
@@ -460,7 +500,26 @@ export function WalletDetailScreen() {
           </TouchableOpacity>
         )}
 
-        <View style={styles.summaryRow}>
+        {/* SummaryCard com sombra animada baseada no scrollY */}
+        <Animated.View style={[
+          styles.summaryRow,
+          {
+            shadowColor: colors.content,
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: scrollY.interpolate({
+              inputRange: [0, 20],
+              outputRange: [0, 0.1],
+              extrapolate: 'clamp',
+            }),
+            shadowRadius: 4,
+            elevation: scrollY.interpolate({
+              inputRange: [0, 20],
+              outputRange: [0, 4],
+              extrapolate: 'clamp',
+            }),
+            zIndex: 1,
+          }
+        ]}>
           <SummaryCard
             income={totalIncome}
             expense={totalExpense}
@@ -479,7 +538,7 @@ export function WalletDetailScreen() {
               })
             }
           />
-        </View>
+        </Animated.View>
 
         {loading ? (
           <View style={styles.skeletonContainer}>
@@ -514,6 +573,11 @@ export function WalletDetailScreen() {
           <ScrollView
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.list}
+            onScroll={Animated.event(
+              [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+              { useNativeDriver: false }
+            )}
+            scrollEventThrottle={16}
           >
             {groupedTransactions.map((group) => (
               <TransactionGroup
@@ -601,6 +665,7 @@ const styles = StyleSheet.create({
   summaryRow: {
     borderBottomWidth: 1,
     borderBottomColor: colors.offwhite,
+    backgroundColor: colors.background,
   },
   periodNav: {
     flexDirection: 'row',

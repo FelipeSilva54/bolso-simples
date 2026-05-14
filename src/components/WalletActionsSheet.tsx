@@ -72,14 +72,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     minHeight: 44,
     paddingVertical: spacing.md,
-    paddingHorizontal: spacing.md,
     gap: spacing.md,
     borderRadius: radius.sm,
   },
   rowLabel: {
     flex: 1,
     fontSize: fs.md,
-    fontWeight: fw.regular,
+    fontWeight: fw.medium,
     color: colors.content,
   },
   rowLabelDanger: {
@@ -87,8 +86,7 @@ const styles = StyleSheet.create({
   },
   separator: {
     height: 1,
-    backgroundColor: colors.border,
-    marginHorizontal: spacing.md,
+    backgroundColor: colors.borderLight,
     marginVertical: spacing.xs,
   },
 });

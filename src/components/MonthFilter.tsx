@@ -144,6 +144,7 @@ const styles = StyleSheet.create({
     right: spacing.lg,
     height: 2.5,
     backgroundColor: colors.primary,
-    borderRadius: 8,
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
   },
 });

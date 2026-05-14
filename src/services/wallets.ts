@@ -63,3 +63,23 @@ export async function deleteWallet(userId: string, walletId: string): Promise<vo
   }
   await deleteDoc(doc(db, 'users', userId, 'wallets', walletId));
 }
+
+export async function clearAllUserData(userId: string): Promise<void> {
+  const batch = writeBatch(db);
+
+  const walletsRef = collection(db, 'users', userId, 'wallets');
+  const walletsSnap = await getDocs(walletsRef);
+
+  for (const walletDoc of walletsSnap.docs) {
+    const txRef = collection(db, 'users', userId, 'wallets', walletDoc.id, 'transactions');
+    const txSnap = await getDocs(txRef);
+    txSnap.docs.forEach((txDoc) => batch.delete(txDoc.ref));
+    batch.delete(walletDoc.ref);
+  }
+
+  const categoriesRef = collection(db, 'users', userId, 'categories');
+  const categoriesSnap = await getDocs(categoriesRef);
+  categoriesSnap.docs.forEach((catDoc) => batch.delete(catDoc.ref));
+
+  await batch.commit();
+}

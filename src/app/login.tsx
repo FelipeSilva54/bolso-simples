@@ -3,8 +3,10 @@ import { View, Text, Image, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, fontSize as fs, fontWeight as fw, spacing, radius, lineHeight as lh } from '@/constants';
 import { Button } from '@/components/Button';
+import { useAuth } from '@/store/AuthContext';
 
 export default function LoginRoute() {
+  const { loginAnonymous } = useAuth();
   const [loadingGoogle, setLoadingGoogle] = useState(false);
   const [loadingAnonymous, setLoadingAnonymous] = useState(false);
 
@@ -20,7 +22,7 @@ export default function LoginRoute() {
   const handleAnonymousSignIn = async () => {
     setLoadingAnonymous(true);
     try {
-      // TODO: signInAnonymously
+      await loginAnonymous();
     } finally {
       setLoadingAnonymous(false);
     }
@@ -109,7 +111,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: fs.md,
-    lineHeight: lh.md(fs.md),
+    lineHeight: lh.lg(fs.md),
     color: colors.subcontent,
   },
   bold: {

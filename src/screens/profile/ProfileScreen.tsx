@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -7,41 +7,79 @@ import {
   Image,
   Share,
   StyleSheet,
+  Modal,
 } from 'react-native';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { StatusBar } from 'expo-status-bar';
-import { useRouter } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { StatusBar, setStatusBarStyle } from 'expo-status-bar';
+import { useRouter, useFocusEffect } from 'expo-router';
 import {
   Bell,
   List,
   Heart,
   HandHeart,
-  Question,
   Info,
   ShareNetwork,
   Star,
   CaretRight,
-  Trash,
-  UserMinus,
+  BroomIcon,
+  TrashIcon,
+  SignOutIcon,
+  WarningCircleIcon,
 } from 'phosphor-react-native';
-import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
+import { colors, fontSize as fs, fontWeight as fw, spacing } from '@/constants';
 import { Header } from '@/components/Header';
 import { Button } from '@/components/Button';
 import { ListItem } from '@/components/ListItem';
+import { Dialog } from '@/components/Dialog';
 import { useAuth } from '@/store/AuthContext';
+import { Toast } from '@/components/Toast';
+import { clearAllUserData } from '@/services/wallets';
 
 type IconComponent = React.ComponentType<{ size?: number; color?: string; weight?: string }>;
 
 export function ProfileScreen() {
-  const { top } = useSafeAreaInsets();
   const router = useRouter();
-  const { user, loginWithGoogle } = useAuth();
+  const { user, loginWithGoogle, logout } = useAuth();
+  const [logoutDialogVisible, setLogoutDialogVisible] = useState(false);
+  const [clearDataDialogVisible, setClearDataDialogVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [toastVariant, setToastVariant] = useState<'success' | 'error'>('success');
+  const [clearing, setClearing] = useState(false);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setStatusBarStyle('dark');
+    }, [])
+  );
 
   const displayName =
     user?.isAnonymous || !user?.displayName ? 'Visitante' : user.displayName;
   const avatarInitial = user?.displayName
     ? user.displayName.charAt(0).toUpperCase()
     : 'V';
+
+  const handleLogout = () => setLogoutDialogVisible(true);
+
+  const handleClearHistory = () => setClearDataDialogVisible(true);
+
+  const handleConfirmClearData = async () => {
+    if (!user) return;
+    setClearing(true);
+    try {
+      await clearAllUserData(user.uid);
+      setClearDataDialogVisible(false);
+      setToastMessage('Histórico apagado com sucesso');
+      setToastVariant('success');
+      setTimeout(() => {
+        router.replace('/(tabs)');
+        setToastMessage(null);
+      }, 1000);
+    } catch {
+      setToastMessage('Não foi possível apagar os dados. Tente novamente.');
+      setToastVariant('error');
+      setClearing(false);
+    }
+  };
 
   const handleShare = async () => {
     await Share.share({
@@ -52,8 +90,7 @@ export function ProfileScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
-      <View style={[styles.statusBarFill, { height: top }]} />
-      <StatusBar style="dark" backgroundColor={colors.white} />
+    <StatusBar style="dark"/>
 
       <Header
         title={`Olá, ${displayName}`}
@@ -64,6 +101,7 @@ export function ProfileScreen() {
       />
 
       <ScrollView
+        style={styles.scrollView}
         contentContainerStyle={styles.scroll}
         showsVerticalScrollIndicator={false}
       >
@@ -162,10 +200,10 @@ export function ProfileScreen() {
             accessibilityLabel="Avaliar aplicativo"
           />
           <ListItem
-            icon={Question as IconComponent}
-            label="Fale conosco"
-            onPress={() => router.push('/(stack)/help' as never)}
-            accessibilityLabel="Fale conosco"
+            icon={SignOutIcon as IconComponent}
+            label="Sair do aplicativo"
+            onPress={handleLogout}
+            accessibilityLabel="Sair do aplicativo"
           />
         </View>
 
@@ -186,19 +224,45 @@ export function ProfileScreen() {
             <CaretRight size={16} color={colors.muted} weight="regular" />
           </TouchableOpacity>
           <ListItem
-            icon={Trash as IconComponent}
-            label="Limpar histórico"
-            onPress={() => {}}
-            accessibilityLabel="Limpar histórico"
+            icon={BroomIcon as IconComponent}
+            label="Limpar dados"
+            onPress={handleClearHistory}
+            accessibilityLabel="Limpar dados"
           />
           <ListItem
-            icon={UserMinus as IconComponent}
+            icon={TrashIcon as IconComponent}
             label="Excluir conta"
             onPress={() => {}}
             accessibilityLabel="Excluir conta"
+            color={colors.danger}
           />
         </View>
       </ScrollView>
+
+      <Dialog
+        visible={logoutDialogVisible}
+        title="Desconectar"
+        description="Tem certeza que deseja sair?"
+        confirmLabel="Sair"
+        cancelLabel="Cancelar"
+        onConfirm={logout}
+        onCancel={() => setLogoutDialogVisible(false)}
+      />
+
+      <Dialog
+        visible={clearDataDialogVisible}
+        title="Apagar todo o histórico?"
+        description="Todas as suas carteiras, transações e categorias serão removidas permanentemente. Essa ação não tem volta."
+        confirmLabel="Limpar tudo"
+        cancelLabel="Cancelar"
+        requireConfirmation={true}
+        confirmationLabel="Entendo que vou perder todos os meus dados"
+        loading={clearing}
+        onConfirm={handleConfirmClearData}
+        onCancel={() => setClearDataDialogVisible(false)}
+      />
+
+      <Toast message={toastMessage} variant={toastVariant} />
     </SafeAreaView>
   );
 }
@@ -206,15 +270,11 @@ export function ProfileScreen() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: colors.background,
-  },
-  statusBarFill: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
     backgroundColor: colors.white,
-    zIndex: 1,
+  },
+
+  scrollView: {
+    backgroundColor: colors.background,
   },
   scroll: {
     paddingBottom: spacing.xxl,
@@ -222,10 +282,8 @@ const styles = StyleSheet.create({
   },
   profileCard: {
     backgroundColor: colors.white,
-    borderRadius: radius.md,
-    padding: spacing.lg,
-    marginHorizontal: spacing.lg,
-    marginTop: spacing.lg,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.xl,
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.md,

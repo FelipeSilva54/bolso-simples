@@ -4,8 +4,10 @@ import {
   signInAnonymously as firebaseSignInAnonymously,
   signOut as firebaseSignOut,
   onAuthStateChanged,
+  deleteUser,
 } from 'firebase/auth';
-import { auth } from '@/services/firebase';
+import { collection, getDocs, deleteDoc, doc, writeBatch } from 'firebase/firestore';
+import { auth, db } from '@/services/firebase';
 import { seedDefaultCategories } from '@/services/categories';
 
 type AuthContextValue = {
@@ -14,6 +16,7 @@ type AuthContextValue = {
   loginWithGoogle: () => Promise<void>;
   loginAnonymous: () => Promise<void>;
   logout: () => Promise<void>;
+  deleteAccount: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -50,8 +53,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await firebaseSignOut(auth);
   }
 
+  async function deleteAccount(): Promise<void> {
+    const currentUser = auth.currentUser;
+    if (!currentUser) return;
+    const uid = currentUser.uid;
+
+    const batch = writeBatch(db);
+
+    const walletsSnap = await getDocs(collection(db, 'users', uid, 'wallets'));
+    for (const walletDoc of walletsSnap.docs) {
+      const txSnap = await getDocs(
+        collection(db, 'users', uid, 'wallets', walletDoc.id, 'transactions'),
+      );
+      txSnap.docs.forEach((txDoc) => batch.delete(txDoc.ref));
+      batch.delete(walletDoc.ref);
+    }
+
+    const categoriesSnap = await getDocs(collection(db, 'users', uid, 'categories'));
+    categoriesSnap.docs.forEach((catDoc) => batch.delete(catDoc.ref));
+
+    batch.delete(doc(db, 'users', uid));
+    await batch.commit();
+
+    await deleteUser(currentUser);
+  }
+
   return (
-    <AuthContext.Provider value={{ user, loading, loginWithGoogle, loginAnonymous, logout }}>
+    <AuthContext.Provider value={{ user, loading, loginWithGoogle, loginAnonymous, logout, deleteAccount }}>
       {children}
     </AuthContext.Provider>
   );
