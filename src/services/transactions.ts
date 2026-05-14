@@ -13,6 +13,32 @@ import {
 import { db } from '@/services/firebase';
 import { Transaction, TransactionType, TransactionStatus } from '@/types/transaction';
 
+export async function getTransaction(
+  userId: string,
+  walletId: string,
+  transactionId: string,
+): Promise<Transaction | null> {
+  const ref = doc(db, 'users', userId, 'wallets', walletId, 'transactions', transactionId);
+  const snap = await getDoc(ref);
+  if (!snap.exists()) return null;
+  const d = snap.data();
+  return {
+    id: snap.id,
+    walletId,
+    type: d.type as TransactionType,
+    title: d.title,
+    description: d.description ?? '',
+    amount: d.amount,
+    categoryId: d.categoryId,
+    status: d.status as TransactionStatus,
+    isRecurring: d.isRecurring ?? false,
+    date: (d.date as Timestamp).toDate(),
+    createdAt: (d.createdAt as Timestamp)?.toDate() ?? new Date(),
+    installmentIndex: d.installmentIndex,
+    installmentTotal: d.installmentTotal,
+  };
+}
+
 export type AddTransactionInput = {
   type: TransactionType;
   title: string;

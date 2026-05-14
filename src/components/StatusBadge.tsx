@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    alignSelf: 'flex-start', // Não estica — ocupa só o espaço do conteúdo
+    alignSelf: 'flex-end', // Não estica — ocupa só o espaço do conteúdo
     borderRadius: radius.xs,         // 2px
     gap: 6,                          // Não existe token de 6px — valor pontual aprovado
     paddingHorizontal: spacing.sm,   // 8px

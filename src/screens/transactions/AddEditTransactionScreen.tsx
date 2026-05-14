@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   Platform,
   Alert,
   StyleSheet,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
@@ -24,7 +25,7 @@ import { DateInput } from '@/components/DateInput';
 import { SelectInput, SelectOption } from '@/components/SelectInput';
 import { useAuth } from '@/store/AuthContext';
 import { useCategories } from '@/hooks/useCategories';
-import { addTransaction } from '@/services/transactions';
+import { addTransaction, updateTransaction, getTransaction } from '@/services/transactions';
 import { TransactionStatus } from '@/types/transaction';
 import { parseCurrency, formatCurrency } from '@/utils/currency';
 
@@ -55,12 +56,24 @@ function statusFor(type: TxType, on: boolean): TransactionStatus {
   return on ? 'received' : 'unreceived';
 }
 
+function derivePaymentType(isRecurring: boolean, installmentTotal?: number): PaymentType {
+  if (isRecurring) return 'recurring';
+  if (installmentTotal != null && installmentTotal > 1) return 'installment';
+  return 'cash';
+}
+
 export function AddEditTransactionScreen() {
   const router = useRouter();
-  const { walletId } = useLocalSearchParams<{ walletId: string }>();
+  const { walletId, transactionId } = useLocalSearchParams<{
+    walletId: string;
+    transactionId?: string;
+  }>();
   const { user } = useAuth();
   const { categories } = useCategories();
 
+  const isEditing = Boolean(transactionId);
+
+  const [loadingTx, setLoadingTx] = useState(isEditing);
   const [type, setType] = useState<TxType>('expense');
   const [valueText, setValueText] = useState('');
   const [statusOn, setStatusOn] = useState(false);
@@ -79,6 +92,43 @@ export function AddEditTransactionScreen() {
   }>({});
 
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (!transactionId || !user || !walletId) return;
+
+    let cancelled = false;
+    setLoadingTx(true);
+
+    getTransaction(user.uid, walletId, transactionId)
+      .then((tx) => {
+        if (cancelled || !tx) return;
+        const txType: TxType =
+          tx.type === 'income' || tx.type === 'expense' ? tx.type : 'expense';
+        setType(txType);
+        setValueText(formatCurrency(tx.amount));
+        setStatusOn(tx.status === 'paid' || tx.status === 'received');
+        setCategoryId(tx.categoryId);
+        setDate(tx.date);
+        setObservation(tx.description);
+        const pt = derivePaymentType(tx.isRecurring, tx.installmentTotal);
+        setPaymentType(pt);
+        if (pt === 'installment' && tx.installmentTotal != null) {
+          setInstallments(String(tx.installmentTotal));
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          Alert.alert('Erro', 'Não foi possível carregar os dados da transação.');
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingTx(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [transactionId, user, walletId]);
 
   const numericValue = parseCurrency(valueText);
   const installmentsCount = parseInt(installments || '0', 10);
@@ -122,7 +172,8 @@ export function AddEditTransactionScreen() {
         next.installments = 'Informe um número inteiro maior que 1';
       }
     }
-    if (paymentType === 'recurring' && !recurrenceType) {
+    // No edit mode we skip recurrence type validation — it's not stored in the document
+    if (paymentType === 'recurring' && !recurrenceType && !isEditing) {
       next.recurrence = 'Selecione o tipo de recorrência';
     }
 
@@ -137,9 +188,18 @@ export function AddEditTransactionScreen() {
 
     setSaving(true);
     try {
-      if (paymentType === 'installment' && installmentsCount > 1) {
-        // Cada parcela vira uma transação com data deslocada em N meses.
-        // Apenas a primeira herda o status do toggle — futuras nascem pendentes.
+      if (isEditing && transactionId) {
+        await updateTransaction(user.uid, walletId, transactionId, {
+          type,
+          title: selectedCategory.name,
+          description: observation,
+          amount: numericValue,
+          categoryId: selectedCategory.id,
+          status: statusFor(type, statusOn),
+          isRecurring: paymentType === 'recurring',
+          date,
+        });
+      } else if (paymentType === 'installment' && installmentsCount > 1) {
         const perInstallment = numericValue / installmentsCount;
         const pendingStatus: TransactionStatus = type === 'expense' ? 'unpaid' : 'unreceived';
 
@@ -189,164 +249,174 @@ export function AddEditTransactionScreen() {
       <StatusBar style="light" />
 
       <Header
-        title="Adicionar transação"
+        title={isEditing ? 'Editar transação' : 'Adicionar transação'}
         variant="screen"
         theme="dark"
         showBackButton
         onBackPress={() => router.back()}
       />
 
-      <KeyboardAvoidingView
-        style={styles.flex}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
-        <ScrollView
-          style={styles.scroll}
-          contentContainerStyle={styles.scrollContent}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
+      {loadingTx ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={colors.primary} />
+        </View>
+      ) : (
+        <KeyboardAvoidingView
+          style={styles.flex}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
-          <TransactionTypeHeader
-            type={type}
-            onTypeChange={(t) => {
-              setType(t);
-              setStatusOn(false);
-              // Clear category if it doesn't belong to the new type
-              if (categoryId != null) {
-                const cat = categories.find((c) => c.id === categoryId);
-                if (cat && cat.type !== t) setCategoryId(null);
-              }
-            }}
-            value={valueText}
-            onValueChange={setValueText}
-          />
-
-          {errors.value != null && (
-            <View style={styles.valueErrorWrapper}>
-              <Text style={styles.errorText}>{errors.value}</Text>
-            </View>
-          )}
-
-          <View style={styles.form}>
-            {/* Categoria */}
-            <SelectInput
-              label="Categoria"
-              placeholder="Selecionar categoria"
-              sheetTitle="Selecionar categoria"
-              options={categoryOptions}
-              value={categoryId}
-              onChange={setCategoryId}
-              searchable
-disabled={categoriesForType.length === 0}
-              helperText={
-                categoriesForType.length === 0
-                  ? `Nenhuma categoria de ${type === 'expense' ? 'despesa' : 'receita'} cadastrada`
-                  : undefined
-              }
-              error={errors.category}
-              accessibilityLabel="Selecionar categoria"
+          <ScrollView
+            style={styles.scroll}
+            contentContainerStyle={styles.scrollContent}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+          >
+            <TransactionTypeHeader
+              type={type}
+              onTypeChange={(t) => {
+                setType(t);
+                setStatusOn(false);
+                if (categoryId != null) {
+                  const cat = categories.find((c) => c.id === categoryId);
+                  if (cat && cat.type !== t) setCategoryId(null);
+                }
+              }}
+              value={valueText}
+              onValueChange={setValueText}
             />
 
-            {/* Data */}
-            <DateInput
-              label="Data"
-              value={date}
-              onChange={setDate}
-              accessibilityLabel="Selecionar data"
-            />
+            {errors.value != null && (
+              <View style={styles.valueErrorWrapper}>
+                <Text style={styles.errorText}>{errors.value}</Text>
+              </View>
+            )}
 
-            {/* Observação */}
-            <TextInput
-              label="Observação"
-              value={observation}
-              onChangeText={setObservation}
-              placeholder="Ex: Carteira do Thiago"
-              accessibilityLabel="Observação da transação"
-            />
-
-            {/* Toggle status */}
-            <View style={styles.toggleRow}>
-              <Toggle
-                value={statusOn}
-                onValueChange={setStatusOn}
-                accessibilityLabel={type === 'expense' ? 'Já paguei' : 'Já recebi'}
+            <View style={styles.form}>
+              {/* Categoria */}
+              <SelectInput
+                label="Categoria"
+                placeholder="Selecionar categoria"
+                sheetTitle="Selecionar categoria"
+                options={categoryOptions}
+                value={categoryId}
+                onChange={setCategoryId}
+                searchable
+                disabled={categoriesForType.length === 0}
+                helperText={
+                  categoriesForType.length === 0
+                    ? `Nenhuma categoria de ${type === 'expense' ? 'despesa' : 'receita'} cadastrada`
+                    : undefined
+                }
+                error={errors.category}
+                accessibilityLabel="Selecionar categoria"
               />
-              <Text style={styles.toggleLabel}>
-                {type === 'expense' ? 'Já paguei' : 'Já recebi'}
-              </Text>
-            </View>
 
-            {/* Tipo de pagamento */}
-            <View>
-              <Text style={styles.sectionLabel}>Tipo de pagamento</Text>
-              <View style={styles.paymentRow}>
-                <View style={styles.paymentItem}>
-                  <Button
-                    variant="outlined"
-                    size="sm"
-                    selected={paymentType === 'cash'}
-                    onPress={() => setPaymentType('cash')}
-                  >
-                    À vista
-                  </Button>
-                </View>
-                <View style={styles.paymentItem}>
-                  <Button
-                    variant="outlined"
-                    size="sm"
-                    selected={paymentType === 'installment'}
-                    onPress={() => setPaymentType('installment')}
-                  >
-                    Parcelado
-                  </Button>
-                </View>
-                <View style={styles.paymentItem}>
-                  <Button
-                    variant="outlined"
-                    size="sm"
-                    selected={paymentType === 'recurring'}
-                    onPress={() => setPaymentType('recurring')}
-                  >
-                    Recorrente
-                  </Button>
+              {/* Data */}
+              <DateInput
+                label="Data"
+                value={date}
+                onChange={setDate}
+                accessibilityLabel="Selecionar data"
+              />
+
+              {/* Observação */}
+              <TextInput
+                label="Observação"
+                value={observation}
+                onChangeText={setObservation}
+                placeholder="Ex: Carteira do Thiago"
+                accessibilityLabel="Observação da transação"
+              />
+
+              {/* Toggle status */}
+              <View style={styles.toggleRow}>
+                <Toggle
+                  value={statusOn}
+                  onValueChange={setStatusOn}
+                  accessibilityLabel={type === 'expense' ? 'Já paguei' : 'Já recebi'}
+                />
+                <Text style={styles.toggleLabel}>
+                  {type === 'expense' ? 'Já paguei' : 'Já recebi'}
+                </Text>
+              </View>
+
+              {/* Tipo de pagamento */}
+              <View>
+                <Text style={styles.sectionLabel}>Tipo de pagamento</Text>
+                <View style={styles.paymentRow}>
+                  <View style={styles.paymentItem}>
+                    <Button
+                      variant="outlined"
+                      size="sm"
+                      selected={paymentType === 'cash'}
+                      onPress={() => setPaymentType('cash')}
+                    >
+                      À vista
+                    </Button>
+                  </View>
+                  <View style={styles.paymentItem}>
+                    <Button
+                      variant="outlined"
+                      size="sm"
+                      selected={paymentType === 'installment'}
+                      onPress={() => setPaymentType('installment')}
+                    >
+                      Parcelado
+                    </Button>
+                  </View>
+                  <View style={styles.paymentItem}>
+                    <Button
+                      variant="outlined"
+                      size="sm"
+                      selected={paymentType === 'recurring'}
+                      onPress={() => setPaymentType('recurring')}
+                    >
+                      Recorrente
+                    </Button>
+                  </View>
                 </View>
               </View>
+
+              {/* Parcelas */}
+              {paymentType === 'installment' && (
+                <TextInput
+                  label="Quantidade de parcelas"
+                  value={installments}
+                  onChangeText={(t) => setInstallments(t.replace(/\D/g, ''))}
+                  keyboardType="numeric"
+                  placeholder="Ex: 3"
+                  accessibilityLabel="Número de parcelas"
+                  error={errors.installments}
+                  helperText={installmentsHelper}
+                />
+              )}
+
+              {/* Recorrência */}
+              {paymentType === 'recurring' && (
+                <SelectInput
+                  label="Tipo de recorrência"
+                  placeholder="Selecionar tipo"
+                  sheetTitle="Tipo de recorrência"
+                  options={recurrenceOptions}
+                  value={recurrenceType}
+                  onChange={setRecurrenceType}
+                  error={errors.recurrence}
+                  accessibilityLabel="Selecionar tipo de recorrência"
+                />
+              )}
             </View>
-
-            {/* Parcelas */}
-            {paymentType === 'installment' && (
-              <TextInput
-                label="Quantidade de parcelas"
-                value={installments}
-                onChangeText={(t) => setInstallments(t.replace(/\D/g, ''))}
-                keyboardType="numeric"
-                placeholder="Ex: 3"
-                accessibilityLabel="Número de parcelas"
-                error={errors.installments}
-                helperText={installmentsHelper}
-              />
-            )}
-
-            {/* Recorrência */}
-            {paymentType === 'recurring' && (
-              <SelectInput
-                label="Tipo de recorrência"
-                placeholder="Selecionar tipo"
-                sheetTitle="Tipo de recorrência"
-                options={recurrenceOptions}
-                value={recurrenceType}
-                onChange={setRecurrenceType}
-                error={errors.recurrence}
-                accessibilityLabel="Selecionar tipo de recorrência"
-              />
-            )}
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      )}
 
       <View style={[styles.footer, { paddingBottom: spacing.xl }]}>
-        <Button variant="primary" onPress={handleSave} loading={saving}>
-          Salvar valor
+        <Button
+          variant="primary"
+          onPress={handleSave}
+          loading={saving}
+          disabled={loadingTx}
+        >
+          {isEditing ? 'Salvar alterações' : 'Salvar valor'}
         </Button>
       </View>
     </SafeAreaView>
@@ -368,6 +438,12 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingBottom: spacing.xl,
+  },
+  loadingContainer: {
+    flex: 1,
+    backgroundColor: colors.white,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   valueErrorWrapper: {
     paddingHorizontal: 20,

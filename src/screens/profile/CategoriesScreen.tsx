@@ -270,9 +270,7 @@ export function CategoriesScreen() {
         <FAB
           label="Adicionar categoria"
           accessibilityLabel="Adicionar categoria"
-          onPress={() => {
-            // TODO: navegar para tela de adicionar categoria
-          }}
+          onPress={() => router.push('/(stack)/add-category')}
           style={{
             position: 'absolute',
             // Com teclado aberto: keyboardHeight no Android edge-to-edge não

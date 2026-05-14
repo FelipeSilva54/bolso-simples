@@ -18,6 +18,8 @@ import {
   Tag,
   CaretLeft,
   CaretRight,
+  Eye,
+  EyeSlash,
 } from 'phosphor-react-native';
 import * as Phosphor from 'phosphor-react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -366,6 +368,9 @@ export function WalletDetailScreen() {
         theme="dark"
         showBackButton
         onBackPress={() => router.back()}
+        secondaryRightIcon={(hideBalance ? EyeSlash : Eye) as IconComponent}
+        onSecondaryRightPress={() => setHideBalance((v) => !v)}
+        secondaryRightIconLabel={hideBalance ? 'Mostrar saldo' : 'Ocultar saldo'}
         rightIcon={CalendarBlank as IconComponent}
         onRightPress={() => setPeriodSheetVisible(true)}
       />
@@ -375,7 +380,6 @@ export function WalletDetailScreen() {
         subtitle="Saldo da carteira:"
         balance={calculatedBalance}
         hideBalance={hideBalance}
-        onToggleVisibility={() => setHideBalance((v) => !v)}
         onTodayPress={handleTodayPress}
       />
 
@@ -458,34 +462,22 @@ export function WalletDetailScreen() {
 
         <View style={styles.summaryRow}>
           <SummaryCard
-            label="Receitas"
-            value={totalIncome}
-            variant="income"
+            income={totalIncome}
+            expense={totalExpense}
+            balance={monthBalance}
             hideBalance={hideBalance}
-            onPress={() =>
+            onIncomePress={() =>
               router.push({
                 pathname: '/(stack)/transaction-list' as never,
                 params: { walletId, type: 'income' },
               })
             }
-          />
-          <SummaryCard
-            label="Despesas"
-            value={totalExpense}
-            variant="expense"
-            hideBalance={hideBalance}
-            onPress={() =>
+            onExpensePress={() =>
               router.push({
                 pathname: '/(stack)/transaction-list' as never,
                 params: { walletId, type: 'expense' },
               })
             }
-          />
-          <SummaryCard
-            label="Saldo"
-            value={monthBalance}
-            variant="balance"
-            hideBalance={hideBalance}
           />
         </View>
 
@@ -560,7 +552,11 @@ export function WalletDetailScreen() {
           handleDetailClose();
         }}
         onEdit={(id) => {
-          // TODO: implementar edição
+          handleDetailClose();
+          router.push({
+            pathname: '/(stack)/edit-transaction/[transactionId]' as never,
+            params: { transactionId: id, walletId },
+          });
         }}
         onStatusChange={handleStatusChange}
       />
@@ -603,11 +599,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   summaryRow: {
-    flexDirection: 'row',
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
-    gap: spacing.sm,
-    backgroundColor: colors.white,
     borderBottomWidth: 1,
     borderBottomColor: colors.offwhite,
   },
