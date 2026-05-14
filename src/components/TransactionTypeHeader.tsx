@@ -10,6 +10,8 @@ import {
 } from 'react-native';
 import { PencilSimple } from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
+import { formatCurrency as formatCurrencyUtil } from '@/utils/currency';
+import { usePreferences } from '@/store/PreferencesContext';
 
 type TransactionType = 'expense' | 'income';
 
@@ -25,15 +27,12 @@ const headerColors: Record<TransactionType, string> = {
   income: colors.success,
 };
 
-// Formata dígitos digitados para o padrão de moeda brasileiro
-// Ex: digitar "1" → "R$ 0,01" | "125" → "R$ 1,25" | "1250" → "R$ 12,50"
-function formatCurrency(input: string): string {
+// Máscara de entrada: converte dígitos em valor monetário formatado.
+// Ex: "1" → "R$ 0,01" | "125" → "R$ 1,25" (para BRL)
+function maskInput(input: string, currency: string): string {
   const digits = input.replace(/\D/g, '');
   const number = parseInt(digits || '0', 10) / 100;
-  return number.toLocaleString('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-  });
+  return formatCurrencyUtil(number, currency);
 }
 
 export function TransactionTypeHeader({
@@ -42,6 +41,7 @@ export function TransactionTypeHeader({
   value,
   onValueChange,
 }: TransactionTypeHeaderProps) {
+  const { preferences } = usePreferences();
   const valueInputRef = useRef<TextInput>(null);
 
   const colorAnim = useRef(new Animated.Value(type === 'expense' ? 0 : 1)).current;
@@ -95,12 +95,12 @@ export function TransactionTypeHeader({
         <TextInput
           ref={valueInputRef}
           value={value}
-          onChangeText={(text) => onValueChange(formatCurrency(text))}
+          onChangeText={(text) => onValueChange(maskInput(text, preferences.currency))}
           autoFocus={true}
           keyboardType="numeric"
           style={styles.valueInput}
           placeholderTextColor="rgba(255,255,255,0.6)"
-          placeholder="R$ 0,00"
+          placeholder={maskInput('', preferences.currency)}
           selectionColor="rgba(255,255,255,0.8)"
         />
         <PencilSimple size={20} color={colors.white} weight="regular" />

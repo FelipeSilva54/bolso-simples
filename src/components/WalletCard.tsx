@@ -8,6 +8,8 @@ import {
 } from 'react-native';
 import { DotsThreeVertical } from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
+import { formatCurrency } from '@/utils/currency';
+import { usePreferences } from '@/store/PreferencesContext';
 
 type WalletCardProps = {
   name: string;
@@ -26,10 +28,8 @@ export function WalletCard({
   onOptionsPress,
   onPress,
 }: WalletCardProps) {
-  const formattedBalance = balance.toLocaleString('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-  });
+  const { preferences } = usePreferences();
+  const formattedBalance = formatCurrency(balance, preferences.currency);
 
   return (
     <Pressable

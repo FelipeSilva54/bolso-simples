@@ -60,13 +60,13 @@ export function PeriodPickerSheet({
             >
               <Icon
                 size={22}
-                color={isActive ? colors.primary : colors.subcontent}
+                color={isActive ? colors.success : colors.primary}
                 weight="regular"
               />
               <Text style={[styles.rowLabel, isActive && styles.rowLabelActive]}>
                 {option.label}
               </Text>
-              {isActive && <Check size={18} color={colors.primary} weight="bold" />}
+              {isActive && <Check size={18} color={colors.success} weight="bold" />}
             </TouchableOpacity>
           );
         })}
@@ -78,14 +78,14 @@ export function PeriodPickerSheet({
 const styles = StyleSheet.create({
   wrapper: {
     paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.xl,
+    paddingBottom: spacing.sm,
     gap: spacing.xs,
   },
   title: {
     fontSize: fs.lg,
     fontWeight: fw.semibold,
     color: colors.content,
-    marginBottom: spacing.md,
+    marginBottom: spacing.lg,
   },
   row: {
     flexDirection: 'row',
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.sm,
   },
   rowActive: {
-    backgroundColor: colors.borderLight,
+    backgroundColor: colors.successLight,
   },
   rowLabel: {
     flex: 1,
@@ -106,6 +106,6 @@ const styles = StyleSheet.create({
   },
   rowLabelActive: {
     fontWeight: fw.semibold,
-    color: colors.primary,
+    color: colors.success, 
   },
 });

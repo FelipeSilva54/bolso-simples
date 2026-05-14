@@ -1,6 +1,8 @@
 import React from 'react';
 import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing } from '@/constants';
+import { formatCurrency } from '@/utils/currency';
+import { usePreferences } from '@/store/PreferencesContext';
 import { StatusBadge } from '@/components/StatusBadge';
 import { AvatarIcon } from '@/components/AvatarIcon';
 type BadgeVariant = 'danger' | 'success' | 'info';
@@ -30,11 +32,9 @@ export function TransactionItem({
   installmentTotal,
   onPress,
 }: TransactionItemProps) {
+  const { preferences } = usePreferences();
   const isNegative = amount < 0;
-  const formattedAmount = `${isNegative ? '-' : '+'}R$ ${Math.abs(amount)
-    .toFixed(2)
-    .replace('.', ',')
-    .replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
+  const formattedAmount = `${isNegative ? '-' : '+'}${formatCurrency(Math.abs(amount), preferences.currency)}`;
 
   const displayTitle =
     installmentTotal != null && installmentTotal > 1 && installmentIndex != null

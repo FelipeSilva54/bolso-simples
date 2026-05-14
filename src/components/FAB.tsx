@@ -36,7 +36,7 @@ export function FAB({
         style,
       ]}
     >
-      <Plus size={20} color={colors.white} weight="regular" />
+      <Plus size={20} color={colors.white} weight="bold" />
 
       {/* Texto só renderiza se label foi passado */}
       {label != null && (
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: radius.full,
-    gap: spacing.xs,               // 4px entre ícone e texto
+    gap: spacing.sm,               // 4px entre ícone e texto
 
     // Sombra padrão de FAB
     shadowColor: colors.primary,

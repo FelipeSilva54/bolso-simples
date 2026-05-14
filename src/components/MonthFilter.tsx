@@ -118,12 +118,12 @@ export function MonthFilter({ activeMonth, activeYear, onChange }: MonthFilterPr
 const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.white,
-    borderBottomWidth: 1,
+    borderBottomWidth: 0.8,
     borderBottomColor: colors.border,
   },
   item: {
     width: ITEM_WIDTH,
-    paddingTop: spacing.md,
+    paddingTop: spacing.lg,
     paddingBottom: spacing.lg,
     alignItems: 'center',
     justifyContent: 'center',
@@ -140,10 +140,10 @@ const styles = StyleSheet.create({
   indicator: {
     position: 'absolute',
     bottom: 0,
-    left: spacing.xl,
-    right: spacing.xl,
-    height: 2,
+    left: spacing.lg,
+    right: spacing.lg,
+    height: 2.5,
     backgroundColor: colors.primary,
-    borderRadius: 1,
+    borderRadius: 8,
   },
 });

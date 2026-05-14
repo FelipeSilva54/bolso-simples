@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -11,24 +11,23 @@ import {
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
-import * as Application from 'expo-application';
 import {
   Bell,
   List,
   Heart,
-  Lock,
   HandHeart,
   Question,
   Info,
   ShareNetwork,
   Star,
   CaretRight,
+  Trash,
+  UserMinus,
 } from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
 import { Header } from '@/components/Header';
 import { Button } from '@/components/Button';
 import { ListItem } from '@/components/ListItem';
-import { Dialog } from '@/components/Dialog';
 import { useAuth } from '@/store/AuthContext';
 
 type IconComponent = React.ComponentType<{ size?: number; color?: string; weight?: string }>;
@@ -36,8 +35,7 @@ type IconComponent = React.ComponentType<{ size?: number; color?: string; weight
 export function ProfileScreen() {
   const { top } = useSafeAreaInsets();
   const router = useRouter();
-  const { user, loginWithGoogle, logout } = useAuth();
-  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
+  const { user, loginWithGoogle } = useAuth();
 
   const displayName =
     user?.isAnonymous || !user?.displayName ? 'Visitante' : user.displayName;
@@ -45,19 +43,11 @@ export function ProfileScreen() {
     ? user.displayName.charAt(0).toUpperCase()
     : 'V';
 
-  const appVersion = Application.nativeApplicationVersion ?? '—';
-  const buildVersion = Application.nativeBuildVersion ?? '—';
-
   const handleShare = async () => {
     await Share.share({
       message:
         'Conheça o Bolso Simples, o app de finanças 100% brasileiro, gratuito e sem anúncios!',
     });
-  };
-
-  const handleLogoutConfirm = async () => {
-    setShowLogoutDialog(false);
-    await logout();
   };
 
   return (
@@ -77,6 +67,7 @@ export function ProfileScreen() {
         contentContainerStyle={styles.scroll}
         showsVerticalScrollIndicator={false}
       >
+        {/* Card de perfil */}
         {!user?.isAnonymous ? (
           <TouchableOpacity
             style={styles.profileCard}
@@ -132,8 +123,9 @@ export function ProfileScreen() {
           </View>
         )}
 
+        {/* Seção: Seu app */}
         <View>
-          <Text style={styles.sectionLabel}>Outros serviços</Text>
+          <Text style={styles.sectionLabel}>Seu app</Text>
           <ListItem
             icon={List as IconComponent}
             label="Categorias"
@@ -142,91 +134,71 @@ export function ProfileScreen() {
           />
           <ListItem
             icon={Heart as IconComponent}
-            label="Preferências do app"
+            label="Preferências"
             onPress={() => router.push('/(stack)/preferences' as never)}
-            accessibilityLabel="Preferências do app"
+            accessibilityLabel="Preferências"
           />
         </View>
 
+        {/* Seção: Informações e ajuda */}
         <View>
-          <Text style={styles.sectionLabel}>Configurações da conta</Text>
+          <Text style={styles.sectionLabel}>Informações e ajuda</Text>
           <ListItem
-            icon={Lock as IconComponent}
-            label="Segurança"
-            onPress={() => router.push('/(stack)/security' as never)}
-            accessibilityLabel="Segurança"
+            icon={Info as IconComponent}
+            label="Sobre"
+            onPress={() => router.push('/(stack)/about' as never)}
+            accessibilityLabel="Sobre"
           />
           <ListItem
-            icon={Bell as IconComponent}
-            label="Notificações"
-            onPress={() => router.push('/(stack)/notifications' as never)}
-            accessibilityLabel="Notificações"
+            icon={ShareNetwork as IconComponent}
+            label="Compartilhar com um amigo"
+            onPress={handleShare}
+            accessibilityLabel="Compartilhar com um amigo"
+          />
+          <ListItem
+            icon={Star as IconComponent}
+            label="Avaliar aplicativo"
+            onPress={() => router.push('/(stack)/rate' as never)}
+            accessibilityLabel="Avaliar aplicativo"
+          />
+          <ListItem
+            icon={Question as IconComponent}
+            label="Fale conosco"
+            onPress={() => router.push('/(stack)/help' as never)}
+            accessibilityLabel="Fale conosco"
           />
         </View>
 
+        {/* Seção: Outros */}
         <View>
-          <Text style={styles.sectionLabel}>Suporte</Text>
+          <Text style={styles.sectionLabel}>Outros</Text>
           <TouchableOpacity
             onPress={() => router.push('/(stack)/support' as never)}
             activeOpacity={0.7}
             accessibilityRole="button"
-            accessibilityLabel="Apoie o bolsosimples"
+            accessibilityLabel="Apoie o Bolso Simples"
             style={styles.listItem}
           >
             <HandHeart size={24} color={colors.success} weight="regular" />
             <Text style={[styles.listItemLabel, styles.listItemLabelSuccess]} numberOfLines={1}>
-              Apoie o bolsosimples
+              Apoie o Bolso Simples
             </Text>
             <CaretRight size={16} color={colors.muted} weight="regular" />
           </TouchableOpacity>
           <ListItem
-            icon={Question as IconComponent}
-            label="Ajuda"
-            onPress={() => router.push('/(stack)/help' as never)}
-            accessibilityLabel="Ajuda"
+            icon={Trash as IconComponent}
+            label="Limpar histórico"
+            onPress={() => {}}
+            accessibilityLabel="Limpar histórico"
           />
           <ListItem
-            icon={Info as IconComponent}
-            label="Sobre o APP"
-            onPress={() => router.push('/(stack)/about' as never)}
-            accessibilityLabel="Sobre o APP"
+            icon={UserMinus as IconComponent}
+            label="Excluir conta"
+            onPress={() => {}}
+            accessibilityLabel="Excluir conta"
           />
-          <ListItem
-            icon={ShareNetwork as IconComponent}
-            label="Compartilhe com um amigo"
-            onPress={handleShare}
-            accessibilityLabel="Compartilhe com um amigo"
-          />
-          <ListItem
-            icon={Star as IconComponent}
-            label="Avalie nosso app"
-            onPress={() => router.push('/(stack)/rate' as never)}
-            accessibilityLabel="Avalie nosso app"
-          />
-        </View>
-
-        <View style={styles.footer}>
-          <Text style={styles.version}>
-            Versão {appVersion} ({buildVersion})
-          </Text>
-          <Button
-            variant="dangerLight"
-            onPress={() => setShowLogoutDialog(true)}
-          >
-            Sair do aplicativo
-          </Button>
         </View>
       </ScrollView>
-
-      <Dialog
-        visible={showLogoutDialog}
-        title="Sair do app?"
-        description="Tem certeza que deseja sair da sua conta?"
-        confirmLabel="Sair"
-        cancelLabel="Cancelar"
-        onConfirm={handleLogoutConfirm}
-        onCancel={() => setShowLogoutDialog(false)}
-      />
     </SafeAreaView>
   );
 }
@@ -328,16 +300,5 @@ const styles = StyleSheet.create({
   },
   listItemLabelSuccess: {
     color: colors.success,
-  },
-  footer: {
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.sm,
-    gap: spacing.md,
-  },
-  version: {
-    fontSize: fs.sm,
-    color: colors.muted,
-    textAlign: 'center',
-    paddingBottom: spacing.md,
   },
 });

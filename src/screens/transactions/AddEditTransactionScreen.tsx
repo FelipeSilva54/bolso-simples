@@ -28,6 +28,7 @@ import { useCategories } from '@/hooks/useCategories';
 import { addTransaction, updateTransaction, getTransaction } from '@/services/transactions';
 import { TransactionStatus } from '@/types/transaction';
 import { parseCurrency, formatCurrency } from '@/utils/currency';
+import { usePreferences } from '@/store/PreferencesContext';
 
 type TxType = 'expense' | 'income';
 type PaymentType = 'cash' | 'installment' | 'recurring';
@@ -70,6 +71,7 @@ export function AddEditTransactionScreen() {
   }>();
   const { user } = useAuth();
   const { categories } = useCategories();
+  const { preferences } = usePreferences();
 
   const isEditing = Boolean(transactionId);
 
@@ -105,7 +107,7 @@ export function AddEditTransactionScreen() {
         const txType: TxType =
           tx.type === 'income' || tx.type === 'expense' ? tx.type : 'expense';
         setType(txType);
-        setValueText(formatCurrency(tx.amount));
+        setValueText(formatCurrency(tx.amount, preferences.currency));
         setStatusOn(tx.status === 'paid' || tx.status === 'received');
         setCategoryId(tx.categoryId);
         setDate(tx.date);
@@ -133,12 +135,12 @@ export function AddEditTransactionScreen() {
     };
   }, [transactionId, user, walletId]);
 
-  const numericValue = parseCurrency(valueText);
+  const numericValue = parseCurrency(valueText, preferences.currency);
   const installmentsCount = parseInt(installments || '0', 10);
   const installmentValue = installmentsCount > 0 ? numericValue / installmentsCount : 0;
   const installmentsHelper =
     installmentsCount > 1 && numericValue > 0
-      ? `${installmentsCount}x de ${formatCurrency(installmentValue)}`
+      ? `${installmentsCount}x de ${formatCurrency(installmentValue, preferences.currency)}`
       : undefined;
 
   const categoriesForType = useMemo(

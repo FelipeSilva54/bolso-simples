@@ -11,6 +11,7 @@ import { Toggle } from '@/components/Toggle';
 import { InfoAlert } from '@/components/InfoAlert';
 import { Dialog } from '@/components/Dialog';
 import { formatCurrency } from '@/utils/currency';
+import { usePreferences } from '@/store/PreferencesContext';
 import { formatDate } from '@/utils/date';
 
 type TxStatus = 'paid' | 'unpaid' | 'received' | 'unreceived';
@@ -61,6 +62,7 @@ export function TransactionDetailSheet({
   onEdit,
   onStatusChange,
 }: TransactionDetailSheetProps) {
+  const { preferences } = usePreferences();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   return (
@@ -82,6 +84,7 @@ export function TransactionDetailSheet({
               >
                 {formatCurrency(
                   transaction.type === 'expense' ? -transaction.amount : transaction.amount,
+                  preferences.currency,
                 )}
               </Text>
             </View>
@@ -247,7 +250,7 @@ const styles = StyleSheet.create({
   // Divider
   divider: {
     height: 1,
-    backgroundColor: colors.border,
+    backgroundColor: colors.borderLight,
   },
 
   // Info rows
@@ -282,7 +285,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.borderLight,
     borderRadius: radius.sm,
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,

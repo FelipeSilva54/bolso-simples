@@ -20,12 +20,14 @@ import { TextInput as FormInput } from '@/components/TextInput';
 import { InfoAlert } from '@/components/InfoAlert';
 import { useWallets } from '@/hooks/useWallets';
 import { formatCurrency } from '@/utils/currency';
+import { usePreferences } from '@/store/PreferencesContext';
 
 const COLOR_PALETTE = [colors.primary, ...walletColors] as string[];
 
 export function AddWalletScreen() {
   const router = useRouter();
   const { createWallet } = useWallets();
+  const { preferences } = usePreferences();
 
   const [name, setName] = useState('');
   const [balanceDigits, setBalanceDigits] = useState('');
@@ -35,7 +37,7 @@ export function AddWalletScreen() {
   const balanceCents = parseInt(balanceDigits || '0', 10);
   const previewBalance = balanceCents / 100;
   const balanceDisplay = balanceDigits
-    ? previewBalance.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+    ? formatCurrency(previewBalance, preferences.currency)
     : '';
   const canSave = name.trim().length > 0 && balanceDigits.length > 0;
 
@@ -94,7 +96,7 @@ export function AddWalletScreen() {
             <View style={styles.previewBalanceContainer}>
               <Text style={styles.previewBalanceLabel}>Saldo da carteira:</Text>
               <Text style={styles.previewBalanceValue} numberOfLines={1} ellipsizeMode="tail">
-                {formatCurrency(previewBalance)}
+                {formatCurrency(previewBalance, preferences.currency)}
               </Text>
             </View>
 

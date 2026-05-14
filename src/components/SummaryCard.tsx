@@ -2,6 +2,7 @@ import React from 'react';
 import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing } from '@/constants';
 import { formatCurrency } from '@/utils/currency';
+import { usePreferences } from '@/store/PreferencesContext';
 
 type SummaryCardProps = {
   income: number;
@@ -20,9 +21,10 @@ export function SummaryCard({
   onIncomePress,
   onExpensePress,
 }: SummaryCardProps) {
-  const displayIncome = hideBalance ? '••••••' : formatCurrency(income);
-  const displayExpense = hideBalance ? '••••••' : formatCurrency(expense);
-  const displayBalance = hideBalance ? '••••••' : formatCurrency(balance);
+  const { preferences } = usePreferences();
+  const displayIncome = hideBalance ? '••••••' : formatCurrency(income, preferences.currency);
+  const displayExpense = hideBalance ? '••••••' : formatCurrency(expense, preferences.currency);
+  const displayBalance = hideBalance ? '••••••' : formatCurrency(balance, preferences.currency);
 
   return (
     <View style={styles.container}>
@@ -31,7 +33,7 @@ export function SummaryCard({
         onPress={onIncomePress}
         activeOpacity={0.7}
         accessibilityRole="button"
-        accessibilityLabel={`Receitas: ${hideBalance ? 'oculto' : formatCurrency(income)}`}
+        accessibilityLabel={`Receitas: ${hideBalance ? 'oculto' : formatCurrency(income, preferences.currency)}`}
       >
         <Text style={[styles.value, styles.incomeColor]} numberOfLines={1}>
           {displayIncome}
@@ -48,7 +50,7 @@ export function SummaryCard({
         onPress={onExpensePress}
         activeOpacity={0.7}
         accessibilityRole="button"
-        accessibilityLabel={`Despesas: ${hideBalance ? 'oculto' : formatCurrency(expense)}`}
+        accessibilityLabel={`Despesas: ${hideBalance ? 'oculto' : formatCurrency(expense, preferences.currency)}`}
       >
         <Text style={[styles.value, styles.expenseColor]} numberOfLines={1}>
           {displayExpense}

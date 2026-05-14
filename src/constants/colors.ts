@@ -4,7 +4,7 @@ export const colors = {
   subcontent: '#5D5D5D',
   muted: '#8C8C8C',
   border: '#DBDBDB',
-  borderLight: '#F4F4F4',
+  borderLight: '#e8e8e8',
   white: '#FFFFFF',
   offwhite: '#ffffffcb',
   dangerLight: '#FEF1F1',

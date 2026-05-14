@@ -2,6 +2,8 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { CalendarDots } from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
+import { formatCurrency } from '@/utils/currency';
+import { usePreferences } from '@/store/PreferencesContext';
 
 type BalanceDisplayVariant = 'total' | 'wallet';
 
@@ -20,10 +22,8 @@ export function BalanceDisplay({
   hideBalance,
   onTodayPress,
 }: BalanceDisplayProps) {
-  const formattedBalance = balance.toLocaleString('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-  });
+  const { preferences } = usePreferences();
+  const formattedBalance = formatCurrency(balance, preferences.currency);
 
   const isWallet = variant === 'wallet';
 

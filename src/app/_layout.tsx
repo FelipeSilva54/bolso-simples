@@ -3,6 +3,7 @@ import React from 'react';
 import * as NavigationBar from 'expo-navigation-bar';
 import { setBackgroundColorAsync } from 'expo-system-ui';
 import { AuthProvider } from '@/store/AuthContext';
+import { PreferencesProvider } from '@/store/PreferencesContext';
 import { PortalHost } from '@/components/PortalProvider';
 
 export default function RootLayout() {
@@ -13,6 +14,7 @@ export default function RootLayout() {
   }, []);
 
   return (
+    <PreferencesProvider>
     <AuthProvider>
       <PortalHost>
         <Stack screenOptions={{ headerShown: false }}>
@@ -23,5 +25,6 @@ export default function RootLayout() {
         </Stack>
       </PortalHost>
     </AuthProvider>
+    </PreferencesProvider>
   );
 }
