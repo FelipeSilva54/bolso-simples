@@ -43,7 +43,44 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       setNotifications([]);
       return;
     }
-    getNotifications(user.uid).then(setNotifications);
+    getNotifications(user.uid).then((real) => {
+      // TEMP TEST — remover antes do build final
+      const fakeNotifications: Notification[] = [
+        {
+          id: 'test-1',
+          type: 'expense_due',
+          title: 'Conta de luz vence amanhã',
+          body: 'R$ 180,00 ainda não foi marcado como pago.',
+          isRead: false,
+          createdAt: new Date(),
+        },
+        {
+          id: 'test-2',
+          type: 'income_pending',
+          title: 'Receita não confirmada',
+          body: 'Freela de R$ 500,00 ainda não foi marcado como recebido.',
+          isRead: false,
+          createdAt: new Date(Date.now() - 1000 * 60 * 90),
+        },
+        {
+          id: 'test-3',
+          type: 'monthly_summary',
+          title: 'Resumo de abril',
+          body: 'Você recebeu R$ 3.200,00 e pagou R$ 2.100,00 este mês.',
+          isRead: true,
+          createdAt: new Date(Date.now() - 1000 * 60 * 60 * 25),
+        },
+        {
+          id: 'test-4',
+          type: 'negative_balance',
+          title: 'Carteira Nubank negativa',
+          body: 'Saldo atual: -R$ 45,00.',
+          isRead: false,
+          createdAt: new Date(Date.now() - 1000 * 60 * 5),
+        },
+      ];
+      setNotifications(fakeNotifications);
+    });
   }, [user]);
 
   const unreadCount = notifications.filter((n) => !n.isRead).length;

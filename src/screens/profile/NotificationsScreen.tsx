@@ -86,7 +86,7 @@ export function NotificationsScreen() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.white,
   },
   markAllRow: {
     alignItems: 'flex-end',

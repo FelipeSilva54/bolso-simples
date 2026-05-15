@@ -9,7 +9,6 @@ import {
 import { colors, fontSize as fs, fontWeight as fw, spacing } from '@/constants';
 import type { Notification, NotificationType } from '@/types/notification';
 
-// warning/warningLight have no tokens in colors.ts — local constants following PaymentTypeBadge precedent
 const WARNING_COLOR = '#D97706';
 const WARNING_LIGHT_COLOR = '#FEF3C7';
 
@@ -26,8 +25,8 @@ const ICON_MAP: Record<NotificationType, IconConfig> = {
   negative_balance: { Icon: TrendDown, iconColor: colors.danger, circleColor: colors.dangerLight },
 };
 
-function getRelativeTime(date: Date): string {
-  const diffMs = Date.now() - date.getTime();
+function getRelativeTime(date: Date | string): string {
+  const diffMs = Date.now() - new Date(date).getTime();
   const diffMin = Math.floor(diffMs / (1000 * 60));
   const diffH = Math.floor(diffMs / (1000 * 60 * 60));
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
@@ -55,7 +54,7 @@ export function NotificationItem({ notification, onPress }: NotificationItemProp
       style={[styles.container, !notification.isRead && styles.containerUnread]}
     >
       <View style={[styles.iconCircle, { backgroundColor: circleColor }]}>
-        <Icon size={20} color={iconColor} weight="regular" />
+        <Icon size={16} color={iconColor} weight="regular" />
       </View>
 
       <View style={styles.info}>
@@ -65,11 +64,7 @@ export function NotificationItem({ notification, onPress }: NotificationItemProp
         <Text style={styles.body} numberOfLines={2}>
           {notification.body}
         </Text>
-      </View>
-
-      <View style={styles.right}>
         <Text style={styles.time}>{relativeTime}</Text>
-        {!notification.isRead && <View style={styles.unreadDot} />}
       </View>
     </TouchableOpacity>
   );
@@ -78,53 +73,40 @@ export function NotificationItem({ notification, onPress }: NotificationItemProp
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: spacing.md,  // 12px
-    paddingHorizontal: 20,        // 20px — igual ao TransactionItem
+    alignItems: 'flex-start',
+    paddingVertical: spacing.lg,   // aumentado de md (12) para lg (16)
+    paddingHorizontal: 20,
     backgroundColor: colors.white,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-    gap: spacing.lg,              // 16px entre círculo e bloco de info
+    gap: spacing.lg,
   },
   containerUnread: {
-    backgroundColor: colors.background, // mais próximo de primaryLight nos tokens disponíveis
+    backgroundColor: colors.background,
   },
   iconCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,
   },
   info: {
     flex: 1,
-    gap: spacing.xs,             // 4px entre título e corpo
+    gap: spacing.xs,
   },
   title: {
-    fontSize: fs.md,             // 16px
+    fontSize: fs.md,
     fontWeight: fw.semibold,
     color: colors.content,
   },
   body: {
-    fontSize: fs.sm,             // 14px
+    fontSize: fs.sm,
     fontWeight: fw.regular,
     color: colors.subcontent,
   },
-  right: {
-    alignItems: 'flex-end',
-    gap: spacing.xs,             // 4px entre tempo e ponto não lido
-    flexShrink: 0,
-  },
   time: {
-    fontSize: fs.xs,             // 12px
+    fontSize: fs.xs,
     fontWeight: fw.regular,
     color: colors.muted,
-  },
-  unreadDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: colors.primary,
   },
 });
