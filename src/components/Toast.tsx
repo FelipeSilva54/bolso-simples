@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, StyleSheet, Text } from 'react-native';
+import { Animated, StyleSheet, Text, View } from 'react-native';
+import { CheckCircleIcon } from 'phosphor-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Portal } from '@/components/PortalProvider';
 import { colors, fontSize as fs, fontWeight as fw, radius, spacing } from '@/constants';
@@ -41,7 +42,12 @@ export function Toast({ message, variant = 'default' }: ToastProps) {
         pointerEvents="none"
         style={[styles.container, { opacity, bottom: bottom + spacing.xxl, backgroundColor: bgColorMap[variant] }]}
       >
-        <Text style={styles.text}>{message ?? ''}</Text>
+        <View style={styles.content}>
+          {variant === 'default' && (
+            <CheckCircleIcon weight="fill" color={colors.white} size={fs.xl} style={styles.icon} />
+          )}
+          <Text style={styles.text}>{message ?? ''}</Text>
+        </View>
       </Animated.View>
     </Portal>
   );
@@ -52,14 +58,23 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: spacing.xxl,
     right: spacing.xxl,
-    borderRadius: radius.md,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
+    borderRadius: radius.sm,
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.lg,
+  },
+  content: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  icon: {
+    flexShrink: 0,
   },
   text: {
+    flex: 1,
     fontSize: fs.sm,
-    fontWeight: fw.medium,
+    fontWeight: fw.regular,
     color: colors.white,
-    textAlign: 'center',
+    textAlign: 'left',
   },
 });

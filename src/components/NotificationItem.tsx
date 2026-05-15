@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     gap: spacing.lg,
   },
   containerUnread: {
-    backgroundColor: colors.background,
+    backgroundColor: '#fafafa',
   },
   iconCircle: {
     width: 32,

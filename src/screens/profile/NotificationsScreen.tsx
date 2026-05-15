@@ -3,7 +3,6 @@ import {
   View,
   Text,
   FlatList,
-  TouchableOpacity,
   StyleSheet,
   ListRenderItem,
 } from 'react-native';
@@ -31,7 +30,7 @@ function EmptyNotifications() {
 
 export function NotificationsScreen() {
   const router = useRouter();
-  const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
+  const { notifications, markAsRead } = useNotifications();
 
   const sorted = [...notifications].sort(
     (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
@@ -58,17 +57,6 @@ export function NotificationsScreen() {
         showBackButton
         onBackPress={() => router.back()}
       />
-
-      {unreadCount > 0 && (
-        <TouchableOpacity
-          onPress={markAllAsRead}
-          style={styles.markAllRow}
-          accessibilityRole="button"
-          accessibilityLabel="Marcar todas as notificações como lidas"
-        >
-          <Text style={styles.markAllLabel}>Marcar todas como lidas</Text>
-        </TouchableOpacity>
-      )}
 
       <FlatList
         data={sorted}

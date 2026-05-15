@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: fs.lg,
-    fontWeight: fw.semibold,
+    fontWeight: fw.medium,
     color: colors.content,
     marginBottom: spacing.md,
   },
