@@ -23,7 +23,7 @@ export default function Index() {
   // Só redireciona quando AMBOS estiverem prontos: Firebase + timer
   useEffect(() => {
     if (loading || !minTimeDone) return;
-    router.replace(user ? '/(tabs)' : '/login');
+    router.replace('/(tabs)');
   }, [loading, minTimeDone, user]);
 
   const displayName = user?.isAnonymous ? 'Visitante' : user?.email ?? null;
@@ -52,7 +52,7 @@ export default function Index() {
       <View style={[styles.footer, { paddingBottom: insets.bottom + spacing.xl }]}>
         {displayName && (
           <>
-            <Text style={styles.footerLabel}>Você está entrando como</Text>
+            <Text style={styles.footerLabel}>Você está entrando como:</Text>
             <Text style={styles.footerEmail}>{displayName}</Text>
           </>
         )}
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
   },
   logoContainer: {
     alignItems: 'center',
-    paddingTop: spacing.md,
+    paddingTop: spacing.xs,
   },
   logo: {
     width: 160,
@@ -79,15 +79,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: spacing.xl,
+    marginBottom: spacing.xxxxl,
   },
   lottie: {
-    width: 160,
-    height: 160,
+    width: 200,
+    height: 200,
   },
   label: {
     fontSize: fs.md,
     fontWeight: fw.regular,
-    color: colors.muted,
+    color: colors.primary,
     textAlign: 'center',
     marginTop: spacing.xl,
   },
@@ -97,10 +98,11 @@ const styles = StyleSheet.create({
   footerLabel: {
     fontSize: fs.sm,
     color: colors.primary,
+    marginBottom: spacing.xs,
   },
   footerEmail: {
     fontSize: fs.sm,
-    fontWeight: fw.bold,
+    fontWeight: fw.semibold,
     color: colors.content,
   },
 });

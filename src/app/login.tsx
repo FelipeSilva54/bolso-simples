@@ -1,14 +1,22 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar';
+import * as NavigationBar from 'expo-navigation-bar';
 import { colors, fontSize as fs, fontWeight as fw, spacing, radius, lineHeight as lh } from '@/constants';
 import { Button } from '@/components/Button';
 import { useAuth } from '@/store/AuthContext';
 
 export default function LoginRoute() {
   const { loginAnonymous } = useAuth();
+  const insets = useSafeAreaInsets();
   const [loadingGoogle, setLoadingGoogle] = useState(false);
   const [loadingAnonymous, setLoadingAnonymous] = useState(false);
+
+  useEffect(() => {
+    NavigationBar.setBackgroundColorAsync('transparent');
+    NavigationBar.setButtonStyleAsync('dark');
+  }, []);
 
   const handleGoogleSignIn = async () => {
     setLoadingGoogle(true);
@@ -29,10 +37,11 @@ export default function LoginRoute() {
   };
 
   return (
-    <SafeAreaView style={styles.screen}>
+    <SafeAreaView style={styles.screen} edges={['top']}>
+      <StatusBar style="light" translucent backgroundColor="transparent" />
       <View style={styles.banner} />
 
-      <View style={styles.card}>
+      <View style={[styles.card, { paddingBottom: spacing.xxl + insets.bottom }]}>
         <Text style={styles.title}>Olá! Seja bem-vindo ao Bolso Simples!</Text>
 
         <View style={styles.gapSm} />
