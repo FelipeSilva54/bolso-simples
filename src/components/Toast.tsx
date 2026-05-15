@@ -44,7 +44,7 @@ export function Toast({ message, variant = 'default' }: ToastProps) {
       >
         <View style={styles.content}>
           {variant === 'default' && (
-            <CheckCircleIcon weight="fill" color={colors.white} size={fs.xl} style={styles.icon} />
+            <CheckCircleIcon weight="fill" color={colors.successLight} size={fs.xl} style={styles.icon} />
           )}
           <Text style={styles.text}>{message ?? ''}</Text>
         </View>

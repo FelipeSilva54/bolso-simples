@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -15,8 +15,8 @@ import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/con
 import { Header } from '@/components/Header';
 import { Button } from '@/components/Button';
 import { TextInput } from '@/components/TextInput';
-import { Toast } from '@/components/Toast';
 import { useAuth } from '@/store/AuthContext';
+import { useToast } from '@/store/ToastContext';
 import { useCategories } from '@/hooks/useCategories';
 import { CategoryType } from '@/types/category';
 
@@ -66,21 +66,9 @@ export function AddEditCategoryScreen() {
   const [selectedIcon, setSelectedIcon] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
-  const [toastVariant, setToastVariant] = useState<'success' | 'error'>('success');
-  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { showToast } = useToast();
 
   const isValid = name.trim().length > 0 && selectedIcon !== null && selectedColor !== null;
-
-  function showToast(message: string, variant: 'success' | 'error') {
-    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
-    setToastMessage(null);
-    setTimeout(() => {
-      setToastMessage(message);
-      setToastVariant(variant);
-      toastTimerRef.current = setTimeout(() => setToastMessage(null), 2500);
-    }, 50);
-  }
 
   async function handleSave() {
     if (!isValid || !user) return;
@@ -92,8 +80,8 @@ export function AddEditCategoryScreen() {
         color: selectedColor!,
         type,
       });
-      showToast('Categoria criada!', 'success');
-      setTimeout(() => router.back(), 1000);
+      router.back();
+      showToast('Categoria adicionada com sucesso');
     } catch {
       showToast('Erro ao salvar categoria', 'error');
       setSaving(false);
@@ -259,7 +247,6 @@ export function AddEditCategoryScreen() {
         </Button>
       </View>
 
-      <Toast message={toastMessage} variant={toastVariant} />
     </SafeAreaView>
   );
 }

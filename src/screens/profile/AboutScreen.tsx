@@ -30,7 +30,7 @@ export function AboutScreen() {
         onBackPress={() => router.back()}
       />
 
-      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         {/* Bloco do app */}
         <View style={styles.appBlock}>
           <View style={styles.iconContainer}>
@@ -101,6 +101,10 @@ export function AboutScreen() {
 
 const styles = StyleSheet.create({
   screen: {
+    flex: 1,
+    backgroundColor: colors.white,
+  },
+  scrollView: {
     flex: 1,
     backgroundColor: colors.background,
   },

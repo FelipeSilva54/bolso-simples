@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -19,9 +19,9 @@ import { EmptyState } from '@/components/EmptyState';
 import { FAB } from '@/components/FAB';
 import { Skeleton } from '@/components/Skeleton';
 import { WalletActionsSheet } from '@/components/WalletActionsSheet';
-import { Toast } from '@/components/Toast';
 import { useAuth } from '@/store/AuthContext';
 import { useNotifications } from '@/store/NotificationContext';
+import { useToast } from '@/store/ToastContext';
 import { useWallets } from '@/hooks/useWallets';
 import { useWalletsBalance } from '@/hooks/useWalletsBalance';
 import { deleteWallet } from '@/services/wallets';
@@ -53,11 +53,10 @@ export function HomeScreen() {
     };
   }, [unreadCount]);
   const { balanceByWallet, totalBalance } = useWalletsBalance(wallets);
+  const { showToast } = useToast();
   const [hideBalance, setHideBalance] = useState(false);
   const [selectedWallet, setSelectedWallet] = useState<SelectedWallet>(null);
   const [walletToDelete, setWalletToDelete] = useState<SelectedWallet>(null);
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
-  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -65,17 +64,12 @@ export function HomeScreen() {
     }, [])
   );
 
+  useEffect(() => {
+    if (walletToDelete === null) setStatusBarStyle('light');
+  }, [walletToDelete]);
+
   const displayName =
     user?.isAnonymous || !user?.displayName ? 'Visitante' : user.displayName;
-
-  function showToast(message: string) {
-    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
-    setToastMessage(null);
-    setTimeout(() => {
-      setToastMessage(message);
-      toastTimerRef.current = setTimeout(() => setToastMessage(null), 2500);
-    }, 50);
-  }
 
   function handleOptionsPress(id: string, name: string) {
     setSelectedWallet({ id, name });
@@ -104,7 +98,7 @@ export function HomeScreen() {
     setWalletToDelete(null);
     try {
       await deleteWallet(user.uid, wallet.id);
-      showToast('Carteira excluída');
+      showToast('Carteira excluída com sucesso');
     } catch {
       Alert.alert('Erro', 'Não foi possível excluir a carteira. Tente novamente.');
     }
@@ -202,7 +196,6 @@ export function HomeScreen() {
         onCancel={() => setWalletToDelete(null)}
       />
 
-      <Toast message={toastMessage} />
     </SafeAreaView>
   );
 }

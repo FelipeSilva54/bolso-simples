@@ -6,6 +6,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { AuthProvider } from '@/store/AuthContext';
 import { PreferencesProvider } from '@/store/PreferencesContext';
 import { NotificationProvider } from '@/store/NotificationContext';
+import { ToastProvider } from '@/store/ToastContext';
 import { PortalHost } from '@/components/PortalProvider';
 
 export default function RootLayout() {
@@ -21,12 +22,14 @@ export default function RootLayout() {
         <AuthProvider>
           <NotificationProvider>
             <PortalHost>
-              <Stack screenOptions={{ headerShown: false }}>
-                <Stack.Screen name="index" />
-                <Stack.Screen name="login" />
-                <Stack.Screen name="(tabs)" />
-                <Stack.Screen name="(stack)" />
-              </Stack>
+              <ToastProvider>
+                <Stack screenOptions={{ headerShown: false }}>
+                  <Stack.Screen name="index" />
+                  <Stack.Screen name="login" />
+                  <Stack.Screen name="(tabs)" />
+                  <Stack.Screen name="(stack)" />
+                </Stack>
+              </ToastProvider>
             </PortalHost>
           </NotificationProvider>
         </AuthProvider>

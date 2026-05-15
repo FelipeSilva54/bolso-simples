@@ -96,7 +96,7 @@ export function PreferencesScreen() {
         onBackPress={() => router.back()}
       />
 
-      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <View style={styles.section}>
           <PrefItem
             icon={Translate as IconComponent}
@@ -142,7 +142,7 @@ export function PreferencesScreen() {
                 <Text style={[styles.sheetRowLabel, isActive && styles.sheetRowLabelActive]}>
                   {option.label}
                 </Text>
-                {isActive && <Check size={18} color={colors.primary} weight="bold" />}
+                {isActive && <Check size={18} color={colors.success} weight="bold" />}
               </TouchableOpacity>
             );
           })}
@@ -165,15 +165,10 @@ export function PreferencesScreen() {
                 accessibilityLabel={`${currency.namePtBR}, ${currency.code}, ${currency.symbol}`}
                 accessibilityState={{ selected: isActive }}
               >
-                <View style={styles.currencyInfo}>
-                  <Text style={[styles.sheetRowLabel, isActive && styles.sheetRowLabelActive]}>
-                    {currency.namePtBR}
-                  </Text>
-                  <Text style={styles.currencyMeta}>
-                    {currency.code} • {currency.symbol}
-                  </Text>
-                </View>
-                {isActive && <Check size={18} color={colors.primary} weight="bold" />}
+                <Text style={[styles.sheetRowLabel, isActive && styles.sheetRowLabelActive]}>
+                  {currency.namePtBR}
+                </Text>
+                {isActive && <Check size={18} color={colors.success} weight="bold" />}
               </TouchableOpacity>
             );
           })}
@@ -213,7 +208,7 @@ export function PreferencesScreen() {
                   </View>
                 )}
                 {isActive && !option.disabled && (
-                  <Check size={18} color={colors.primary} weight="bold" />
+                  <Check size={18} color={colors.success} weight="bold" />
                 )}
               </TouchableOpacity>
             );
@@ -226,6 +221,10 @@ export function PreferencesScreen() {
 
 const styles = StyleSheet.create({
   screen: {
+    flex: 1,
+    backgroundColor: colors.white,
+  },
+  scrollView: {
     flex: 1,
     backgroundColor: colors.background,
   },
@@ -290,7 +289,7 @@ const styles = StyleSheet.create({
     minHeight: 44,
   },
   sheetRowActive: {
-    backgroundColor: colors.borderLight,
+    backgroundColor: colors.successLight,
   },
   sheetRowDisabled: {
     opacity: 0.5,
@@ -303,20 +302,10 @@ const styles = StyleSheet.create({
   },
   sheetRowLabelActive: {
     fontWeight: fw.semibold,
-    color: colors.primary,
+    color: colors.success,
   },
   sheetRowLabelDisabled: {
     color: colors.muted,
-  },
-
-  // Currency item extras
-  currencyInfo: {
-    flex: 1,
-    gap: 2,
-  },
-  currencyMeta: {
-    fontSize: fs.xs,
-    color: colors.subcontent,
   },
 
   // "Em breve" badge

@@ -42,6 +42,7 @@ import { useWalletsBalance } from '@/hooks/useWalletsBalance';
 import { useTransactions } from '@/hooks/useTransactions';
 import { useCategories } from '@/hooks/useCategories';
 import { updateTransaction, deleteTransaction } from '@/services/transactions';
+import { useToast } from '@/store/ToastContext';
 import { Transaction, TransactionStatus } from '@/types/transaction';
 import { Category } from '@/types/category';
 import { Period, PeriodMode } from '@/types/period';
@@ -215,6 +216,7 @@ export function WalletDetailScreen() {
   const [pickerStep, setPickerStep] = useState<'none' | 'customStart' | 'customEnd'>('none');
   const [pendingCustomStart, setPendingCustomStart] = useState<Date | null>(null);
 
+  const { showToast } = useToast();
   const [detailSheetVisible, setDetailSheetVisible] = useState(false);
   const [selectedTransactionId, setSelectedTransactionId] = useState<string | null>(null);
 
@@ -614,6 +616,7 @@ export function WalletDetailScreen() {
           if (!user || !walletId) return;
           await deleteTransaction(user.uid, walletId, id);
           handleDetailClose();
+          showToast('Transação excluída com sucesso');
         }}
         onEdit={(id) => {
           handleDetailClose();

@@ -29,6 +29,7 @@ import { addTransaction, updateTransaction, getTransaction } from '@/services/tr
 import { TransactionStatus } from '@/types/transaction';
 import { parseCurrency, formatCurrency } from '@/utils/currency';
 import { usePreferences } from '@/store/PreferencesContext';
+import { useToast } from '@/store/ToastContext';
 
 type TxType = 'expense' | 'income';
 type PaymentType = 'cash' | 'installment' | 'recurring';
@@ -93,6 +94,7 @@ export function AddEditTransactionScreen() {
     recurrence?: string;
   }>({});
 
+  const { showToast } = useToast();
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -229,6 +231,9 @@ export function AddEditTransactionScreen() {
           );
         }
         await Promise.all(promises);
+        router.back();
+        showToast('Transação adicionada com sucesso');
+        return;
       } else {
         await addTransaction(user.uid, walletId, {
           type,
@@ -241,6 +246,11 @@ export function AddEditTransactionScreen() {
           recurrenceType: paymentType === 'recurring' ? (recurrenceType ?? undefined) : undefined,
           date,
         });
+        if (!isEditing) {
+          router.back();
+          showToast('Transação adicionada com sucesso');
+          return;
+        }
       }
       router.back();
     } catch {
@@ -425,6 +435,7 @@ export function AddEditTransactionScreen() {
           {isEditing ? 'Salvar alterações' : 'Salvar valor'}
         </Button>
       </View>
+
     </SafeAreaView>
   );
 }

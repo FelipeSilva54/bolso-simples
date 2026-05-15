@@ -46,7 +46,7 @@ export default function Index() {
           loop
           style={styles.lottie}
         />
-        <Text style={styles.label}>Estamos sincronizando os seus dados, aguarde alguns segundos...</Text>
+        <Text style={styles.label}>Estamos sincronizando os seus dados,{'\n'}aguarde alguns segundos...</Text>
       </View>
 
       <View style={[styles.footer, { paddingBottom: insets.bottom + spacing.xl }]}>

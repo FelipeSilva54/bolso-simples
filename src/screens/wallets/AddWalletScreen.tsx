@@ -21,6 +21,7 @@ import { InfoAlert } from '@/components/InfoAlert';
 import { useWallets } from '@/hooks/useWallets';
 import { formatCurrency } from '@/utils/currency';
 import { usePreferences } from '@/store/PreferencesContext';
+import { useToast } from '@/store/ToastContext';
 
 const COLOR_PALETTE = [...walletColors] as string[];
 
@@ -32,6 +33,7 @@ export function AddWalletScreen() {
   const [name, setName] = useState('');
   const [balanceDigits, setBalanceDigits] = useState('');
   const [selectedColor, setSelectedColor] = useState<string>(walletColors[0]);
+  const { showToast } = useToast();
   const [saving, setSaving] = useState(false);
 
   const balanceCents = parseInt(balanceDigits || '0', 10);
@@ -54,6 +56,7 @@ export function AddWalletScreen() {
         initialBalance: previewBalance,
       });
       router.back();
+      showToast('Carteira adicionada com sucesso');
     } catch {
       Alert.alert('Erro', 'Não foi possível criar a carteira. Tente novamente.');
     } finally {
@@ -165,6 +168,7 @@ export function AddWalletScreen() {
           Salvar carteira
         </Button>
       </View>
+
     </SafeAreaView>
   );
 }

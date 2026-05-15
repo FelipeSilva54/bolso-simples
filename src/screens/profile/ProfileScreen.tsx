@@ -31,7 +31,7 @@ import { ListItem } from '@/components/ListItem';
 import { Dialog } from '@/components/Dialog';
 import { useAuth } from '@/store/AuthContext';
 import { useNotifications } from '@/store/NotificationContext';
-import { Toast } from '@/components/Toast';
+import { useToast } from '@/store/ToastContext';
 import { clearAllUserData } from '@/services/wallets';
 
 type IconComponent = React.ComponentType<{ size?: number; color?: string; weight?: string }>;
@@ -57,12 +57,11 @@ export function ProfileScreen() {
       );
     };
   }, [unreadCount]);
+  const { showToast } = useToast();
   const [logoutDialogVisible, setLogoutDialogVisible] = useState(false);
   const [clearDataDialogVisible, setClearDataDialogVisible] = useState(false);
   const [deleteAccountVisible, setDeleteAccountVisible] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
-  const [toastVariant, setToastVariant] = useState<'success' | 'error'>('success');
   const [clearing, setClearing] = useState(false);
 
   useFocusEffect(
@@ -87,15 +86,10 @@ export function ProfileScreen() {
     try {
       await clearAllUserData(user.uid);
       setClearDataDialogVisible(false);
-      setToastMessage('Histórico apagado com sucesso');
-      setToastVariant('success');
-      setTimeout(() => {
-        router.replace('/(tabs)');
-        setToastMessage(null);
-      }, 1000);
+      router.replace('/(tabs)');
+      showToast('Dados limpados com sucesso');
     } catch {
-      setToastMessage('Não foi possível apagar os dados. Tente novamente.');
-      setToastVariant('error');
+      showToast('Não foi possível apagar os dados. Tente novamente.', 'error');
       setClearing(false);
     }
   };
@@ -105,8 +99,7 @@ export function ProfileScreen() {
     try {
       await deleteAccount();
     } catch {
-      setToastMessage('Não foi possível excluir a conta. Tente novamente.');
-      setToastVariant('error');
+      showToast('Não foi possível excluir a conta. Tente novamente.', 'error');
       setDeleting(false);
     }
   };
@@ -309,7 +302,6 @@ export function ProfileScreen() {
         onCancel={() => setDeleteAccountVisible(false)}
       />
 
-      <Toast message={toastMessage} variant={toastVariant} />
     </SafeAreaView>
   );
 }
