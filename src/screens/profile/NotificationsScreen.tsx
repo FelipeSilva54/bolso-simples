@@ -15,15 +15,17 @@ import { Header } from '@/components/Header';
 import { NotificationItem } from '@/components/NotificationItem';
 import { useNotifications } from '@/store/NotificationContext';
 import { Notification } from '@/types/notification';
+import { useLanguage } from '@/store/LanguageContext';
 
 function EmptyNotifications() {
+  const { t } = useLanguage();
   return (
     <View style={styles.empty}>
       <View style={styles.emptyIconCircle}>
         <Bell size={40} color={colors.muted} weight="regular" />
       </View>
-      <Text style={styles.emptyTitle}>Nenhuma notificação</Text>
-      <Text style={styles.emptySubtitle}>Você está em dia com tudo por aqui.</Text>
+      <Text style={styles.emptyTitle}>{t('notifications.emptyTitle')}</Text>
+      <Text style={styles.emptySubtitle}>{t('notifications.emptySubtitle')}</Text>
     </View>
   );
 }
@@ -31,6 +33,7 @@ function EmptyNotifications() {
 export function NotificationsScreen() {
   const router = useRouter();
   const { notifications, markAsRead } = useNotifications();
+  const { t } = useLanguage();
 
   const sorted = [...notifications].sort(
     (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
@@ -51,7 +54,7 @@ export function NotificationsScreen() {
       <StatusBar style="dark" />
 
       <Header
-        title="Notificações"
+        title={t('notifications.title')}
         variant="screen"
         theme="light"
         showBackButton

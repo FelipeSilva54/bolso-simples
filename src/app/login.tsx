@@ -6,9 +6,11 @@ import * as NavigationBar from 'expo-navigation-bar';
 import { colors, fontSize as fs, fontWeight as fw, spacing, radius, lineHeight as lh } from '@/constants';
 import { Button } from '@/components/Button';
 import { useAuth } from '@/store/AuthContext';
+import { useLanguage } from '@/store/LanguageContext';
 
 export default function LoginRoute() {
   const { loginAnonymous } = useAuth();
+  const { t } = useLanguage();
   const insets = useSafeAreaInsets();
   const [loadingGoogle, setLoadingGoogle] = useState(false);
   const [loadingAnonymous, setLoadingAnonymous] = useState(false);
@@ -42,17 +44,17 @@ export default function LoginRoute() {
       <View style={styles.banner} />
 
       <View style={[styles.card, { paddingBottom: spacing.xxl + insets.bottom }]}>
-        <Text style={styles.title}>Olá! Seja bem-vindo ao Bolso Simples!</Text>
+        <Text style={styles.title}>{t('login.title')}</Text>
 
         <View style={styles.gapSm} />
 
         <Text style={styles.subtitle}>
-          Seu app de bolso para finanças{' '}
-          <Text style={styles.bold}>100% brasileiro</Text>
+          {t('login.subtitleBase')}
+          <Text style={styles.bold}>{t('login.featureBrazilian')}</Text>
           {', '}
-          <Text style={styles.bold}>gratuito</Text>
-          {' e '}
-          <Text style={styles.bold}>sem anúncios.</Text>
+          <Text style={styles.bold}>{t('login.featureFree')}</Text>
+          {t('login.and')}
+          <Text style={styles.bold}>{t('login.featureNoAds')}</Text>
         </Text>
 
         <View style={styles.gapXl} />
@@ -66,16 +68,16 @@ export default function LoginRoute() {
             <Image
               source={require('@/assets/images/Logo-Google.png')}
               style={styles.googleIcon}
-              accessibilityLabel="Logo do Google"
+              accessibilityLabel={t('common.googleLogo')}
             />
           }
         >
-          Entrar com o Google
+          {t('login.signInGoogle')}
         </Button>
 
         <View style={styles.separator}>
           <View style={styles.separatorLine} />
-          <Text style={styles.separatorText}>ou</Text>
+          <Text style={styles.separatorText}>{t('common.or')}</Text>
           <View style={styles.separatorLine} />
         </View>
 
@@ -85,7 +87,7 @@ export default function LoginRoute() {
           loading={loadingAnonymous}
           disabled={loadingGoogle}
         >
-          Entrar sem cadastro
+          {t('login.signInAnonymous')}
         </Button>
       </View>
     </SafeAreaView>

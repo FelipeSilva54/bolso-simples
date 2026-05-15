@@ -13,6 +13,7 @@ import { Dialog } from '@/components/Dialog';
 import { formatCurrency } from '@/utils/currency';
 import { usePreferences } from '@/store/PreferencesContext';
 import { formatDate } from '@/utils/date';
+import { useLanguage } from '@/store/LanguageContext';
 
 type TxStatus = 'paid' | 'unpaid' | 'received' | 'unreceived';
 
@@ -43,16 +44,6 @@ function toggledStatus(type: 'expense' | 'income', current: TxStatus): TxStatus 
   return current === 'received' ? 'unreceived' : 'received';
 }
 
-function statusToggleLabel(type: 'expense' | 'income'): string {
-  return type === 'expense' ? 'Já paguei' : 'Já recebi';
-}
-
-function statusBadge(status: TxStatus) {
-  if (status === 'paid') return <StatusBadge variant="success" label="PAGO" />;
-  if (status === 'unpaid') return <StatusBadge variant="danger" label="NÃO PAGO" />;
-  if (status === 'received') return <StatusBadge variant="success" label="RECEBIDO" />;
-  return <StatusBadge variant="danger" label="NÃO RECEBIDO" />;
-}
 
 export function TransactionDetailSheet({
   visible,
@@ -63,7 +54,19 @@ export function TransactionDetailSheet({
   onStatusChange,
 }: TransactionDetailSheetProps) {
   const { preferences } = usePreferences();
+  const { t } = useLanguage();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
+  function statusToggleLabel(type: 'expense' | 'income'): string {
+    return type === 'expense' ? t('transaction.alreadyPaid') : t('transaction.alreadyReceived');
+  }
+
+  function statusBadge(status: TxStatus) {
+    if (status === 'paid') return <StatusBadge variant="success" label={t('transaction.detailBadgePaid')} />;
+    if (status === 'unpaid') return <StatusBadge variant="danger" label={t('transaction.detailBadgeNotPaid')} />;
+    if (status === 'received') return <StatusBadge variant="success" label={t('transaction.detailBadgeReceived')} />;
+    return <StatusBadge variant="danger" label={t('transaction.detailBadgeNotReceived')} />;
+  }
 
   return (
     <BottomSheet visible={visible} onClose={onClose}>
@@ -111,12 +114,12 @@ export function TransactionDetailSheet({
             {/* 4. Linhas de informação */}
             <View style={styles.infoSection}>
               <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>Adicionada em:</Text>
+                <Text style={styles.infoLabel}>{t('transaction.detailAddedOn')}</Text>
                 <Text style={styles.infoValue}>{formatDate(transaction.date)}</Text>
               </View>
 
               <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>Tipo de pagamento:</Text>
+                <Text style={styles.infoLabel}>{t('transaction.detailPaymentType')}</Text>
                 {transaction.isRecurring
                   ? <PaymentTypeBadge variant="recurring" />
                   : transaction.installmentTotal != null && transaction.installmentTotal > 1
@@ -126,7 +129,7 @@ export function TransactionDetailSheet({
               </View>
 
               <View style={[styles.infoRow, styles.infoRowLast]}>
-                <Text style={styles.infoLabel}>Status:</Text>
+                <Text style={styles.infoLabel}>{t('transaction.detailStatus')}</Text>
                 {statusBadge(transaction.status)}
               </View>
             </View>
@@ -157,11 +160,11 @@ export function TransactionDetailSheet({
           {/* Footer — InfoAlert + botões */}
           <View style={styles.footer}>
             <InfoAlert>
-              {'Despesas '}
-              <Text style={styles.infoTextBold}>não pagas</Text>
-              {' e receitas '}
-              <Text style={styles.infoTextBold}>não recebidas</Text>
-              {' não são consideradas no saldo do mês.'}
+              {t('transaction.detailInfoPrefix')}
+              <Text style={styles.infoTextBold}>{t('transaction.detailInfoBold1')}</Text>
+              {t('transaction.detailInfoMiddle')}
+              <Text style={styles.infoTextBold}>{t('transaction.detailInfoBold2')}</Text>
+              {t('transaction.detailInfoSuffix')}
             </InfoAlert>
 
             <View style={styles.actions}>
@@ -172,7 +175,7 @@ export function TransactionDetailSheet({
                   leftIcon={<Trash size={18} color={colors.danger} weight="fill" />}
                   onPress={() => setShowDeleteDialog(true)}
                 >
-                  Excluir
+                  {t('transaction.detailDeleteButton')}
                 </Button>
               </View>
               <View style={styles.actionItem}>
@@ -182,7 +185,7 @@ export function TransactionDetailSheet({
                   leftIcon={<PencilSimple size={18} color={colors.content} weight="fill" />}
                   onPress={() => onEdit(transaction.id)}
                 >
-                  Editar
+                  {t('transaction.detailEditButton')}
                 </Button>
               </View>
             </View>
@@ -194,10 +197,10 @@ export function TransactionDetailSheet({
       {transaction != null && (
         <Dialog
           visible={showDeleteDialog}
-          title="Excluir transação?"
-          description="Essa ação não pode ser desfeita. A transação será removida permanentemente."
-          confirmLabel="Excluir"
-          cancelLabel="Cancelar"
+          title={t('transaction.detailDeleteTitle')}
+          description={t('transaction.detailDeleteDescription')}
+          confirmLabel={t('transaction.detailDeleteButton')}
+          cancelLabel={t('common.cancel')}
           onCancel={() => setShowDeleteDialog(false)}
           onConfirm={() => {
             onDelete(transaction.id);

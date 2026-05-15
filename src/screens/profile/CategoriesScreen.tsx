@@ -23,6 +23,7 @@ import { EmptyState } from '@/components/EmptyState';
 import { Skeleton } from '@/components/Skeleton';
 import { useCategories } from '@/hooks/useCategories';
 import { Category, CategoryType } from '@/types/category';
+import { useLanguage } from '@/store/LanguageContext';
 
 type IconComponent = React.ComponentType<{ size?: number; color?: string; weight?: string }>;
 
@@ -43,6 +44,7 @@ function normalize(text: string): string {
 export function CategoriesScreen() {
   const router = useRouter();
   const { categories, loading } = useCategories();
+  const { t } = useLanguage();
 
   const [activeTab, setActiveTab] = useState<CategoryType>('expense');
   const [searchMode, setSearchMode] = useState(false);
@@ -140,7 +142,7 @@ export function CategoriesScreen() {
         />
       ) : (
         <Header
-          title="Categorias"
+          title={t('categories.title')}
           variant="screen"
           theme="light"
           showBackButton
@@ -185,7 +187,7 @@ export function CategoriesScreen() {
               onPress={() => handleTabChange('expense')}
               accessibilityRole="tab"
               accessibilityState={{ selected: activeTab === 'expense' }}
-              accessibilityLabel="Despesa"
+              accessibilityLabel={t('categories.expenseTab')}
               style={styles.tabItem}
             >
               <Text
@@ -194,7 +196,7 @@ export function CategoriesScreen() {
                   activeTab === 'expense' && styles.tabLabelActive,
                 ]}
               >
-                Despesa
+                {t('categories.expenseTab')}
               </Text>
             </Pressable>
 
@@ -202,7 +204,7 @@ export function CategoriesScreen() {
               onPress={() => handleTabChange('income')}
               accessibilityRole="tab"
               accessibilityState={{ selected: activeTab === 'income' }}
-              accessibilityLabel="Receita"
+              accessibilityLabel={t('categories.incomeTab')}
               style={styles.tabItem}
             >
               <Text
@@ -211,7 +213,7 @@ export function CategoriesScreen() {
                   activeTab === 'income' && styles.tabLabelActive,
                 ]}
               >
-                Receita
+                {t('categories.incomeTab')}
               </Text>
             </Pressable>
           </View>
@@ -230,8 +232,8 @@ export function CategoriesScreen() {
         ) : filteredCategories.length === 0 ? (
           <EmptyState
             image={require('@/assets/images/MobilePay.png')}
-            title={emptyTitle(activeTab, searchText)}
-            subtitle={emptySubtitle(searchText)}
+            title={emptyTitle(activeTab, searchText, t)}
+            subtitle={emptySubtitle(searchText, t)}
           />
         ) : (
           <ScrollView
@@ -268,8 +270,8 @@ export function CategoriesScreen() {
         )}
 
         <FAB
-          label="Adicionar categoria"
-          accessibilityLabel="Adicionar categoria"
+          label={t('categories.addButton')}
+          accessibilityLabel={t('categories.addButton')}
           onPress={() => router.push('/(stack)/add-category')}
           style={{
             position: 'absolute',
@@ -301,16 +303,16 @@ function filterCategories(
   return byType.filter((c) => normalize(c.name).includes(needle));
 }
 
-function emptyTitle(type: CategoryType, search: string): string {
+function emptyTitle(type: CategoryType, search: string, t: (key: string) => string): string {
   if (search.trim().length > 0) {
-    return `Nenhuma categoria encontrada para "${search.trim()}"`;
+    return `${t('categories.emptyTitleSearchPrefix')}"${search.trim()}"`;
   }
-  return `Nenhuma categoria de ${type === 'expense' ? 'despesa' : 'receita'} cadastrada`;
+  return type === 'expense' ? t('categories.emptyTitleExpense') : t('categories.emptyTitleIncome');
 }
 
-function emptySubtitle(search: string): string | undefined {
+function emptySubtitle(search: string, t: (key: string) => string): string | undefined {
   if (search.trim().length > 0) return undefined;
-  return 'Toque no botão abaixo para adicionar uma nova categoria.';
+  return t('categories.emptySubtitle');
 }
 
 const styles = StyleSheet.create({

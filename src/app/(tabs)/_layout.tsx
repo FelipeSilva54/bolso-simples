@@ -1,8 +1,10 @@
 import { Tabs } from 'expo-router';
 import { Wallet, User } from 'phosphor-react-native';
 import { colors, fontSize as fs } from '@/constants';
+import { useLanguage } from '@/store/LanguageContext';
 
 export default function TabLayout() {
+  const { t } = useLanguage();
   return (
     <Tabs
       screenOptions={{
@@ -21,7 +23,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Carteiras',
+          title: t('tabs.wallets'),
           tabBarIcon: ({ color, focused }) => (
             // `color` é calculado automaticamente pelo React Navigation
             // com base em tabBarActiveTintColor / tabBarInactiveTintColor
@@ -36,7 +38,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="profile"
         options={{
-          title: 'Perfil',
+          title: t('tabs.profile'),
           tabBarIcon: ({ color, focused }) => (
             <User
               size={28}

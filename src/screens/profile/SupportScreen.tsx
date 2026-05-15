@@ -17,6 +17,7 @@ import { Copy } from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
 import { Header } from '@/components/Header';
 import { Button } from '@/components/Button';
+import { useLanguage } from '@/store/LanguageContext';
 
 const PIX_KEY = 'seuemail@exemplo.com';
 
@@ -27,6 +28,7 @@ export function SupportScreen() {
   const [selectedPreset, setSelectedPreset] = useState<number | null>(null);
   const [customValue, setCustomValue] = useState('');
   const [copied, setCopied] = useState(false);
+  const { t } = useLanguage();
 
   const handleSelectPreset = (value: number) => {
     setSelectedPreset(value);
@@ -56,7 +58,7 @@ export function SupportScreen() {
         : parseInt(customValue, 10) / 100;
 
     if (!rawValue || rawValue < 1) {
-      Alert.alert('Valor inválido', 'Escolha ou digite um valor para continuar.');
+      Alert.alert(t('support.invalidValueTitle'), t('support.invalidValueMsg'));
       return;
     }
 
@@ -73,7 +75,7 @@ export function SupportScreen() {
       <StatusBar style="dark" backgroundColor={colors.white} />
 
       <Header
-        title="Apoie o app"
+        title={t('support.title')}
         variant="screen"
         theme="light"
         showBackButton
@@ -88,16 +90,13 @@ export function SupportScreen() {
         {/* Seção 1 — Hero */}
         <View style={styles.hero}>
           <Image source={require('@/assets/images/Support-Image.png')} style={styles.heroImage} />
-          <Text style={styles.heroTitle}>O Bolso Simples é gratuito e sem anúncios</Text>
-          <Text style={styles.heroSubtitle}>
-            Se o app te ajuda a organizar a vida financeira, considere contribuir com qualquer
-            valor. Isso mantém o app vivo e em evolução.
-          </Text>
+          <Text style={styles.heroTitle}>{t('support.heroTitle')}</Text>
+          <Text style={styles.heroSubtitle}>{t('support.heroSubtitle')}</Text>
         </View>
 
         {/* Seção 2 — Seletor de valor */}
         <View style={styles.section}>
-          <Text style={styles.sectionLabel}>Escolha ou digite um valor</Text>
+          <Text style={styles.sectionLabel}>{t('support.chooseValue')}</Text>
 
           <View style={styles.chipsRow}>
             {PRESET_VALUES.map((value) => (
@@ -107,7 +106,7 @@ export function SupportScreen() {
                 onPress={() => handleSelectPreset(value)}
                 activeOpacity={0.7}
                 accessibilityRole="button"
-                accessibilityLabel={`Contribuir com R$ ${value}`}
+                accessibilityLabel={`${t('support.contributeA11yPrefix')}${value}`}
               >
                 <Text style={[styles.chipText, selectedPreset === value && styles.chipTextSelected]}>
                   R$ {value}
@@ -120,7 +119,7 @@ export function SupportScreen() {
             <Text style={styles.inputPrefix}>R$</Text>
             <TextInput
               style={styles.input}
-              placeholder="Ou digite outro valor"
+              placeholder={t('support.otherValuePlaceholder')}
               placeholderTextColor={colors.muted}
               keyboardType="numeric"
               value={formatBRL(customValue)}
@@ -132,12 +131,10 @@ export function SupportScreen() {
 
         {/* Seção 3 — Chave Pix */}
         <View style={styles.pixCard}>
-          <Text style={styles.pixLabel}>CHAVE PIX</Text>
+          <Text style={styles.pixLabel}>{t('support.pixLabel')}</Text>
           <Text style={styles.pixValue}>{PIX_KEY}</Text>
         </View>
-        <Text style={styles.pixHint}>
-          O Pix é gerado com o valor que você escolheu. Basta copiar e colar no seu banco.
-        </Text>
+        <Text style={styles.pixHint}>{t('support.pixHint')}</Text>
 
         {/* Seção 4 — Botão */}
         <Button
@@ -145,9 +142,9 @@ export function SupportScreen() {
           size="lg"
           onPress={handleCopyPix}
           leftIcon={<Copy size={20} color={colors.white} weight="regular" />}
-          accessibilityLabel="Copiar chave Pix com valor para contribuição"
+          accessibilityLabel={t('support.copyPixA11y')}
         >
-          {copied ? 'Copiado! ✓' : 'Copiar Pix com valor'}
+          {copied ? t('support.copied') : t('support.copyPix')}
         </Button>
       </ScrollView>
     </SafeAreaView>

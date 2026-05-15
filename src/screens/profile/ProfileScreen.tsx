@@ -32,6 +32,7 @@ import { Dialog } from '@/components/Dialog';
 import { useAuth } from '@/store/AuthContext';
 import { useNotifications } from '@/store/NotificationContext';
 import { useToast } from '@/store/ToastContext';
+import { useLanguage } from '@/store/LanguageContext';
 import { clearAllUserData } from '@/services/wallets';
 
 type IconComponent = React.ComponentType<{ size?: number; color?: string; weight?: string }>;
@@ -40,6 +41,7 @@ export function ProfileScreen() {
   const router = useRouter();
   const { user, loginWithGoogle, logout, deleteAccount } = useAuth();
   const { unreadCount } = useNotifications();
+  const { t } = useLanguage();
 
   const BellWithBadge = useMemo<IconComponent>(() => {
     return function BellWithBadgeIcon({ size, color, weight }) {
@@ -71,7 +73,7 @@ export function ProfileScreen() {
   );
 
   const displayName =
-    user?.isAnonymous || !user?.displayName ? 'Visitante' : user.displayName;
+    user?.isAnonymous || !user?.displayName ? t('common.visitor') : user.displayName;
   const avatarInitial = user?.displayName
     ? user.displayName.charAt(0).toUpperCase()
     : 'V';
@@ -87,9 +89,9 @@ export function ProfileScreen() {
       await clearAllUserData(user.uid);
       setClearDataDialogVisible(false);
       router.replace('/(tabs)');
-      showToast('Dados limpados com sucesso');
+      showToast(t('profile.clearDataSuccess'));
     } catch {
-      showToast('Não foi possível apagar os dados. Tente novamente.', 'error');
+      showToast(t('profile.clearDataError'), 'error');
       setClearing(false);
     }
   };
@@ -99,28 +101,25 @@ export function ProfileScreen() {
     try {
       await deleteAccount();
     } catch {
-      showToast('Não foi possível excluir a conta. Tente novamente.', 'error');
+      showToast(t('profile.deleteAccountError'), 'error');
       setDeleting(false);
     }
   };
 
   const handleShare = async () => {
-    await Share.share({
-      message:
-        'Conheça o Bolso Simples, o app de finanças 100% brasileiro, gratuito e sem anúncios!',
-    });
+    await Share.share({ message: t('profile.shareMessage') });
   };
 
   const deleteAccountDescription = user?.isAnonymous
-    ? 'Ao excluir sua conta, todas as suas carteiras, transações e categorias serão apagadas permanentemente. Como você está usando o app sem cadastro, não será possível recuperar essas informações depois.'
-    : 'Ao excluir sua conta, todas as suas carteiras, transações e categorias serão apagadas permanentemente. Essa ação não pode ser desfeita e não afeta sua conta Google.';
+    ? t('profile.deleteAccountDialogDescAnonymous')
+    : t('profile.deleteAccountDialogDescLoggedIn');
 
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
     <StatusBar style="dark"/>
 
       <Header
-        title={`Olá, ${displayName}`}
+        title={`${t('common.greetingPrefix')}${displayName}`}
         variant="home"
         theme="light"
         rightIcon={BellWithBadge}
@@ -139,13 +138,13 @@ export function ProfileScreen() {
             onPress={() => router.push('/(stack)/edit-profile' as never)}
             activeOpacity={0.7}
             accessibilityRole="button"
-            accessibilityLabel="Editar perfil"
+            accessibilityLabel={t('profile.editProfile')}
           >
             {user?.photoURL ? (
               <Image
                 source={{ uri: user.photoURL }}
                 style={styles.avatar}
-                accessibilityLabel="Foto de perfil"
+                accessibilityLabel={t('profile.profilePhoto')}
               />
             ) : (
               <View style={styles.avatarPlaceholder}>
@@ -170,7 +169,7 @@ export function ProfileScreen() {
               source={require('@/assets/images/Logo-Icon.png')}
               style={styles.anonymousImage}
               resizeMode="contain"
-              accessibilityLabel="Ilustração de perfil"
+              accessibilityLabel={t('profile.profileIllustration')}
             />
             <Button
               variant="outlined"
@@ -179,88 +178,88 @@ export function ProfileScreen() {
                 <Image
                   source={require('@/assets/images/Logo-Google.png')}
                   style={styles.googleLogo}
-                  accessibilityLabel="Logo do Google"
+                  accessibilityLabel={t('common.googleLogo')}
                 />
               }
             >
-              Entrar com o Google
+              {t('profile.loginWithGoogle')}
             </Button>
           </View>
         )}
 
         {/* Seção: Seu app */}
         <View>
-          <Text style={styles.sectionLabel}>Seu app</Text>
+          <Text style={styles.sectionLabel}>{t('profile.sectionApp')}</Text>
           <ListItem
             icon={List as IconComponent}
-            label="Categorias"
+            label={t('profile.categories')}
             onPress={() => router.push('/(stack)/categories' as never)}
-            accessibilityLabel="Categorias"
+            accessibilityLabel={t('profile.categories')}
           />
           <ListItem
             icon={Heart as IconComponent}
-            label="Preferências"
+            label={t('profile.preferences')}
             onPress={() => router.push('/(stack)/preferences' as never)}
-            accessibilityLabel="Preferências"
+            accessibilityLabel={t('profile.preferences')}
           />
         </View>
 
         {/* Seção: Informações e ajuda */}
         <View>
-          <Text style={styles.sectionLabel}>Informações e ajuda</Text>
+          <Text style={styles.sectionLabel}>{t('profile.sectionHelp')}</Text>
           <ListItem
             icon={Info as IconComponent}
-            label="Sobre"
+            label={t('profile.about')}
             onPress={() => router.push('/(stack)/about' as never)}
-            accessibilityLabel="Sobre"
+            accessibilityLabel={t('profile.about')}
           />
           <ListItem
             icon={ShareNetwork as IconComponent}
-            label="Compartilhar com um amigo"
+            label={t('profile.share')}
             onPress={handleShare}
-            accessibilityLabel="Compartilhar com um amigo"
+            accessibilityLabel={t('profile.share')}
           />
           <ListItem
             icon={Star as IconComponent}
-            label="Avaliar aplicativo"
+            label={t('profile.rate')}
             onPress={() => router.push('/(stack)/rate' as never)}
-            accessibilityLabel="Avaliar aplicativo"
+            accessibilityLabel={t('profile.rate')}
           />
           <ListItem
             icon={SignOutIcon as IconComponent}
-            label="Sair do aplicativo"
+            label={t('profile.logout')}
             onPress={handleLogout}
-            accessibilityLabel="Sair do aplicativo"
+            accessibilityLabel={t('profile.logout')}
           />
         </View>
 
         {/* Seção: Outros */}
         <View>
-          <Text style={styles.sectionLabel}>Outros</Text>
+          <Text style={styles.sectionLabel}>{t('profile.sectionOther')}</Text>
           <TouchableOpacity
             onPress={() => router.push('/(stack)/support' as never)}
             activeOpacity={0.7}
             accessibilityRole="button"
-            accessibilityLabel="Apoie o Bolso Simples"
+            accessibilityLabel={t('profile.support')}
             style={styles.listItem}
           >
             <HandHeart size={24} color={colors.success} weight="regular" />
             <Text style={[styles.listItemLabel, styles.listItemLabelSuccess]} numberOfLines={1}>
-              Apoie o Bolso Simples
+              {t('profile.support')}
             </Text>
             <CaretRight size={16} color={colors.muted} weight="regular" />
           </TouchableOpacity>
           <ListItem
             icon={BroomIcon as IconComponent}
-            label="Limpar dados"
+            label={t('profile.clearData')}
             onPress={handleClearHistory}
-            accessibilityLabel="Limpar dados"
+            accessibilityLabel={t('profile.clearData')}
           />
           <ListItem
             icon={TrashIcon as IconComponent}
-            label="Excluir conta"
+            label={t('profile.deleteAccount')}
             onPress={() => setDeleteAccountVisible(true)}
-            accessibilityLabel="Excluir conta"
+            accessibilityLabel={t('profile.deleteAccount')}
             color={colors.danger}
           />
         </View>
@@ -268,22 +267,22 @@ export function ProfileScreen() {
 
       <Dialog
         visible={logoutDialogVisible}
-        title="Desconectar"
-        description="Tem certeza que deseja sair?"
-        confirmLabel="Sair"
-        cancelLabel="Cancelar"
+        title={t('profile.logoutDialogTitle')}
+        description={t('profile.logoutDialogDescription')}
+        confirmLabel={t('profile.logoutDialogConfirm')}
+        cancelLabel={t('common.cancel')}
         onConfirm={logout}
         onCancel={() => setLogoutDialogVisible(false)}
       />
 
       <Dialog
         visible={clearDataDialogVisible}
-        title="Limpar dados?"
-        description="Todas as suas carteiras, transações e categorias serão removidas permanentemente. Essa ação não tem volta."
-        confirmLabel="Limpar tudo"
-        cancelLabel="Cancelar"
+        title={t('profile.clearDataDialogTitle')}
+        description={t('profile.clearDataDialogDescription')}
+        confirmLabel={t('profile.clearDataDialogConfirm')}
+        cancelLabel={t('common.cancel')}
         requireConfirmation={true}
-        confirmationLabel="Estou ciente e desejo continuar"
+        confirmationLabel={t('common.confirmAware')}
         loading={clearing}
         onConfirm={handleConfirmClearData}
         onCancel={() => setClearDataDialogVisible(false)}
@@ -291,12 +290,12 @@ export function ProfileScreen() {
 
       <Dialog
         visible={deleteAccountVisible}
-        title="Excluir conta"
+        title={t('profile.deleteAccountDialogTitle')}
         description={deleteAccountDescription}
-        confirmLabel="Excluir conta"
-        cancelLabel="Cancelar"
+        confirmLabel={t('profile.deleteAccountDialogConfirm')}
+        cancelLabel={t('common.cancel')}
         requireConfirmation={true}
-        confirmationLabel="Estou ciente e desejo continuar"
+        confirmationLabel={t('common.confirmAware')}
         loading={deleting}
         onConfirm={handleConfirmDeleteAccount}
         onCancel={() => setDeleteAccountVisible(false)}

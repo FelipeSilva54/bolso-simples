@@ -9,6 +9,7 @@ import {
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { CalendarBlank } from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing } from '@/constants';
+import { useLanguage } from '@/store/LanguageContext';
 
 type DateInputProps = {
   label?: string;
@@ -20,8 +21,10 @@ type DateInputProps = {
   accessibilityLabel?: string;
 };
 
-// Retorna "Ontem", "Hoje", "Amanhã" ou dd/mm/aaaa
-function formatDateLabel(date: Date): string {
+function formatDateLabel(
+  date: Date,
+  labels: { today: string; yesterday: string; tomorrow: string },
+): string {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -30,9 +33,9 @@ function formatDateLabel(date: Date): string {
 
   const diff = (target.getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
 
-  if (diff === 0) return 'Hoje';
-  if (diff === -1) return 'Ontem';
-  if (diff === 1) return 'Amanhã';
+  if (diff === 0) return labels.today;
+  if (diff === -1) return labels.yesterday;
+  if (diff === 1) return labels.tomorrow;
 
   const day = String(date.getDate()).padStart(2, '0');
   const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -49,8 +52,15 @@ export function DateInput({
   disabled = false,
   accessibilityLabel,
 }: DateInputProps) {
+  const { t } = useLanguage();
   const [showPicker, setShowPicker] = useState(false);
   const [focused, setFocused] = useState(false);
+
+  const dateLabels = {
+    today: t('date.today'),
+    yesterday: t('date.yesterday'),
+    tomorrow: t('date.tomorrow'),
+  };
 
   const hasError = error != null && error.length > 0;
   const borderColor = hasError ? colors.danger : focused ? colors.content : colors.border;
@@ -81,7 +91,7 @@ export function DateInput({
         onPress={handlePress}
         activeOpacity={0.7}
         accessibilityRole="button"
-        accessibilityLabel={accessibilityLabel ?? label ?? 'Selecionar data'}
+        accessibilityLabel={accessibilityLabel ?? label ?? t('date.selectDate')}
         style={[
           styles.input,
           {
@@ -91,7 +101,7 @@ export function DateInput({
         ]}
       >
         <Text style={styles.valueText}>
-          {formatDateLabel(value)}
+          {formatDateLabel(value, dateLabels)}
         </Text>
         <CalendarBlank size={24} color={colors.content} weight="regular" />
       </TouchableOpacity>

@@ -22,6 +22,7 @@ import { WalletActionsSheet } from '@/components/WalletActionsSheet';
 import { useAuth } from '@/store/AuthContext';
 import { useNotifications } from '@/store/NotificationContext';
 import { useToast } from '@/store/ToastContext';
+import { useLanguage } from '@/store/LanguageContext';
 import { useWallets } from '@/hooks/useWallets';
 import { useWalletsBalance } from '@/hooks/useWalletsBalance';
 import { deleteWallet } from '@/services/wallets';
@@ -35,6 +36,7 @@ export function HomeScreen() {
   const { user } = useAuth();
   const { unreadCount } = useNotifications();
   const { wallets, loading } = useWallets();
+  const { t } = useLanguage();
 
   const BellWithBadge = useMemo<IconComponent>(() => {
     return function BellWithBadgeIcon({ size, color, weight }) {
@@ -69,7 +71,7 @@ export function HomeScreen() {
   }, [walletToDelete]);
 
   const displayName =
-    user?.isAnonymous || !user?.displayName ? 'Visitante' : user.displayName;
+    user?.isAnonymous || !user?.displayName ? t('common.visitor') : user.displayName;
 
   function handleOptionsPress(id: string, name: string) {
     setSelectedWallet({ id, name });
@@ -98,9 +100,9 @@ export function HomeScreen() {
     setWalletToDelete(null);
     try {
       await deleteWallet(user.uid, wallet.id);
-      showToast('Carteira excluída com sucesso');
+      showToast(t('home.walletDeleted'));
     } catch {
-      Alert.alert('Erro', 'Não foi possível excluir a carteira. Tente novamente.');
+      Alert.alert(t('common.error'), t('home.walletDeleteError'));
     }
   }
 
@@ -109,25 +111,25 @@ export function HomeScreen() {
       <StatusBar style="light" />
 
       <Header
-        title={`Olá, ${displayName}`}
+        title={`${t('common.greetingPrefix')}${displayName}`}
         variant="home"
         theme="dark"
         secondaryRightIcon={(hideBalance ? EyeClosed : Eye) as IconComponent}
         onSecondaryRightPress={() => setHideBalance((h) => !h)}
-        secondaryRightIconLabel={hideBalance ? 'Mostrar saldo' : 'Ocultar saldo'}
+        secondaryRightIconLabel={hideBalance ? t('home.showBalance') : t('home.hideBalance')}
         rightIcon={BellWithBadge}
         onRightPress={() => router.push('/(stack)/notifications' as never)}
       />
 
       <BalanceDisplay
         variant="total"
-        subtitle="Seu balanço total é de:"
+        subtitle={t('home.totalBalance')}
         balance={totalBalance}
         hideBalance={hideBalance}
       />
 
       <View style={styles.body}>
-        <Text style={styles.sectionTitle}>Minhas carteiras</Text>
+        <Text style={styles.sectionTitle}>{t('home.myWallets')}</Text>
 
         {loading ? (
           <View style={styles.skeletonList}>
@@ -147,8 +149,8 @@ export function HomeScreen() {
         ) : wallets.length === 0 ? (
           <EmptyState
             image={require('@/assets/images/Wallet.png')}
-            title="Comece criando uma carteira"
-            subtitle="Clique no botão abaixo para criar sua primeira carteira"
+            title={t('home.emptyWalletTitle')}
+            subtitle={t('home.emptyWalletSubtitle')}
           />
         ) : (
           <ScrollView
@@ -171,9 +173,9 @@ export function HomeScreen() {
       </View>
 
       <FAB
-        label="Adicionar carteira"
+        label={t('home.addWallet')}
         onPress={() => router.push('/(stack)/add-wallet' as never)}
-        accessibilityLabel="Adicionar carteira"
+        accessibilityLabel={t('home.addWallet')}
         style={styles.fab}
       />
 
@@ -188,10 +190,10 @@ export function HomeScreen() {
 
       <Dialog
         visible={walletToDelete !== null}
-        title="Excluir carteira"
-        description="Tem certeza? Todas as transações desta carteira também serão excluídas."
-        confirmLabel="Excluir"
-        cancelLabel="Cancelar"
+        title={t('home.deleteWalletTitle')}
+        description={t('home.deleteWalletDescription')}
+        confirmLabel={t('common.delete')}
+        cancelLabel={t('common.cancel')}
         onConfirm={handleDeleteConfirm}
         onCancel={() => setWalletToDelete(null)}
       />

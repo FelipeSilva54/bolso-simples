@@ -22,6 +22,7 @@ import { useWallets } from '@/hooks/useWallets';
 import { formatCurrency } from '@/utils/currency';
 import { usePreferences } from '@/store/PreferencesContext';
 import { useToast } from '@/store/ToastContext';
+import { useLanguage } from '@/store/LanguageContext';
 
 const COLOR_PALETTE = [...walletColors] as string[];
 
@@ -34,6 +35,7 @@ export function AddWalletScreen() {
   const [balanceDigits, setBalanceDigits] = useState('');
   const [selectedColor, setSelectedColor] = useState<string>(walletColors[0]);
   const { showToast } = useToast();
+  const { t } = useLanguage();
   const [saving, setSaving] = useState(false);
 
   const balanceCents = parseInt(balanceDigits || '0', 10);
@@ -56,9 +58,9 @@ export function AddWalletScreen() {
         initialBalance: previewBalance,
       });
       router.back();
-      showToast('Carteira adicionada com sucesso');
+      showToast(t('wallet.walletAdded'));
     } catch {
-      Alert.alert('Erro', 'Não foi possível criar a carteira. Tente novamente.');
+      Alert.alert(t('common.error'), t('wallet.walletErrorCreate'));
     } finally {
       setSaving(false);
     }
@@ -68,7 +70,7 @@ export function AddWalletScreen() {
     <SafeAreaView style={styles.screen} edges={['top']}>
       <StatusBar style="dark" />
       <Header
-        title="Criar carteira"
+        title={t('wallet.createTitle')}
         variant="screen"
         theme="light"
         showBackButton
@@ -92,12 +94,12 @@ export function AddWalletScreen() {
                 numberOfLines={1}
                 ellipsizeMode="tail"
               >
-                {name.length > 0 ? name : 'Nome da carteira'}
+                {name.length > 0 ? name : t('wallet.namePreview')}
               </Text>
             </View>
 
             <View style={styles.previewBalanceContainer}>
-              <Text style={styles.previewBalanceLabel}>Saldo da carteira:</Text>
+              <Text style={styles.previewBalanceLabel}>{t('wallet.balanceSubtitle')}</Text>
               <Text style={styles.previewBalanceValue} numberOfLines={1} ellipsizeMode="tail">
                 {formatCurrency(previewBalance, preferences.currency)}
               </Text>
@@ -112,34 +114,34 @@ export function AddWalletScreen() {
           {/* Form */}
           <View style={styles.form}>
             <FormInput
-              label="Apelido"
-              placeholder="Ex: Carteira do Thiago"
+              label={t('wallet.nameLabel')}
+              placeholder={t('wallet.namePlaceholder')}
               value={name}
               onChangeText={setName}
               returnKeyType="next"
-              accessibilityLabel="Apelido da carteira"
+              accessibilityLabel={t('wallet.nameLabelA11y')}
             />
 
             <FormInput
-              label="Saldo atual"
-              placeholder="Ex: R$ 10.000,00"
+              label={t('wallet.balanceLabel')}
+              placeholder={t('wallet.balancePlaceholder')}
               value={balanceDisplay}
               onChangeText={handleBalanceChange}
               keyboardType="numeric"
               returnKeyType="done"
-              accessibilityLabel="Saldo atual da carteira"
+              accessibilityLabel={t('wallet.balanceLabelA11y')}
             />
 
             {/* Color picker */}
             <View>
-              <Text style={styles.colorLabel}>Cor de fundo</Text>
+              <Text style={styles.colorLabel}>{t('wallet.colorLabel')}</Text>
               <View style={styles.colorGrid}>
                 {COLOR_PALETTE.map((color) => (
                   <TouchableOpacity
                     key={color}
                     style={[styles.colorCircle, { backgroundColor: color }]}
                     onPress={() => setSelectedColor(color)}
-                    accessibilityLabel={`Selecionar cor ${color}`}
+                    accessibilityLabel={`${t('wallet.colorA11yPrefix')} ${color}`}
                     accessibilityRole="radio"
                     accessibilityState={{ selected: selectedColor === color }}
                     hitSlop={{ top: spacing.xs, bottom: spacing.xs, left: spacing.xs, right: spacing.xs }}
@@ -156,16 +158,14 @@ export function AddWalletScreen() {
       </KeyboardAvoidingView>
 
       <View style={styles.footer}>
-        <InfoAlert>
-          Use carteiras para separar seu dinheiro por contas, cartões, bancos ou metas.
-        </InfoAlert>
+        <InfoAlert>{t('wallet.infoAlert')}</InfoAlert>
         <Button
           variant="primary"
           onPress={handleSave}
           disabled={!canSave}
           loading={saving}
         >
-          Salvar carteira
+          {t('wallet.saveButton')}
         </Button>
       </View>
 

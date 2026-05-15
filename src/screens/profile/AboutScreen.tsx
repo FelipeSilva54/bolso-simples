@@ -14,16 +14,18 @@ import { useRouter } from 'expo-router';
 import { ArrowSquareOut } from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
 import { Header } from '@/components/Header';
+import { useLanguage } from '@/store/LanguageContext';
 
 export function AboutScreen() {
   const router = useRouter();
+  const { t } = useLanguage();
 
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
       <StatusBar style="dark" backgroundColor={colors.white} />
 
       <Header
-        title="Sobre"
+        title={t('about.title')}
         variant="screen"
         theme="light"
         showBackButton
@@ -38,29 +40,27 @@ export function AboutScreen() {
               source={require('@/assets/images/Logo-Icon.png')}
               style={styles.appIcon}
               resizeMode="contain"
-              accessibilityLabel="Ícone do Bolso Simples"
+              accessibilityLabel={t('about.appIconLabel')}
             />
           </View>
           <Text style={styles.appName}>
             <Text style={styles.appNameRegular}>bolso</Text>
             <Text style={styles.appNameBold}>simples</Text>
           </Text>
-          <Text style={styles.tagline}>
-            Simplificando a organização das finanças pessoais
-          </Text>
-          <Text style={styles.version}>Versão 1.0.0</Text>
+          <Text style={styles.tagline}>{t('about.tagline')}</Text>
+          <Text style={styles.version}>{t('about.version')}</Text>
         </View>
 
         {/* Seção de informações */}
         <View style={styles.section}>
           <View style={styles.infoRow}>
-            <Text style={styles.label}>E-mail de contato</Text>
-            <Text style={styles.value}>bolsosimples@gmail.com</Text>
+            <Text style={styles.label}>{t('about.contactLabel')}</Text>
+            <Text style={styles.value}>{t('about.contactValue')}</Text>
           </View>
           <View style={styles.separator} />
           <View style={styles.infoRow}>
-            <Text style={styles.label}>Versão do aplicativo</Text>
-            <Text style={styles.value}>1.0.0</Text>
+            <Text style={styles.label}>{t('about.versionLabel')}</Text>
+            <Text style={styles.value}>{t('about.versionValue')}</Text>
           </View>
         </View>
 
@@ -71,9 +71,9 @@ export function AboutScreen() {
             onPress={() => Linking.openURL('https://bolsosimples.com/termos')}
             activeOpacity={0.7}
             accessibilityRole="link"
-            accessibilityLabel="Abrir termos de uso no navegador"
+            accessibilityLabel={t('about.termsA11y')}
           >
-            <Text style={styles.label}>Termos de uso</Text>
+            <Text style={styles.label}>{t('about.termsLabel')}</Text>
             <ArrowSquareOut size={20} color={colors.primary} />
           </TouchableOpacity>
           <View style={styles.separator} />
@@ -82,17 +82,17 @@ export function AboutScreen() {
             onPress={() => Linking.openURL('https://bolsosimples.com/privacidade')}
             activeOpacity={0.7}
             accessibilityRole="link"
-            accessibilityLabel="Abrir política de privacidade no navegador"
+            accessibilityLabel={t('about.privacyA11y')}
           >
-            <Text style={styles.label}>Política de privacidade</Text>
+            <Text style={styles.label}>{t('about.privacyLabel')}</Text>
             <ArrowSquareOut size={20} color={colors.primary} />
           </TouchableOpacity>
         </View>
 
         {/* Rodapé */}
         <View style={styles.footer}>
-          <Text style={styles.footerLine}>Feito com ♥ no Brasil</Text>
-          <Text style={styles.footerLineLast}>© 2025 Bolso Simples</Text>
+          <Text style={styles.footerLine}>{t('about.footer')}</Text>
+          <Text style={styles.footerLineLast}>{t('about.copyright')}</Text>
         </View>
       </ScrollView>
     </SafeAreaView>

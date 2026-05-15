@@ -4,14 +4,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const STORAGE_KEY = '@preferences';
 
 export type AppPreferences = {
-  language: 'pt-BR' | 'en';
+  language: 'pt' | 'en';
   currency: string;
   theme: 'light' | 'dark';
   balanceVisible: boolean;
 };
 
 const DEFAULTS: AppPreferences = {
-  language: 'pt-BR',
+  language: 'pt',
   currency: 'BRL',
   theme: 'light',
   balanceVisible: true,

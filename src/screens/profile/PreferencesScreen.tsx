@@ -19,18 +19,19 @@ import {
 import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
 import { Header } from '@/components/Header';
 import { BottomSheet } from '@/components/BottomSheet';
-import { usePreferences, AppPreferences } from '@/store/PreferencesContext';
+import { usePreferences } from '@/store/PreferencesContext';
+import { useLanguage, Language } from '@/store/LanguageContext';
 import { SUPPORTED_CURRENCIES } from '@/utils/currency';
 
 type IconComponent = React.ComponentType<{ size?: number; color?: string; weight?: string }>;
 type SheetId = 'language' | 'currency' | 'theme' | null;
 
-const LANGUAGE_OPTIONS: { value: AppPreferences['language']; label: string }[] = [
-  { value: 'pt-BR', label: 'Português' },
-  { value: 'en',   label: 'English'   },
+const LANGUAGE_OPTIONS: { value: Language }[] = [
+  { value: 'pt' },
+  { value: 'en' },
 ];
 
-const THEME_OPTIONS: { value: AppPreferences['theme']; label: string; disabled: boolean }[] = [
+const THEME_OPTIONS: { value: 'light' | 'dark'; label: string; disabled: boolean }[] = [
   { value: 'light', label: 'Light', disabled: false },
   { value: 'dark',  label: 'Dark',  disabled: true  },
 ];
@@ -71,10 +72,13 @@ function PrefItem({ icon: Icon, title, value, onPress, accessibilityLabel, isLas
 export function PreferencesScreen() {
   const router = useRouter();
   const { preferences, setPreference } = usePreferences();
+  const { language, setLanguage, t } = useLanguage();
   const [sheet, setSheet] = useState<SheetId>(null);
 
-  const currentLanguageLabel =
-    LANGUAGE_OPTIONS.find((o) => o.value === preferences.language)?.label ?? 'Português';
+  const langLabel = (value: Language) =>
+    value === 'pt' ? t('preferences.langPt') : t('preferences.langEn');
+
+  const currentLanguageLabel = langLabel(language);
 
   const currentCurrency = SUPPORTED_CURRENCIES.find((c) => c.code === preferences.currency);
   const currentCurrencyLabel = currentCurrency
@@ -89,7 +93,7 @@ export function PreferencesScreen() {
       <StatusBar style="dark" backgroundColor={colors.white} />
 
       <Header
-        title="Preferências"
+        title={t('preferences.title')}
         variant="screen"
         theme="light"
         showBackButton
@@ -100,24 +104,24 @@ export function PreferencesScreen() {
         <View style={styles.section}>
           <PrefItem
             icon={Translate as IconComponent}
-            title="Idioma"
+            title={t('preferences.language')}
             value={currentLanguageLabel}
             onPress={() => setSheet('language')}
-            accessibilityLabel={`Idioma: ${currentLanguageLabel}. Toque para alterar`}
+            accessibilityLabel={`${t('preferences.language')}: ${currentLanguageLabel}. ${t('preferences.tapToChange')}`}
           />
           <PrefItem
             icon={CurrencyCircleDollar as IconComponent}
-            title="Moeda padrão"
+            title={t('preferences.currency')}
             value={currentCurrencyLabel}
             onPress={() => setSheet('currency')}
-            accessibilityLabel={`Moeda padrão: ${currentCurrencyLabel}. Toque para alterar`}
+            accessibilityLabel={`${t('preferences.currency')}: ${currentCurrencyLabel}. ${t('preferences.tapToChange')}`}
           />
           <PrefItem
             icon={Moon as IconComponent}
-            title="Tema"
+            title={t('preferences.theme')}
             value={currentThemeLabel}
             onPress={() => setSheet('theme')}
-            accessibilityLabel={`Tema: ${currentThemeLabel}. Toque para alterar`}
+            accessibilityLabel={`${t('preferences.theme')}: ${currentThemeLabel}. ${t('preferences.tapToChange')}`}
             isLast
           />
         </View>
@@ -126,21 +130,22 @@ export function PreferencesScreen() {
       {/* Language Sheet */}
       <BottomSheet visible={sheet === 'language'} onClose={() => setSheet(null)}>
         <View style={styles.sheetWrapper}>
-          <Text style={styles.sheetTitle}>Idioma</Text>
+          <Text style={styles.sheetTitle}>{t('preferences.language')}</Text>
           {LANGUAGE_OPTIONS.map((option) => {
-            const isActive = option.value === preferences.language;
+            const isActive = option.value === language;
+            const label = langLabel(option.value);
             return (
               <TouchableOpacity
                 key={option.value}
                 style={[styles.sheetRow, isActive && styles.sheetRowActive]}
-                onPress={() => { setPreference('language', option.value); setSheet(null); }}
+                onPress={() => { setLanguage(option.value); setSheet(null); }}
                 activeOpacity={0.7}
                 accessibilityRole="radio"
-                accessibilityLabel={option.label}
+                accessibilityLabel={label}
                 accessibilityState={{ selected: isActive }}
               >
                 <Text style={[styles.sheetRowLabel, isActive && styles.sheetRowLabelActive]}>
-                  {option.label}
+                  {label}
                 </Text>
                 {isActive && <Check size={18} color={colors.success} weight="bold" />}
               </TouchableOpacity>
@@ -152,7 +157,7 @@ export function PreferencesScreen() {
       {/* Currency Sheet */}
       <BottomSheet visible={sheet === 'currency'} onClose={() => setSheet(null)}>
         <View style={styles.sheetWrapper}>
-          <Text style={styles.sheetTitle}>Moeda padrão</Text>
+          <Text style={styles.sheetTitle}>{t('preferences.currency')}</Text>
           {SUPPORTED_CURRENCIES.map((currency) => {
             const isActive = currency.code === preferences.currency;
             return (
@@ -178,7 +183,7 @@ export function PreferencesScreen() {
       {/* Theme Sheet */}
       <BottomSheet visible={sheet === 'theme'} onClose={() => setSheet(null)}>
         <View style={styles.sheetWrapper}>
-          <Text style={styles.sheetTitle}>Tema</Text>
+          <Text style={styles.sheetTitle}>{t('preferences.theme')}</Text>
           {THEME_OPTIONS.map((option) => {
             const isActive = option.value === preferences.theme;
             return (
@@ -204,7 +209,7 @@ export function PreferencesScreen() {
                 </Text>
                 {option.disabled && (
                   <View style={styles.badge}>
-                    <Text style={styles.badgeLabel}>Em breve</Text>
+                    <Text style={styles.badgeLabel}>{t('preferences.comingSoon')}</Text>
                   </View>
                 )}
                 {isActive && !option.disabled && (

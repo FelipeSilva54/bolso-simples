@@ -43,6 +43,7 @@ import { useTransactions } from '@/hooks/useTransactions';
 import { useCategories } from '@/hooks/useCategories';
 import { updateTransaction, deleteTransaction } from '@/services/transactions';
 import { useToast } from '@/store/ToastContext';
+import { useLanguage } from '@/store/LanguageContext';
 import { Transaction, TransactionStatus } from '@/types/transaction';
 import { Category } from '@/types/category';
 import { Period, PeriodMode } from '@/types/period';
@@ -62,12 +63,6 @@ type GroupTransaction = {
   installmentTotal?: number;
 };
 
-const BADGE_LABEL: Record<TransactionStatus, string> = {
-  paid: 'Pago',
-  unpaid: 'Não pago',
-  received: 'Recebido',
-  unreceived: 'Não recebido',
-};
 
 function getIconComponent(name: string | undefined): IconComponent {
   if (!name) return Tag as unknown as IconComponent;
@@ -75,61 +70,80 @@ function getIconComponent(name: string | undefined): IconComponent {
   return ((Icon ?? Tag) as unknown) as IconComponent;
 }
 
-function transformTransaction(t: Transaction, category?: Category): GroupTransaction {
+function transformTransaction(
+  tx: Transaction,
+  category?: Category,
+  badgeLabels?: Record<TransactionStatus, string>,
+): GroupTransaction {
   const icon: IconComponent = category
     ? getIconComponent(category.icon)
-    : ((t.type === 'income'
+    : ((tx.type === 'income'
         ? ArrowUp
-        : t.type === 'expense'
+        : tx.type === 'expense'
         ? ArrowDown
         : ArrowsLeftRight) as IconComponent);
 
   const iconColor = category
     ? category.color
-    : t.type === 'income'
+    : tx.type === 'income'
     ? colors.success
-    : t.type === 'expense'
+    : tx.type === 'expense'
     ? colors.danger
     : colors.primary;
 
-  const amount = t.type === 'expense' ? -t.amount : t.amount;
+  const amount = tx.type === 'expense' ? -tx.amount : tx.amount;
 
   const badgeVariant: 'success' | 'danger' =
-    t.status === 'paid' || t.status === 'received' ? 'success' : 'danger';
+    tx.status === 'paid' || tx.status === 'received' ? 'success' : 'danger';
 
   return {
-    id: t.id,
+    id: tx.id,
     icon,
     iconColor,
-    title: t.title,
-    description: t.description || undefined,
+    title: tx.title,
+    description: tx.description || undefined,
     amount,
     badgeVariant,
-    badgeLabel: BADGE_LABEL[t.status],
-    installmentIndex: t.installmentIndex,
-    installmentTotal: t.installmentTotal,
+    badgeLabel: badgeLabels ? badgeLabels[tx.status] : tx.status,
+    installmentIndex: tx.installmentIndex,
+    installmentTotal: tx.installmentTotal,
   };
+}
+
+function capitalize(text: string): string {
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+function formatGroupDate(date: Date, weekdays: string[], months: string[]): string {
+  return `${weekdays[date.getDay()]}, ${date.getDate()} de ${months[date.getMonth()]}`;
+}
+
+function formatDayLabel(date: Date, weekdays: string[], months: string[]): string {
+  return `${weekdays[date.getDay()]}, ${date.getDate()} de ${months[date.getMonth()]} de ${date.getFullYear()}`;
 }
 
 function groupByDate(
   transactions: Transaction[],
   categoriesById: Map<string, Category>,
+  weekdays: string[],
+  months: string[],
+  badgeLabels: Record<TransactionStatus, string>,
 ): { date: string; transactions: GroupTransaction[] }[] {
   const map = new Map<string, { date: string; transactions: GroupTransaction[] }>();
 
-  for (const t of transactions) {
+  for (const tx of transactions) {
     const d =
-      t.date instanceof Date
-        ? t.date
-        : (t.date as unknown as { toDate: () => Date }).toDate();
+      tx.date instanceof Date
+        ? tx.date
+        : (tx.date as unknown as { toDate: () => Date }).toDate();
 
     const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 
     if (!map.has(key)) {
-      map.set(key, { date: formatGroupDate(d), transactions: [] });
+      map.set(key, { date: formatGroupDate(d, weekdays, months), transactions: [] });
     }
     map.get(key)!.transactions.push(
-      transformTransaction(t, categoriesById.get(t.categoryId)),
+      transformTransaction(tx, categoriesById.get(tx.categoryId), badgeLabels),
     );
   }
 
@@ -141,47 +155,31 @@ function groupByDate(
 function groupByMonth(
   transactions: Transaction[],
   categoriesById: Map<string, Category>,
+  months: string[],
+  badgeLabels: Record<TransactionStatus, string>,
 ): { date: string; transactions: GroupTransaction[] }[] {
   const map = new Map<string, { date: string; transactions: GroupTransaction[] }>();
 
-  for (const t of transactions) {
+  for (const tx of transactions) {
     const d =
-      t.date instanceof Date
-        ? t.date
-        : (t.date as unknown as { toDate: () => Date }).toDate();
+      tx.date instanceof Date
+        ? tx.date
+        : (tx.date as unknown as { toDate: () => Date }).toDate();
 
     const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
 
     if (!map.has(key)) {
-      const label = `${capitalize(MONTHS[d.getMonth()])} de ${d.getFullYear()}`;
+      const label = `${capitalize(months[d.getMonth()])} de ${d.getFullYear()}`;
       map.set(key, { date: label, transactions: [] });
     }
     map.get(key)!.transactions.push(
-      transformTransaction(t, categoriesById.get(t.categoryId)),
+      transformTransaction(tx, categoriesById.get(tx.categoryId), badgeLabels),
     );
   }
 
   return Array.from(map.entries())
     .sort(([a], [b]) => b.localeCompare(a))
     .map(([, group]) => group);
-}
-
-const WEEKDAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
-const MONTHS = [
-  'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
-  'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro',
-];
-
-function capitalize(text: string): string {
-  return text.charAt(0).toUpperCase() + text.slice(1);
-}
-
-function formatGroupDate(date: Date): string {
-  return `${WEEKDAYS[date.getDay()]}, ${date.getDate()} de ${MONTHS[date.getMonth()]}`;
-}
-
-function formatDayLabel(date: Date): string {
-  return `${WEEKDAYS[date.getDay()]}, ${date.getDate()} de ${MONTHS[date.getMonth()]} de ${date.getFullYear()}`;
 }
 
 function formatShortDate(date: Date): string {
@@ -217,6 +215,27 @@ export function WalletDetailScreen() {
   const [pendingCustomStart, setPendingCustomStart] = useState<Date | null>(null);
 
   const { showToast } = useToast();
+  const { t } = useLanguage();
+
+  const weekdays = useMemo(() => [
+    t('date.weekdays.sun'), t('date.weekdays.mon'), t('date.weekdays.tue'),
+    t('date.weekdays.wed'), t('date.weekdays.thu'), t('date.weekdays.fri'),
+    t('date.weekdays.sat'),
+  ], [t]);
+
+  const months = useMemo(() => [
+    t('date.months.jan'), t('date.months.feb'), t('date.months.mar'), t('date.months.apr'),
+    t('date.months.may'), t('date.months.jun'), t('date.months.jul'), t('date.months.aug'),
+    t('date.months.sep'), t('date.months.oct'), t('date.months.nov'), t('date.months.dec'),
+  ], [t]);
+
+  const badgeLabels = useMemo<Record<TransactionStatus, string>>(() => ({
+    paid: t('common.paid'),
+    unpaid: t('common.notPaid'),
+    received: t('common.received'),
+    unreceived: t('common.notReceived'),
+  }), [t]);
+
   const [detailSheetVisible, setDetailSheetVisible] = useState(false);
   const [selectedTransactionId, setSelectedTransactionId] = useState<string | null>(null);
 
@@ -292,9 +311,9 @@ export function WalletDetailScreen() {
   const groupedTransactions = useMemo(
     () =>
       period.mode === 'yearly'
-        ? groupByMonth(transactions, categoriesById)
-        : groupByDate(transactions, categoriesById),
-    [transactions, categoriesById, period.mode],
+        ? groupByMonth(transactions, categoriesById, months, badgeLabels)
+        : groupByDate(transactions, categoriesById, weekdays, months, badgeLabels),
+    [transactions, categoriesById, period.mode, weekdays, months, badgeLabels],
   );
 
   const selectedTransaction = useMemo(() => {
@@ -405,21 +424,21 @@ export function WalletDetailScreen() {
       <StatusBar style="light" />
 
       <Header
-        title={wallet?.name ?? 'Carteira'}
+        title={wallet?.name ?? t('wallet.fallbackName')}
         variant="screen"
         theme="dark"
         showBackButton
         onBackPress={() => router.back()}
         secondaryRightIcon={(hideBalance ? EyeClosed : Eye) as IconComponent}
         onSecondaryRightPress={() => setHideBalance((v) => !v)}
-        secondaryRightIconLabel={hideBalance ? 'Mostrar saldo' : 'Ocultar saldo'}
+        secondaryRightIconLabel={hideBalance ? t('wallet.showBalance') : t('wallet.hideBalance')}
         rightIcon={CalendarBlank as IconComponent}
         onRightPress={() => setPeriodSheetVisible(true)}
       />
 
       <BalanceDisplay
         variant="wallet"
-        subtitle="Saldo da carteira:"
+        subtitle={t('wallet.balanceSubtitle')}
         balance={calculatedBalance}
         hideBalance={hideBalance}
         onTodayPress={handleTodayPress}
@@ -439,18 +458,18 @@ export function WalletDetailScreen() {
             <TouchableOpacity
               onPress={handlePrevDay}
               style={styles.periodNavButton}
-              accessibilityLabel="Dia anterior"
+              accessibilityLabel={t('wallet.previousDay')}
               accessibilityRole="button"
             >
               <CaretLeft size={20} color={colors.subcontent} weight="bold" />
             </TouchableOpacity>
             <Text style={styles.periodNavLabel} numberOfLines={1}>
-              {formatDayLabel(period.date)}
+              {formatDayLabel(period.date, weekdays, months)}
             </Text>
             <TouchableOpacity
               onPress={handleNextDay}
               style={styles.periodNavButton}
-              accessibilityLabel="Próximo dia"
+              accessibilityLabel={t('wallet.nextDay')}
               accessibilityRole="button"
             >
               <CaretRight size={20} color={colors.subcontent} weight="bold" />
@@ -463,7 +482,7 @@ export function WalletDetailScreen() {
             <TouchableOpacity
               onPress={handlePrevYear}
               style={styles.periodNavButton}
-              accessibilityLabel="Ano anterior"
+              accessibilityLabel={t('wallet.previousYear')}
               accessibilityRole="button"
             >
               <CaretLeft size={20} color={colors.subcontent} weight="bold" />
@@ -472,7 +491,7 @@ export function WalletDetailScreen() {
             <TouchableOpacity
               onPress={handleNextYear}
               style={styles.periodNavButton}
-              accessibilityLabel="Próximo ano"
+              accessibilityLabel={t('wallet.nextYear')}
               accessibilityRole="button"
             >
               <CaretRight size={20} color={colors.subcontent} weight="bold" />
@@ -482,7 +501,7 @@ export function WalletDetailScreen() {
 
         {period.mode === 'all' && (
           <View style={styles.periodNav}>
-            <Text style={styles.periodNavLabel}>Todas as transações</Text>
+            <Text style={styles.periodNavLabel}>{t('wallet.allTransactions')}</Text>
           </View>
         )}
 
@@ -493,7 +512,7 @@ export function WalletDetailScreen() {
               setPickerStep('customStart');
             }}
             style={styles.periodNav}
-            accessibilityLabel="Editar intervalo personalizado"
+            accessibilityLabel={t('wallet.editCustomRange')}
             accessibilityRole="button"
           >
             <Text style={styles.periodNavLabel} numberOfLines={1}>
@@ -568,8 +587,8 @@ export function WalletDetailScreen() {
         ) : transactions.length === 0 ? (
           <EmptyState
             image={require('@/assets/images/MobilePay.png')}
-            title="Nenhuma transação adicionada"
-            subtitle="Clique no botão de + para adicionar uma receita ou despesa."
+            title={t('wallet.emptyTitle')}
+            subtitle={t('wallet.emptySubtitle')}
           />
         ) : (
           <ScrollView
@@ -594,7 +613,7 @@ export function WalletDetailScreen() {
       </View>
 
       <FAB
-        accessibilityLabel="Adicionar transação"
+        accessibilityLabel={t('wallet.addTransactionFab')}
         onPress={() =>
           router.push({
             pathname: '/(stack)/add-transaction' as never,
@@ -616,7 +635,7 @@ export function WalletDetailScreen() {
           if (!user || !walletId) return;
           await deleteTransaction(user.uid, walletId, id);
           handleDetailClose();
-          showToast('Transação excluída com sucesso');
+          showToast(t('wallet.transactionDeleted'));
         }}
         onEdit={(id) => {
           handleDetailClose();

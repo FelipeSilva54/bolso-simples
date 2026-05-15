@@ -4,12 +4,14 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import LottieView from 'lottie-react-native';
 import { useAuth } from '@/store/AuthContext';
+import { useLanguage } from '@/store/LanguageContext';
 import { colors, fontSize as fs, fontWeight as fw, spacing } from '@/constants';
 
 const MIN_LOADING_MS = 5000;
 
 export default function Index() {
   const { user, loading } = useAuth();
+  const { t } = useLanguage();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [minTimeDone, setMinTimeDone] = useState(false);
@@ -26,7 +28,7 @@ export default function Index() {
     router.replace('/(tabs)');
   }, [loading, minTimeDone, user]);
 
-  const displayName = user?.isAnonymous ? 'Visitante' : user?.email ?? null;
+  const displayName = user?.isAnonymous ? t('common.visitor') : user?.email ?? null;
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
@@ -46,13 +48,13 @@ export default function Index() {
           loop
           style={styles.lottie}
         />
-        <Text style={styles.label}>Estamos sincronizando os seus dados,{'\n'}aguarde alguns segundos...</Text>
+        <Text style={styles.label}>{t('loading.syncing')}</Text>
       </View>
 
       <View style={[styles.footer, { paddingBottom: insets.bottom + spacing.xl }]}>
         {displayName && (
           <>
-            <Text style={styles.footerLabel}>Você está entrando como:</Text>
+            <Text style={styles.footerLabel}>{t('loading.signingAs')}</Text>
             <Text style={styles.footerEmail}>{displayName}</Text>
           </>
         )}

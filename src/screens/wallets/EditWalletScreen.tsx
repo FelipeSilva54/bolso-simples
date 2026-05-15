@@ -20,6 +20,7 @@ import { Button } from '@/components/Button';
 import { TextInput as FormInput } from '@/components/TextInput';
 import { useAuth } from '@/store/AuthContext';
 import { getWallet, updateWallet } from '@/services/wallets';
+import { useLanguage } from '@/store/LanguageContext';
 
 const COLOR_PALETTE = [...walletColors] as string[];
 
@@ -33,6 +34,7 @@ export function EditWalletScreen() {
   const [balance, setBalance] = useState(0);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const { t } = useLanguage();
 
   useEffect(() => {
     if (!user || !walletId) return;
@@ -60,7 +62,7 @@ export function EditWalletScreen() {
       await updateWallet(user.uid, walletId, { name: name.trim(), color: selectedColor });
       router.back();
     } catch {
-      Alert.alert('Erro', 'Não foi possível salvar as alterações. Tente novamente.');
+      Alert.alert(t('common.error'), t('wallet.walletErrorSave'));
     } finally {
       setSaving(false);
     }
@@ -71,7 +73,7 @@ export function EditWalletScreen() {
       <SafeAreaView style={styles.screen} edges={['top']}>
         <StatusBar style="dark" />
         <Header
-          title="Editar carteira"
+          title={t('wallet.editTitle')}
           variant="screen"
           theme="light"
           showBackButton
@@ -88,7 +90,7 @@ export function EditWalletScreen() {
     <SafeAreaView style={styles.screen} edges={['top']}>
       <StatusBar style="dark" />
       <Header
-        title="Editar carteira"
+        title={t('wallet.editTitle')}
         variant="screen"
         theme="light"
         showBackButton
@@ -112,11 +114,11 @@ export function EditWalletScreen() {
                 numberOfLines={1}
                 ellipsizeMode="tail"
               >
-                {name.length > 0 ? name : 'Nome da carteira'}
+                {name.length > 0 ? name : t('wallet.namePreview')}
               </Text>
             </View>
             <View style={styles.previewBalanceContainer}>
-              <Text style={styles.previewBalanceLabel}>Saldo da carteira:</Text>
+              <Text style={styles.previewBalanceLabel}>{t('wallet.balanceSubtitle')}</Text>
               <Text style={styles.previewBalanceValue} numberOfLines={1} ellipsizeMode="tail">
                 {formattedBalance}
               </Text>
@@ -130,23 +132,23 @@ export function EditWalletScreen() {
           {/* Form */}
           <View style={styles.form}>
             <FormInput
-              label="Apelido"
-              placeholder="Ex: Carteira do Thiago"
+              label={t('wallet.nameLabel')}
+              placeholder={t('wallet.namePlaceholder')}
               value={name}
               onChangeText={setName}
               returnKeyType="done"
-              accessibilityLabel="Apelido da carteira"
+              accessibilityLabel={t('wallet.nameLabelA11y')}
             />
 
             <View>
-              <Text style={styles.colorLabel}>Cor de fundo</Text>
+              <Text style={styles.colorLabel}>{t('wallet.colorLabel')}</Text>
               <View style={styles.colorGrid}>
                 {COLOR_PALETTE.map((color) => (
                   <TouchableOpacity
                     key={color}
                     style={[styles.colorCircle, { backgroundColor: color }]}
                     onPress={() => setSelectedColor(color)}
-                    accessibilityLabel={`Selecionar cor ${color}`}
+                    accessibilityLabel={`${t('wallet.colorA11yPrefix')} ${color}`}
                     accessibilityRole="radio"
                     accessibilityState={{ selected: selectedColor === color }}
                     hitSlop={{ top: spacing.xs, bottom: spacing.xs, left: spacing.xs, right: spacing.xs }}
@@ -169,7 +171,7 @@ export function EditWalletScreen() {
           disabled={!canSave}
           loading={saving}
         >
-          Salvar alterações
+          {t('wallet.saveChanges')}
         </Button>
       </View>
     </SafeAreaView>

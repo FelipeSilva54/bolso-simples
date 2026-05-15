@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import {
   CalendarBlank,
@@ -11,6 +11,7 @@ import {
 import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
 import { BottomSheet } from '@/components/BottomSheet';
 import { PeriodMode } from '@/types/period';
+import { useLanguage } from '@/store/LanguageContext';
 
 type IconComponent = React.ComponentType<{ size?: number; color?: string; weight?: string }>;
 
@@ -19,14 +20,6 @@ type Option = {
   label: string;
   icon: IconComponent;
 };
-
-const OPTIONS: Option[] = [
-  { mode: 'monthly', label: 'Mensal', icon: CalendarBlank as IconComponent },
-  { mode: 'daily', label: 'Diariamente', icon: CalendarDot as IconComponent },
-  { mode: 'yearly', label: 'Anual', icon: CalendarCheck as IconComponent },
-  { mode: 'all', label: 'Tempo todo', icon: ListBullets as IconComponent },
-  { mode: 'custom', label: 'Personalizado', icon: Funnel as IconComponent },
-];
 
 type PeriodPickerSheetProps = {
   visible: boolean;
@@ -41,11 +34,21 @@ export function PeriodPickerSheet({
   currentMode,
   onSelectMode,
 }: PeriodPickerSheetProps) {
+  const { t } = useLanguage();
+
+  const options = useMemo<Option[]>(() => [
+    { mode: 'monthly', label: t('period.monthly'), icon: CalendarBlank as IconComponent },
+    { mode: 'daily', label: t('period.daily'), icon: CalendarDot as IconComponent },
+    { mode: 'yearly', label: t('period.yearly'), icon: CalendarCheck as IconComponent },
+    { mode: 'all', label: t('period.all'), icon: ListBullets as IconComponent },
+    { mode: 'custom', label: t('period.custom'), icon: Funnel as IconComponent },
+  ], [t]);
+
   return (
     <BottomSheet visible={visible} onClose={onClose}>
       <View style={styles.wrapper}>
-        <Text style={styles.title}>Período de visualização</Text>
-        {OPTIONS.map((option) => {
+        <Text style={styles.title}>{t('period.title')}</Text>
+        {options.map((option) => {
           const isActive = option.mode === currentMode;
           const Icon = option.icon;
           return (

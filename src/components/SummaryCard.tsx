@@ -3,6 +3,7 @@ import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing } from '@/constants';
 import { formatCurrency } from '@/utils/currency';
 import { usePreferences } from '@/store/PreferencesContext';
+import { useLanguage } from '@/store/LanguageContext';
 
 type SummaryCardProps = {
   income: number;
@@ -22,6 +23,7 @@ export function SummaryCard({
   onExpensePress,
 }: SummaryCardProps) {
   const { preferences } = usePreferences();
+  const { t } = useLanguage();
   const displayIncome = hideBalance ? '••••••' : formatCurrency(income, preferences.currency);
   const displayExpense = hideBalance ? '••••••' : formatCurrency(expense, preferences.currency);
   const displayBalance = hideBalance ? '••••••' : formatCurrency(balance, preferences.currency);
@@ -33,13 +35,13 @@ export function SummaryCard({
         onPress={onIncomePress}
         activeOpacity={0.7}
         accessibilityRole="button"
-        accessibilityLabel={`Receitas: ${hideBalance ? 'oculto' : formatCurrency(income, preferences.currency)}`}
+        accessibilityLabel={`${t('common.income')}: ${hideBalance ? t('common.hidden') : formatCurrency(income, preferences.currency)}`}
       >
         <Text style={[styles.value, styles.incomeColor]} numberOfLines={1}>
           {displayIncome}
         </Text>
         <Text style={styles.label} numberOfLines={1}>
-          Receitas
+          {t('common.income')}
         </Text>
       </TouchableOpacity>
 
@@ -50,13 +52,13 @@ export function SummaryCard({
         onPress={onExpensePress}
         activeOpacity={0.7}
         accessibilityRole="button"
-        accessibilityLabel={`Despesas: ${hideBalance ? 'oculto' : formatCurrency(expense, preferences.currency)}`}
+        accessibilityLabel={`${t('common.expense')}: ${hideBalance ? t('common.hidden') : formatCurrency(expense, preferences.currency)}`}
       >
         <Text style={[styles.value, styles.expenseColor]} numberOfLines={1}>
           {displayExpense}
         </Text>
         <Text style={styles.label} numberOfLines={1}>
-          Despesas
+          {t('common.expense')}
         </Text>
       </TouchableOpacity>
 
@@ -67,7 +69,7 @@ export function SummaryCard({
           {displayBalance}
         </Text>
         <Text style={styles.label} numberOfLines={1}>
-          Saldo
+          {t('common.balance')}
         </Text>
       </View>
     </View>

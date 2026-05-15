@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useCallback } from 'react';
+import React, { useRef, useEffect, useCallback, useMemo } from 'react';
 import {
   FlatList,
   TouchableOpacity,
@@ -9,6 +9,7 @@ import {
   ListRenderItem,
 } from 'react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing } from '@/constants';
+import { useLanguage } from '@/store/LanguageContext';
 
 type MonthFilterProps = {
   activeMonth: number; // 0-indexed
@@ -22,7 +23,6 @@ type MonthItem = {
   key: string;
 };
 
-const MONTHS_SHORT = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 const ITEM_WIDTH = Dimensions.get('window').width / 3;
 const MONTHS_BACK = 24;
 const MONTHS_FORWARD = 12;
@@ -47,7 +47,15 @@ function buildMonthList(): MonthItem[] {
 const MONTH_LIST = buildMonthList();
 
 export function MonthFilter({ activeMonth, activeYear, onChange }: MonthFilterProps) {
+  const { t } = useLanguage();
   const listRef = useRef<FlatList<MonthItem>>(null);
+
+  const MONTHS_SHORT = useMemo(() => [
+    t('date.monthsShort.jan'), t('date.monthsShort.feb'), t('date.monthsShort.mar'),
+    t('date.monthsShort.apr'), t('date.monthsShort.may'), t('date.monthsShort.jun'),
+    t('date.monthsShort.jul'), t('date.monthsShort.aug'), t('date.monthsShort.sep'),
+    t('date.monthsShort.oct'), t('date.monthsShort.nov'), t('date.monthsShort.dec'),
+  ], [t]);
 
   const activeIndex = MONTH_LIST.findIndex(
     (item) => item.month === activeMonth && item.year === activeYear,
@@ -85,7 +93,7 @@ export function MonthFilter({ activeMonth, activeYear, onChange }: MonthFilterPr
         </TouchableOpacity>
       );
     },
-    [activeMonth, activeYear, onChange],
+    [activeMonth, activeYear, onChange, MONTHS_SHORT],
   );
 
   const getItemLayout = useCallback(

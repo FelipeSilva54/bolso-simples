@@ -30,20 +30,11 @@ import { TransactionStatus } from '@/types/transaction';
 import { parseCurrency, formatCurrency } from '@/utils/currency';
 import { usePreferences } from '@/store/PreferencesContext';
 import { useToast } from '@/store/ToastContext';
+import { useLanguage } from '@/store/LanguageContext';
 
 type TxType = 'expense' | 'income';
 type PaymentType = 'cash' | 'installment' | 'recurring';
 
-const RECURRENCE_OPTIONS = [
-  { value: 'daily', label: 'Diária' },
-  { value: 'weekly', label: 'Semanal' },
-  { value: 'biweekly', label: 'Quinzenal' },
-  { value: 'monthly', label: 'Mensal' },
-  { value: 'bimonthly', label: 'Bimestral' },
-  { value: 'quarterly', label: 'Trimestral' },
-  { value: 'semiannually', label: 'Semestral' },
-  { value: 'annually', label: 'Anual' },
-] as const;
 
 type IconComponent = React.ComponentType<{ size?: number; color?: string; weight?: string }>;
 
@@ -95,7 +86,19 @@ export function AddEditTransactionScreen() {
   }>({});
 
   const { showToast } = useToast();
+  const { t } = useLanguage();
   const [saving, setSaving] = useState(false);
+
+  const RECURRENCE_OPTIONS = useMemo(() => [
+    { value: 'daily', label: t('transaction.recurrenceDaily') },
+    { value: 'weekly', label: t('transaction.recurrenceWeekly') },
+    { value: 'biweekly', label: t('transaction.recurrenceBiweekly') },
+    { value: 'monthly', label: t('transaction.recurrenceMonthly') },
+    { value: 'bimonthly', label: t('transaction.recurrenceBimonthly') },
+    { value: 'quarterly', label: t('transaction.recurrenceQuarterly') },
+    { value: 'semiannually', label: t('transaction.recurrenceSemiannually') },
+    { value: 'annually', label: t('transaction.recurrenceAnnually') },
+  ], [t]);
 
   useEffect(() => {
     if (!transactionId || !user || !walletId) return;
@@ -125,7 +128,7 @@ export function AddEditTransactionScreen() {
       })
       .catch(() => {
         if (!cancelled) {
-          Alert.alert('Erro', 'Não foi possível carregar os dados da transação.');
+          Alert.alert(t('common.error'), t('transaction.errorLoad'));
         }
       })
       .finally(() => {
@@ -169,18 +172,18 @@ export function AddEditTransactionScreen() {
     const next: typeof errors = {};
 
     if (numericValue <= 0) {
-      next.value = 'Informe um valor maior que R$ 0,00';
+      next.value = t('transaction.validationValue');
     }
     if (!categoryId) {
-      next.category = 'Selecione uma categoria';
+      next.category = t('transaction.validationCategory');
     }
     if (paymentType === 'installment') {
       if (!Number.isInteger(installmentsCount) || installmentsCount < 2) {
-        next.installments = 'Informe um número inteiro maior que 1';
+        next.installments = t('transaction.validationInstallments');
       }
     }
     if (paymentType === 'recurring' && !recurrenceType) {
-      next.recurrence = 'Selecione o tipo de recorrência';
+      next.recurrence = t('transaction.validationRecurrence');
     }
 
     setErrors(next);
@@ -232,7 +235,7 @@ export function AddEditTransactionScreen() {
         }
         await Promise.all(promises);
         router.back();
-        showToast('Transação adicionada com sucesso');
+        showToast(t('transaction.added'));
         return;
       } else {
         await addTransaction(user.uid, walletId, {
@@ -248,13 +251,13 @@ export function AddEditTransactionScreen() {
         });
         if (!isEditing) {
           router.back();
-          showToast('Transação adicionada com sucesso');
+          showToast(t('transaction.added'));
           return;
         }
       }
       router.back();
     } catch {
-      Alert.alert('Erro ao salvar', 'Não foi possível salvar a transação. Tente novamente.');
+      Alert.alert(t('transaction.errorSaveTitle'), t('transaction.errorSave'));
     } finally {
       setSaving(false);
     }
@@ -265,7 +268,7 @@ export function AddEditTransactionScreen() {
       <StatusBar style="light" />
 
       <Header
-        title={isEditing ? 'Editar transação' : 'Adicionar transação'}
+        title={isEditing ? t('transaction.editTitle') : t('transaction.addTitle')}
         variant="screen"
         theme="dark"
         showBackButton
@@ -310,9 +313,9 @@ export function AddEditTransactionScreen() {
             <View style={styles.form}>
               {/* Categoria */}
               <SelectInput
-                label="Categoria"
-                placeholder="Selecionar categoria"
-                sheetTitle="Selecionar categoria"
+                label={t('transaction.categoryLabel')}
+                placeholder={t('transaction.categoryPlaceholder')}
+                sheetTitle={t('transaction.categoryPlaceholder')}
                 options={categoryOptions}
                 value={categoryId}
                 onChange={setCategoryId}
@@ -320,28 +323,28 @@ export function AddEditTransactionScreen() {
                 disabled={categoriesForType.length === 0}
                 helperText={
                   categoriesForType.length === 0
-                    ? `Nenhuma categoria de ${type === 'expense' ? 'despesa' : 'receita'} cadastrada`
+                    ? t(type === 'expense' ? 'transaction.noCategoryExpense' : 'transaction.noCategoryIncome')
                     : undefined
                 }
                 error={errors.category}
-                accessibilityLabel="Selecionar categoria"
+                accessibilityLabel={t('transaction.categoryPlaceholder')}
               />
 
               {/* Data */}
               <DateInput
-                label="Data"
+                label={t('transaction.dateLabel')}
                 value={date}
                 onChange={setDate}
-                accessibilityLabel="Selecionar data"
+                accessibilityLabel={t('date.selectDate')}
               />
 
               {/* Observação */}
               <TextInput
-                label="Observação"
+                label={t('transaction.notesLabel')}
                 value={observation}
                 onChangeText={setObservation}
-                placeholder="Ex: Carteira do Thiago"
-                accessibilityLabel="Observação da transação"
+                placeholder={t('transaction.notesPlaceholder')}
+                accessibilityLabel={t('transaction.notesLabel')}
               />
 
               {/* Toggle status */}
@@ -349,16 +352,16 @@ export function AddEditTransactionScreen() {
                 <Toggle
                   value={statusOn}
                   onValueChange={setStatusOn}
-                  accessibilityLabel={type === 'expense' ? 'Já paguei' : 'Já recebi'}
+                  accessibilityLabel={type === 'expense' ? t('transaction.alreadyPaid') : t('transaction.alreadyReceived')}
                 />
                 <Text style={styles.toggleLabel}>
-                  {type === 'expense' ? 'Já paguei' : 'Já recebi'}
+                  {type === 'expense' ? t('transaction.alreadyPaid') : t('transaction.alreadyReceived')}
                 </Text>
               </View>
 
               {/* Tipo de pagamento */}
               <View>
-                <Text style={styles.sectionLabel}>Tipo de pagamento</Text>
+                <Text style={styles.sectionLabel}>{t('transaction.paymentTypeLabel')}</Text>
                 <View style={styles.paymentRow}>
                   <View style={styles.paymentItem}>
                     <Button
@@ -367,7 +370,7 @@ export function AddEditTransactionScreen() {
                       selected={paymentType === 'cash'}
                       onPress={() => setPaymentType('cash')}
                     >
-                      À vista
+                      {t('transaction.paymentTypeCash')}
                     </Button>
                   </View>
                   <View style={styles.paymentItem}>
@@ -377,7 +380,7 @@ export function AddEditTransactionScreen() {
                       selected={paymentType === 'installment'}
                       onPress={() => setPaymentType('installment')}
                     >
-                      Parcelado
+                      {t('transaction.paymentTypeInstallment')}
                     </Button>
                   </View>
                   <View style={styles.paymentItem}>
@@ -387,7 +390,7 @@ export function AddEditTransactionScreen() {
                       selected={paymentType === 'recurring'}
                       onPress={() => setPaymentType('recurring')}
                     >
-                      Recorrente
+                      {t('transaction.paymentTypeRecurring')}
                     </Button>
                   </View>
                 </View>
@@ -396,12 +399,12 @@ export function AddEditTransactionScreen() {
               {/* Parcelas */}
               {paymentType === 'installment' && (
                 <TextInput
-                  label="Quantidade de parcelas"
+                  label={t('transaction.installmentsLabel')}
                   value={installments}
-                  onChangeText={(t) => setInstallments(t.replace(/\D/g, ''))}
+                  onChangeText={(v) => setInstallments(v.replace(/\D/g, ''))}
                   keyboardType="numeric"
-                  placeholder="Ex: 3"
-                  accessibilityLabel="Número de parcelas"
+                  placeholder={t('transaction.installmentsPlaceholder')}
+                  accessibilityLabel={t('transaction.installmentsLabel')}
                   error={errors.installments}
                   helperText={installmentsHelper}
                 />
@@ -410,9 +413,9 @@ export function AddEditTransactionScreen() {
               {/* Recorrência */}
               {paymentType === 'recurring' && (
                 <SelectInput
-                  label="Tipo de recorrência"
-                  placeholder="Selecionar tipo"
-                  sheetTitle="Tipo de recorrência"
+                  label={t('transaction.recurrenceTypeLabel')}
+                  placeholder={t('transaction.recurrenceTypePlaceholder')}
+                  sheetTitle={t('transaction.recurrenceTypeLabel')}
                   options={recurrenceOptions}
                   value={recurrenceType}
                   onChange={setRecurrenceType}
@@ -432,7 +435,7 @@ export function AddEditTransactionScreen() {
           loading={saving}
           disabled={loadingTx}
         >
-          {isEditing ? 'Salvar alterações' : 'Salvar valor'}
+          {isEditing ? t('transaction.saveChanges') : t('transaction.saveButton')}
         </Button>
       </View>
 

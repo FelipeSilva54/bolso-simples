@@ -10,6 +10,7 @@ import { Trash } from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
 import { Button } from '@/components/Button';
 import { Checkbox } from '@/components/Checkbox';
+import { useLanguage } from '@/store/LanguageContext';
 
 type DialogProps = {
   visible: boolean;
@@ -28,15 +29,20 @@ export function Dialog({
   visible,
   title,
   description,
-  confirmLabel = 'Excluir',
-  cancelLabel = 'Cancelar',
+  confirmLabel,
+  cancelLabel,
   requireConfirmation = false,
-  confirmationLabel = 'Entendo as consequências desta ação',
+  confirmationLabel,
   loading = false,
   onConfirm,
   onCancel,
 }: DialogProps) {
+  const { t } = useLanguage();
   const [checked, setChecked] = useState(false);
+
+  const resolvedConfirmLabel = confirmLabel ?? t('dialog.confirmDefault');
+  const resolvedCancelLabel = cancelLabel ?? t('dialog.cancelDefault');
+  const resolvedConfirmationLabel = confirmationLabel ?? t('dialog.confirmationDefault');
 
   function handleCancel() {
     setChecked(false);
@@ -73,8 +79,8 @@ export function Dialog({
               <Checkbox
                 value={checked}
                 onValueChange={setChecked}
-                label={confirmationLabel}
-                accessibilityLabel={confirmationLabel}
+                label={resolvedConfirmationLabel}
+                accessibilityLabel={resolvedConfirmationLabel}
               />
             </View>
           )}
@@ -82,7 +88,7 @@ export function Dialog({
           <View style={styles.actions}>
             <View style={styles.actionButton}>
               <Button variant="outlined" size="sm" onPress={handleCancel}>
-                {cancelLabel}
+                {resolvedCancelLabel}
               </Button>
             </View>
             <View style={styles.actionButton}>
@@ -93,7 +99,7 @@ export function Dialog({
                 loading={loading}
                 onPress={handleConfirm}
               >
-                {confirmLabel}
+                {resolvedConfirmLabel}
               </Button>
             </View>
           </View>

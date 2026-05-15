@@ -19,6 +19,7 @@ import { useAuth } from '@/store/AuthContext';
 import { useToast } from '@/store/ToastContext';
 import { useCategories } from '@/hooks/useCategories';
 import { CategoryType } from '@/types/category';
+import { useLanguage } from '@/store/LanguageContext';
 
 const ICONS = [
   'ShoppingCart', 'Car', 'Heart', 'House', 'Briefcase', 'GraduationCap',
@@ -67,6 +68,7 @@ export function AddEditCategoryScreen() {
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const { showToast } = useToast();
+  const { t } = useLanguage();
 
   const isValid = name.trim().length > 0 && selectedIcon !== null && selectedColor !== null;
 
@@ -81,9 +83,9 @@ export function AddEditCategoryScreen() {
         type,
       });
       router.back();
-      showToast('Categoria adicionada com sucesso');
+      showToast(t('category.added'));
     } catch {
-      showToast('Erro ao salvar categoria', 'error');
+      showToast(t('category.saveError'), 'error');
       setSaving(false);
     }
   }
@@ -95,7 +97,7 @@ export function AddEditCategoryScreen() {
       <StatusBar style="dark" backgroundColor={colors.white} />
 
       <Header
-        title="Adicionar categoria"
+        title={t('category.addTitle')}
         variant="screen"
         theme="light"
         showBackButton
@@ -116,33 +118,33 @@ export function AddEditCategoryScreen() {
             )}
           </View>
           <Text style={styles.previewName} numberOfLines={1}>
-            {name.trim().length > 0 ? name.trim() : 'Nome da categoria'}
+            {name.trim().length > 0 ? name.trim() : t('category.namePreview')}
           </Text>
         </View>
 
         {/* Nome */}
         <View style={styles.field}>
           <TextInput
-            label="Nome"
+            label={t('category.nameInputLabel')}
             value={name}
             onChangeText={setName}
-            placeholder="Ex: Alimentação"
-            accessibilityLabel="Nome da categoria"
+            placeholder={t('category.nameInputPlaceholder')}
+            accessibilityLabel={t('category.nameInputA11y')}
             autoCorrect={false}
           />
         </View>
 
         {/* Tipo */}
         <View style={styles.field}>
-          <Text style={styles.label}>Tipo de transação</Text>
+          <Text style={styles.label}>{t('category.typeLabel')}</Text>
           <View style={styles.typeRow}>
-            {(['expense', 'income'] as CategoryType[]).map((t) => {
-              const isChecked = type === t;
-              const label = t === 'expense' ? 'Despesa' : 'Receita';
+            {(['expense', 'income'] as CategoryType[]).map((catType) => {
+              const isChecked = type === catType;
+              const label = catType === 'expense' ? t('category.expenseLabel') : t('category.incomeLabel');
               return (
                 <TouchableOpacity
-                  key={t}
-                  onPress={() => setType(t)}
+                  key={catType}
+                  onPress={() => setType(catType)}
                   accessibilityLabel={label}
                   accessibilityRole="radio"
                   accessibilityState={{ checked: isChecked }}
@@ -160,7 +162,7 @@ export function AddEditCategoryScreen() {
 
         {/* Ícone */}
         <View style={styles.field}>
-          <Text style={styles.label}>Ícone</Text>
+          <Text style={styles.label}>{t('category.iconLabel')}</Text>
           <ScrollView
             style={styles.iconGrid}
             nestedScrollEnabled
@@ -201,7 +203,7 @@ export function AddEditCategoryScreen() {
 
         {/* Cor */}
         <View style={styles.field}>
-          <Text style={styles.label}>Cor</Text>
+          <Text style={styles.label}>{t('category.colorLabel')}</Text>
           {colorRows.map((row, rowIdx) => (
             <View key={rowIdx} style={[styles.colorRow, rowIdx < colorRows.length - 1 && styles.colorRowGap]}>
               {row.map((color) => {
@@ -243,7 +245,7 @@ export function AddEditCategoryScreen() {
           disabled={!isValid}
           loading={saving}
         >
-          Salvar categoria
+          {t('category.saveButton')}
         </Button>
       </View>
 
