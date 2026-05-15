@@ -6,13 +6,14 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
+  Image,
   StyleSheet,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import * as Clipboard from 'expo-clipboard';
-import { Heart, Copy } from 'phosphor-react-native';
+import { Copy } from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
 import { Header } from '@/components/Header';
 import { Button } from '@/components/Button';
@@ -32,8 +33,19 @@ export function SupportScreen() {
     setCustomValue('');
   };
 
+  const formatBRL = (digits: string): string => {
+    if (!digits) return '';
+    const cents = parseInt(digits, 10);
+    if (isNaN(cents)) return '';
+    return (cents / 100).toLocaleString('pt-BR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  };
+
   const handleCustomValueChange = (text: string) => {
-    setCustomValue(text);
+    const digits = text.replace(/\D/g, '');
+    setCustomValue(digits);
     setSelectedPreset(null);
   };
 
@@ -41,7 +53,7 @@ export function SupportScreen() {
     const rawValue =
       selectedPreset !== null
         ? selectedPreset
-        : parseFloat(customValue.replace(',', '.'));
+        : parseInt(customValue, 10) / 100;
 
     if (!rawValue || rawValue < 1) {
       Alert.alert('Valor inválido', 'Escolha ou digite um valor para continuar.');
@@ -75,7 +87,7 @@ export function SupportScreen() {
       >
         {/* Seção 1 — Hero */}
         <View style={styles.hero}>
-          <Heart size={48} color={colors.success} weight="fill" />
+          <Image source={require('@/assets/images/Support-Image.png')} style={styles.heroImage} />
           <Text style={styles.heroTitle}>O Bolso Simples é gratuito e sem anúncios</Text>
           <Text style={styles.heroSubtitle}>
             Se o app te ajuda a organizar a vida financeira, considere contribuir com qualquer
@@ -111,7 +123,7 @@ export function SupportScreen() {
               placeholder="Ou digite outro valor"
               placeholderTextColor={colors.muted}
               keyboardType="numeric"
-              value={customValue}
+              value={formatBRL(customValue)}
               onChangeText={handleCustomValueChange}
               accessibilityLabel="Campo de valor customizado"
             />
@@ -157,12 +169,17 @@ const styles = StyleSheet.create({
   hero: {
     alignItems: 'center',
     gap: spacing.md,
-    paddingTop: spacing.xl,
+  },
+  heroImage: {
+    width: 150,
+    height: 150,
+    resizeMode: 'contain',
   },
   heroTitle: {
     fontSize: fs.xl,
     fontWeight: fw.bold,
     color: colors.content,
+    lineHeight: fs.xl * 1.25,
     textAlign: 'center',
   },
   heroSubtitle: {
@@ -193,12 +210,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: radius.md,
-    backgroundColor: colors.background,
+    borderRadius: radius.sm,
   },
   chipSelected: {
-    borderColor: colors.primary,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.success,
   },
   chipText: {
     fontSize: fs.md,
@@ -213,7 +228,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: radius.md,
+    borderRadius: radius.sm,
     paddingHorizontal: spacing.md,
   },
   inputPrefix: {
@@ -232,7 +247,7 @@ const styles = StyleSheet.create({
   // Pix card
   pixCard: {
     backgroundColor: colors.background,
-    borderRadius: radius.lg,
+    borderRadius: radius.md,
     padding: spacing.lg,
     gap: spacing.xs,
   },

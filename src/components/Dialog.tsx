@@ -6,9 +6,10 @@ import {
   StyleSheet,
   Pressable,
 } from 'react-native';
-import { Trash, CheckSquare, Square } from 'phosphor-react-native';
+import { Trash } from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
 import { Button } from '@/components/Button';
+import { Checkbox } from '@/components/Checkbox';
 
 type DialogProps = {
   visible: boolean;
@@ -68,13 +69,14 @@ export function Dialog({
           </View>
 
           {requireConfirmation && (
-            <Pressable style={styles.checkboxRow} onPress={() => setChecked((v) => !v)}>
-              {checked
-                ? <CheckSquare size={20} color={colors.danger} weight="fill" />
-                : <Square size={20} color={colors.muted} weight="regular" />
-              }
-              <Text style={styles.checkboxLabel}>{confirmationLabel}</Text>
-            </Pressable>
+            <View style={styles.checkboxRow}>
+              <Checkbox
+                value={checked}
+                onValueChange={setChecked}
+                label={confirmationLabel}
+                accessibilityLabel={confirmationLabel}
+              />
+            </View>
           )}
 
           <View style={styles.actions}>
@@ -116,6 +118,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     padding: spacing.xl,
     alignItems: 'center',
+    gap: spacing.sm,
   },
   iconCircle: {
     width: 64,
@@ -145,18 +148,8 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
   checkboxRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
     marginBottom: spacing.xl,
-    alignSelf: 'stretch',
-  },
-  checkboxLabel: {
-    flex: 1,
-    fontSize: fs.sm,
-    fontWeight: fw.regular,
-    color: colors.subcontent,
-    lineHeight: 20,
+    alignSelf: 'flex-start',
   },
   actions: {
     flexDirection: 'row',

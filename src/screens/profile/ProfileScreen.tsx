@@ -100,8 +100,8 @@ export function ProfileScreen() {
   };
 
   const deleteAccountDescription = user?.isAnonymous
-    ? 'Ao excluir sua conta, todos os seus dados — carteiras, transações e categorias — serão apagados permanentemente. Como você está no modo sem cadastro, não há como recuperar essas informações depois.'
-    : 'Ao excluir sua conta, todos os seus dados — carteiras, transações e categorias — serão apagados permanentemente. Essa ação não pode ser desfeita e não afeta sua conta Google.';
+    ? 'Ao excluir sua conta, todas as suas carteiras, transações e categorias serão apagadas permanentemente. Como você está usando o app sem cadastro, não será possível recuperar essas informações depois.'
+    : 'Ao excluir sua conta, todas as suas carteiras, transações e categorias serão apagadas permanentemente. Essa ação não pode ser desfeita e não afeta sua conta Google.';
 
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
@@ -266,12 +266,12 @@ export function ProfileScreen() {
 
       <Dialog
         visible={clearDataDialogVisible}
-        title="Apagar todo o histórico?"
+        title="Limpar dados?"
         description="Todas as suas carteiras, transações e categorias serão removidas permanentemente. Essa ação não tem volta."
         confirmLabel="Limpar tudo"
         cancelLabel="Cancelar"
         requireConfirmation={true}
-        confirmationLabel="Entendo que vou perder todos os meus dados"
+        confirmationLabel="Estou ciente e desejo continuar"
         loading={clearing}
         onConfirm={handleConfirmClearData}
         onCancel={() => setClearDataDialogVisible(false)}
@@ -284,7 +284,7 @@ export function ProfileScreen() {
         confirmLabel="Excluir conta"
         cancelLabel="Cancelar"
         requireConfirmation={true}
-        confirmationLabel="Entendi que essa ação é permanente e não pode ser desfeita"
+        confirmationLabel="Estou ciente e desejo continuar"
         loading={deleting}
         onConfirm={handleConfirmDeleteAccount}
         onCancel={() => setDeleteAccountVisible(false)}
