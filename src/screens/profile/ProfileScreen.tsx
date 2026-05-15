@@ -7,7 +7,6 @@ import {
   Image,
   Share,
   StyleSheet,
-  Modal,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar, setStatusBarStyle } from 'expo-status-bar';
@@ -24,7 +23,6 @@ import {
   BroomIcon,
   TrashIcon,
   SignOutIcon,
-  WarningCircleIcon,
 } from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing } from '@/constants';
 import { Header } from '@/components/Header';
@@ -39,9 +37,11 @@ type IconComponent = React.ComponentType<{ size?: number; color?: string; weight
 
 export function ProfileScreen() {
   const router = useRouter();
-  const { user, loginWithGoogle, logout } = useAuth();
+  const { user, loginWithGoogle, logout, deleteAccount } = useAuth();
   const [logoutDialogVisible, setLogoutDialogVisible] = useState(false);
   const [clearDataDialogVisible, setClearDataDialogVisible] = useState(false);
+  const [deleteAccountVisible, setDeleteAccountVisible] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [toastVariant, setToastVariant] = useState<'success' | 'error'>('success');
   const [clearing, setClearing] = useState(false);
@@ -81,12 +81,27 @@ export function ProfileScreen() {
     }
   };
 
+  const handleConfirmDeleteAccount = async () => {
+    setDeleting(true);
+    try {
+      await deleteAccount();
+    } catch {
+      setToastMessage('Não foi possível excluir a conta. Tente novamente.');
+      setToastVariant('error');
+      setDeleting(false);
+    }
+  };
+
   const handleShare = async () => {
     await Share.share({
       message:
         'Conheça o Bolso Simples, o app de finanças 100% brasileiro, gratuito e sem anúncios!',
     });
   };
+
+  const deleteAccountDescription = user?.isAnonymous
+    ? 'Ao excluir sua conta, todos os seus dados — carteiras, transações e categorias — serão apagados permanentemente. Como você está no modo sem cadastro, não há como recuperar essas informações depois.'
+    : 'Ao excluir sua conta, todos os seus dados — carteiras, transações e categorias — serão apagados permanentemente. Essa ação não pode ser desfeita e não afeta sua conta Google.';
 
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
@@ -232,7 +247,7 @@ export function ProfileScreen() {
           <ListItem
             icon={TrashIcon as IconComponent}
             label="Excluir conta"
-            onPress={() => {}}
+            onPress={() => setDeleteAccountVisible(true)}
             accessibilityLabel="Excluir conta"
             color={colors.danger}
           />
@@ -260,6 +275,19 @@ export function ProfileScreen() {
         loading={clearing}
         onConfirm={handleConfirmClearData}
         onCancel={() => setClearDataDialogVisible(false)}
+      />
+
+      <Dialog
+        visible={deleteAccountVisible}
+        title="Excluir conta"
+        description={deleteAccountDescription}
+        confirmLabel="Excluir conta"
+        cancelLabel="Cancelar"
+        requireConfirmation={true}
+        confirmationLabel="Entendi que essa ação é permanente e não pode ser desfeita"
+        loading={deleting}
+        onConfirm={handleConfirmDeleteAccount}
+        onCancel={() => setDeleteAccountVisible(false)}
       />
 
       <Toast message={toastMessage} variant={toastVariant} />
