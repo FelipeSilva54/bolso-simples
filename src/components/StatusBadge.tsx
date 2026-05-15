@@ -33,7 +33,7 @@ export function StatusBadge({ variant, label }: StatusBadgeProps) {
     <View style={[styles.container, { backgroundColor: background }]}>
       <BadgeIcon variant={variant} color={color} />
       <Text style={[styles.label, { color }]}>
-        {label.toUpperCase()}
+        {label}
       </Text>
     </View>
   );
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: fs.xs,        // 12px
-    fontWeight: fw.semibold,
-    letterSpacing: 0.5,     // Leve tracking em caixa alta melhora legibilidade
+    fontWeight: fw.medium,
+    letterSpacing: 0.6,     // Leve tracking em caixa alta melhora legibilidade
   },
 });
