@@ -166,7 +166,6 @@ export function SelectInput({
           }}
         />
       </BottomSheet>
-
     </View>
   );
 }

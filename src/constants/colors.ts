@@ -25,4 +25,5 @@ export const walletColors = [
   '#2C7873',
   '#8E3B46',
   '#4A4A8A',
+  '#3D3A40',
 ] as const;

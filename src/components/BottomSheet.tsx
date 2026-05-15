@@ -35,8 +35,10 @@ export function BottomSheet({ visible, onClose, children, height }: BottomSheetP
 
   const panResponder = useRef(
     PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponder: () => true,
+      // false = não captura o toque inicial, então taps em botões filhos funcionam normalmente
+      onStartShouldSetPanResponder: () => false,
+      // Captura somente quando o movimento é predominantemente para baixo
+      onMoveShouldSetPanResponder: (_, gs) => gs.dy > 10 && gs.dy > Math.abs(gs.dx),
       onPanResponderMove: (_, gs) => {
         if (gs.dy > 0) translateY.setValue(gs.dy);
       },
@@ -106,10 +108,11 @@ export function BottomSheet({ visible, onClose, children, height }: BottomSheetP
           style={[
             styles.sheet,
             height != null ? { height } : styles.sheetAuto,
-            { transform: [{ translateY }], paddingBottom: bottomInset},
+            { transform: [{ translateY }], paddingBottom: bottomInset },
           ]}
+          {...panResponder.panHandlers}
         >
-          <View style={styles.handleWrapper} {...panResponder.panHandlers}>
+          <View style={styles.handleWrapper}>
             <View style={styles.handle} />
           </View>
           {children}

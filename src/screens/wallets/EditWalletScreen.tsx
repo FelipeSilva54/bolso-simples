@@ -21,7 +21,7 @@ import { TextInput as FormInput } from '@/components/TextInput';
 import { useAuth } from '@/store/AuthContext';
 import { getWallet, updateWallet } from '@/services/wallets';
 
-const COLOR_PALETTE = [colors.primary, ...walletColors] as string[];
+const COLOR_PALETTE = [...walletColors] as string[];
 
 export function EditWalletScreen() {
   const router = useRouter();
@@ -29,7 +29,7 @@ export function EditWalletScreen() {
   const { user } = useAuth();
 
   const [name, setName] = useState('');
-  const [selectedColor, setSelectedColor] = useState<string>(colors.primary);
+  const [selectedColor, setSelectedColor] = useState<string>(walletColors[0]);
   const [balance, setBalance] = useState(0);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);

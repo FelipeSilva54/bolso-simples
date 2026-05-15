@@ -22,7 +22,7 @@ import { useWallets } from '@/hooks/useWallets';
 import { formatCurrency } from '@/utils/currency';
 import { usePreferences } from '@/store/PreferencesContext';
 
-const COLOR_PALETTE = [colors.primary, ...walletColors] as string[];
+const COLOR_PALETTE = [...walletColors] as string[];
 
 export function AddWalletScreen() {
   const router = useRouter();
@@ -31,7 +31,7 @@ export function AddWalletScreen() {
 
   const [name, setName] = useState('');
   const [balanceDigits, setBalanceDigits] = useState('');
-  const [selectedColor, setSelectedColor] = useState<string>(colors.primary);
+  const [selectedColor, setSelectedColor] = useState<string>(walletColors[0]);
   const [saving, setSaving] = useState(false);
 
   const balanceCents = parseInt(balanceDigits || '0', 10);

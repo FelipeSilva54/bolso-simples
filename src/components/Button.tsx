@@ -19,6 +19,7 @@ type ButtonProps = {
   loading?: boolean;
   leftIcon?: React.ReactNode;
   selected?: boolean;
+  accessibilityLabel?: string;
   children: React.ReactNode;
 };
 
@@ -37,6 +38,7 @@ export function Button({
   loading = false,
   leftIcon,
   selected = false,
+  accessibilityLabel,
   children,
 }: ButtonProps) {
   const isSelectedOutlined = variant === 'outlined' && selected;
@@ -47,6 +49,8 @@ export function Button({
       activeOpacity={0.7}
       onPress={onPress}
       disabled={disabled || loading}
+      accessibilityLabel={accessibilityLabel}
+      accessibilityRole="button"
       style={[
         styles.base,
         sizeStyles[size],
