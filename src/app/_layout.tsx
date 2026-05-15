@@ -5,6 +5,7 @@ import { setBackgroundColorAsync } from 'expo-system-ui';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { AuthProvider } from '@/store/AuthContext';
 import { PreferencesProvider } from '@/store/PreferencesContext';
+import { NotificationProvider } from '@/store/NotificationContext';
 import { PortalHost } from '@/components/PortalProvider';
 
 export default function RootLayout() {
@@ -18,14 +19,16 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <PreferencesProvider>
         <AuthProvider>
-          <PortalHost>
-            <Stack screenOptions={{ headerShown: false }}>
-              <Stack.Screen name="index" />
-              <Stack.Screen name="login" />
-              <Stack.Screen name="(tabs)" />
-              <Stack.Screen name="(stack)" />
-            </Stack>
-          </PortalHost>
+          <NotificationProvider>
+            <PortalHost>
+              <Stack screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="index" />
+                <Stack.Screen name="login" />
+                <Stack.Screen name="(tabs)" />
+                <Stack.Screen name="(stack)" />
+              </Stack>
+            </PortalHost>
+          </NotificationProvider>
         </AuthProvider>
       </PreferencesProvider>
     </GestureHandlerRootView>

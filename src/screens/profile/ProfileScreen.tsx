@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -30,6 +30,7 @@ import { Button } from '@/components/Button';
 import { ListItem } from '@/components/ListItem';
 import { Dialog } from '@/components/Dialog';
 import { useAuth } from '@/store/AuthContext';
+import { useNotifications } from '@/store/NotificationContext';
 import { Toast } from '@/components/Toast';
 import { clearAllUserData } from '@/services/wallets';
 
@@ -38,6 +39,24 @@ type IconComponent = React.ComponentType<{ size?: number; color?: string; weight
 export function ProfileScreen() {
   const router = useRouter();
   const { user, loginWithGoogle, logout, deleteAccount } = useAuth();
+  const { unreadCount } = useNotifications();
+
+  const BellWithBadge = useMemo<IconComponent>(() => {
+    return function BellWithBadgeIcon({ size, color, weight }) {
+      return (
+        <View>
+          <Bell size={size} color={color} weight={weight as any} />
+          {unreadCount > 0 && (
+            <View style={styles.badge}>
+              <Text style={styles.badgeText}>
+                {unreadCount > 99 ? '99+' : unreadCount}
+              </Text>
+            </View>
+          )}
+        </View>
+      );
+    };
+  }, [unreadCount]);
   const [logoutDialogVisible, setLogoutDialogVisible] = useState(false);
   const [clearDataDialogVisible, setClearDataDialogVisible] = useState(false);
   const [deleteAccountVisible, setDeleteAccountVisible] = useState(false);
@@ -111,7 +130,7 @@ export function ProfileScreen() {
         title={`Olá, ${displayName}`}
         variant="home"
         theme="light"
-        rightIcon={Bell as IconComponent}
+        rightIcon={BellWithBadge}
         onRightPress={() => router.push('/(stack)/notifications' as never)}
       />
 
@@ -386,5 +405,23 @@ const styles = StyleSheet.create({
   },
   listItemLabelSuccess: {
     color: colors.success,
+  },
+  badge: {
+    position: 'absolute',
+    top: -spacing.xs,
+    right: -spacing.xs,
+    minWidth: spacing.lg,
+    height: spacing.lg,
+    borderRadius: spacing.sm,
+    backgroundColor: colors.danger,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: spacing.xs,
+  },
+  badgeText: {
+    fontSize: fs.xs,
+    fontWeight: fw.bold,
+    color: colors.white,
+    lineHeight: spacing.lg,
   },
 });
