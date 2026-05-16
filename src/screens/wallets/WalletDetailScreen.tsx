@@ -5,7 +5,6 @@ import {
   ScrollView,
   Animated,
   TouchableOpacity,
-  Platform,
   StyleSheet,
   PanResponder,
 } from 'react-native';
@@ -24,7 +23,7 @@ import {
   EyeClosed,
 } from 'phosphor-react-native';
 import * as Phosphor from 'phosphor-react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import { DateRangePicker } from '@/components/DateRangePicker';
 import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
 import { Header } from '@/components/Header';
 import { Skeleton } from '@/components/Skeleton';
@@ -211,8 +210,7 @@ export function WalletDetailScreen() {
     year: today.getFullYear(),
   });
   const [periodSheetVisible, setPeriodSheetVisible] = useState(false);
-  const [pickerStep, setPickerStep] = useState<'none' | 'customStart' | 'customEnd'>('none');
-  const [pendingCustomStart, setPendingCustomStart] = useState<Date | null>(null);
+  const [dateRangePickerVisible, setDateRangePickerVisible] = useState(false);
 
   const { showToast } = useToast();
   const { t } = useLanguage();
@@ -359,29 +357,12 @@ export function WalletDetailScreen() {
     } else if (mode === 'all') {
       setPeriod({ mode: 'all' });
     } else if (mode === 'custom') {
-      setPendingCustomStart(null);
-      setPickerStep('customStart');
+      setDateRangePickerVisible(true);
     }
   };
 
-  const handleCustomDateChange = (
-    event: { type?: string },
-    selectedDate?: Date,
-  ) => {
-    if (event.type === 'dismissed' || !selectedDate) {
-      setPickerStep('none');
-      setPendingCustomStart(null);
-      return;
-    }
-
-    if (pickerStep === 'customStart') {
-      setPendingCustomStart(selectedDate);
-      setPickerStep('customEnd');
-    } else if (pickerStep === 'customEnd' && pendingCustomStart != null) {
-      setPeriod({ mode: 'custom', start: pendingCustomStart, end: selectedDate });
-      setPickerStep('none');
-      setPendingCustomStart(null);
-    }
+  const handleCustomRangeConfirm = (start: Date, end: Date) => {
+    setPeriod({ mode: 'custom', start, end });
   };
 
   const handlePrevDay = () => {
@@ -507,10 +488,7 @@ export function WalletDetailScreen() {
 
         {period.mode === 'custom' && (
           <TouchableOpacity
-            onPress={() => {
-              setPendingCustomStart(null);
-              setPickerStep('customStart');
-            }}
+            onPress={() => setDateRangePickerVisible(true)}
             style={styles.periodNav}
             accessibilityLabel={t('wallet.editCustomRange')}
             accessibilityRole="button"
@@ -654,23 +632,13 @@ export function WalletDetailScreen() {
         onSelectMode={handleSelectPeriodMode}
       />
 
-      {pickerStep !== 'none' && (
-        <DateTimePicker
-          value={
-            pickerStep === 'customEnd' && pendingCustomStart != null
-              ? pendingCustomStart
-              : new Date()
-          }
-          mode="date"
-          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-          minimumDate={
-            pickerStep === 'customEnd' && pendingCustomStart != null
-              ? pendingCustomStart
-              : undefined
-          }
-          onChange={handleCustomDateChange}
-        />
-      )}
+      <DateRangePicker
+        visible={dateRangePickerVisible}
+        onClose={() => setDateRangePickerVisible(false)}
+        onConfirm={handleCustomRangeConfirm}
+        initialStartDate={period.mode === 'custom' ? period.start : undefined}
+        initialEndDate={period.mode === 'custom' ? period.end : undefined}
+      />
     </SafeAreaView>
   );
 }

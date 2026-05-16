@@ -247,6 +247,12 @@ Todos os componentes ficam em `src/components/`. São construídos com React Nat
 - `recurring` — Recorrente → ícone `ArrowsClockwise`, fundo `#EDE7F6`, texto/ícone `#4527A0`
 **Obs:** cores são hardcoded locais (não existem em `colors.ts`) — declaradas como constantes nomeadas no topo do arquivo
 
+### 7.14 DateRangePicker
+**Arquivo:** `src/components/DateRangePicker.tsx`
+**Uso:** Seletor de intervalo de datas exibido dentro do BottomSheet — usado na WalletDetailScreen como opção "Personalizado" do filtro de período
+**Props:** `visible`, `onClose`, `onConfirm(startDate, endDate)`, `initialStartDate?`, `initialEndDate?`
+**Comportamento:** calendário mensal em React Native puro; primeiro toque define início, segundo toque define fim; toque em data ≤ início reinicia seleção; navega entre meses com CaretLeft/CaretRight (Phosphor); datas do range com fundo `colors.offwhite` e efeito de meia-pílula nas extremidades; seleção exibida como "Selecionado: dd/mm/aaaa – dd/mm/aaaa"; botão Confirmar desabilitado até ambas as datas serem selecionadas; link Limpar reseta a seleção
+
 ---
 
 ## 8. Ícones
