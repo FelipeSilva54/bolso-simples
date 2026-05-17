@@ -286,14 +286,10 @@ const styles = StyleSheet.create({
   rangeBarRight: {
     left: '50%',
     right: 0,
-    borderTopLeftRadius: DAY_CIRCLE_SIZE / 2,
-    borderBottomLeftRadius: DAY_CIRCLE_SIZE / 2,
   },
   rangeBarLeft: {
     left: 0,
     right: '50%',
-    borderTopRightRadius: DAY_CIRCLE_SIZE / 2,
-    borderBottomRightRadius: DAY_CIRCLE_SIZE / 2,
   },
   dayCircle: {
     width: DAY_CIRCLE_SIZE,
