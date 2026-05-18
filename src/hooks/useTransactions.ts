@@ -8,6 +8,7 @@ import { useAuth } from '@/store/AuthContext';
 type UseTransactionsParams = {
   walletId: string;
   period: Period;
+  enabled?: boolean;
 };
 
 type UseTransactionsResult = {
@@ -15,7 +16,7 @@ type UseTransactionsResult = {
   loading: boolean;
 };
 
-export function useTransactions({ walletId, period }: UseTransactionsParams): UseTransactionsResult {
+export function useTransactions({ walletId, period, enabled = true }: UseTransactionsParams): UseTransactionsResult {
   const { user } = useAuth();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
@@ -27,6 +28,11 @@ export function useTransactions({ walletId, period }: UseTransactionsParams): Us
     : 'all';
 
   useEffect(() => {
+    if (!enabled) {
+      setTransactions([]);
+      setLoading(true);
+      return;
+    }
     if (!user || !walletId) {
       setTransactions([]);
       setLoading(false);
@@ -72,7 +78,7 @@ export function useTransactions({ walletId, period }: UseTransactionsParams): Us
 
     return unsubscribe;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, walletId, rangeKey]);
+  }, [user, walletId, rangeKey, enabled]);
 
   return { transactions, loading };
 }

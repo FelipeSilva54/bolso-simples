@@ -20,7 +20,7 @@ type WalletCardProps = {
   onPress: () => void;
 };
 
-export function WalletCard({
+export const WalletCard = React.memo(function WalletCard({
   name,
   balance,
   color,
@@ -75,7 +75,7 @@ export function WalletCard({
       </View>
     </Pressable>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: {

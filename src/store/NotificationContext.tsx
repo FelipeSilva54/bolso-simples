@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { Notification } from '@/types/notification';
 import { Transaction } from '@/types/transaction';
 import { Wallet } from '@/types/wallet';
@@ -137,10 +137,13 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     [user],
   );
 
+  const value = useMemo(
+    () => ({ notifications, unreadCount, markAsRead, markAllAsRead, checkAndGenerateNotifications }),
+    [notifications, unreadCount, markAsRead, markAllAsRead, checkAndGenerateNotifications],
+  );
+
   return (
-    <NotificationContext.Provider
-      value={{ notifications, unreadCount, markAsRead, markAllAsRead, checkAndGenerateNotifications }}
-    >
+    <NotificationContext.Provider value={value}>
       {children}
     </NotificationContext.Provider>
   );

@@ -10,12 +10,16 @@ type UseWalletsBalanceResult = {
   loading: boolean;
 };
 
+type UseWalletsBalanceOptions = {
+  enabled?: boolean;
+};
+
 // Saldo é sempre recalculado a partir das transações em tempo real:
 //   wallet.balance (seed inicial gravado na criação) +
 //   soma de receitas com status `received` -
 //   soma de despesas com status `paid`.
 // Transações `unpaid`/`unreceived` não entram no cálculo.
-export function useWalletsBalance(wallets: Wallet[]): UseWalletsBalanceResult {
+export function useWalletsBalance(wallets: Wallet[], { enabled = true }: UseWalletsBalanceOptions = {}): UseWalletsBalanceResult {
   const { user } = useAuth();
   const [transactionTotals, setTransactionTotals] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
@@ -27,6 +31,11 @@ export function useWalletsBalance(wallets: Wallet[]): UseWalletsBalanceResult {
     .join(',');
 
   useEffect(() => {
+    if (!enabled) {
+      setTransactionTotals({});
+      setLoading(true);
+      return;
+    }
     if (!user || wallets.length === 0) {
       setTransactionTotals({});
       setLoading(false);
@@ -70,7 +79,7 @@ export function useWalletsBalance(wallets: Wallet[]): UseWalletsBalanceResult {
       for (const unsub of unsubscribers) unsub();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, walletIdsKey]);
+  }, [user, walletIdsKey, enabled]);
 
   const balanceByWallet: Record<string, number> = {};
   for (const wallet of wallets) {

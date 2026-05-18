@@ -21,7 +21,8 @@
       "navigationBarColor": "#ffffff",
       "navigationBarStyle": "dark-content",
       "edgeToEdgeEnabled": false,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.anonymous.bolsosimples"
     },
     "web": {
       "output": "static",
@@ -51,6 +52,15 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {
+        "root": "src/app"
+      },
+      "eas": {
+        "projectId": "bcf4235b-6786-446a-b16d-f023b7ede64c"
+      }
+    },
+    "owner": "felipe-silva-18"
   }
 }

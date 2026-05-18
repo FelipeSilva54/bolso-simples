@@ -1,8 +1,8 @@
-import React, { useMemo, useState, useRef } from 'react';
+import React, { useMemo, useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
-  ScrollView,
+  FlatList,
   Animated,
   TouchableOpacity,
   StyleSheet,
@@ -202,6 +202,12 @@ export function WalletDetailScreen() {
   const { walletId } = useLocalSearchParams<{ walletId: string }>();
   const { user } = useAuth();
   const [hideBalance, setHideBalance] = useState(false);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setReady(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
 
   const today = new Date();
   const [period, setPeriod] = useState<Period>({
@@ -209,6 +215,18 @@ export function WalletDetailScreen() {
     month: today.getMonth(),
     year: today.getFullYear(),
   });
+  const [debouncedPeriod, setDebouncedPeriod] = useState<Period>(period);
+  const periodDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (periodDebounceRef.current) clearTimeout(periodDebounceRef.current);
+    periodDebounceRef.current = setTimeout(() => {
+      setDebouncedPeriod(period);
+    }, 300);
+    return () => {
+      if (periodDebounceRef.current) clearTimeout(periodDebounceRef.current);
+    };
+  }, [period]);
   const [periodSheetVisible, setPeriodSheetVisible] = useState(false);
   const [dateRangePickerVisible, setDateRangePickerVisible] = useState(false);
 
@@ -281,12 +299,13 @@ export function WalletDetailScreen() {
   const { wallets } = useWallets();
   const wallet = wallets.find((w) => w.id === walletId);
   const walletList = useMemo(() => (wallet ? [wallet] : []), [wallet]);
-  const { balanceByWallet } = useWalletsBalance(walletList);
+  const { balanceByWallet } = useWalletsBalance(walletList, { enabled: ready });
   const calculatedBalance = walletId ? balanceByWallet[walletId] ?? 0 : 0;
 
   const { transactions, loading } = useTransactions({
     walletId: walletId ?? '',
-    period,
+    period: debouncedPeriod,
+    enabled: ready,
   });
 
   const { categories } = useCategories();
@@ -569,7 +588,16 @@ export function WalletDetailScreen() {
             subtitle={t('wallet.emptySubtitle')}
           />
         ) : (
-          <ScrollView
+          <FlatList
+            data={groupedTransactions}
+            keyExtractor={(item) => item.date}
+            renderItem={({ item }) => (
+              <TransactionGroup
+                date={item.date}
+                transactions={item.transactions}
+                onTransactionPress={handleTransactionPress}
+              />
+            )}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.list}
             onScroll={Animated.event(
@@ -577,16 +605,11 @@ export function WalletDetailScreen() {
               { useNativeDriver: false }
             )}
             scrollEventThrottle={16}
-          >
-            {groupedTransactions.map((group) => (
-              <TransactionGroup
-                key={group.date}
-                date={group.date}
-                transactions={group.transactions}
-                onTransactionPress={handleTransactionPress}
-              />
-            ))}
-          </ScrollView>
+            removeClippedSubviews={true}
+            initialNumToRender={8}
+            maxToRenderPerBatch={10}
+            windowSize={5}
+          />
         )}
       </View>
 

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const STORAGE_KEY = '@preferences';
@@ -47,8 +47,10 @@ export function PreferencesProvider({ children }: { children: React.ReactNode })
     setPreferences((prev) => ({ ...prev, [key]: value }));
   }
 
+  const value = useMemo(() => ({ preferences, setPreference }), [preferences, setPreference]);
+
   return (
-    <PreferencesContext.Provider value={{ preferences, setPreference }}>
+    <PreferencesContext.Provider value={value}>
       {children}
     </PreferencesContext.Provider>
   );
