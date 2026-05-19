@@ -20,7 +20,7 @@
       },
       "navigationBarColor": "#ffffff",
       "navigationBarStyle": "dark-content",
-      "edgeToEdgeEnabled": false,
+      "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "com.anonymous.bolsosimples"
     },
