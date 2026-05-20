@@ -2,13 +2,21 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import {
   User,
   signInAnonymously as firebaseSignInAnonymously,
+  signInWithCredential,
+  GoogleAuthProvider,
   signOut as firebaseSignOut,
   onAuthStateChanged,
   deleteUser,
 } from 'firebase/auth';
 import { collection, getDocs, deleteDoc, doc, writeBatch } from 'firebase/firestore';
+import { GoogleSignin, isErrorWithCode, statusCodes } from '@react-native-google-signin/google-signin';
+import { useRouter, useSegments } from 'expo-router';
 import { auth, db } from '@/services/firebase';
 import { seedDefaultCategories } from '@/services/categories';
+
+GoogleSignin.configure({
+  webClientId: '552079077785-fienoalfospe047s005rl29nq0c2s046.apps.googleusercontent.com',
+});
 
 type AuthContextValue = {
   user: User | null;
@@ -24,6 +32,8 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
+  const segments = useSegments();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
@@ -41,8 +51,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return unsubscribe;
   }, []);
 
+  useEffect(() => {
+    if (loading) return;
+    const inProtectedRoute = segments[0] === '(tabs)' || segments[0] === '(stack)';
+    const inAuthRoute = segments[0] === 'login';
+    if (!user && inProtectedRoute) {
+      router.replace('/login');
+    } else if (user && inAuthRoute) {
+      router.replace('/(tabs)');
+    }
+  }, [user, loading, segments]);
+
   async function loginWithGoogle(): Promise<void> {
-    throw new Error('loginWithGoogle requires expo-auth-session — install and configure first');
+    await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+    const { data } = await GoogleSignin.signIn();
+    if (!data?.idToken) throw new Error('Google Sign-In: no idToken returned');
+    const credential = GoogleAuthProvider.credential(data.idToken);
+    await signInWithCredential(auth, credential);
   }
 
   async function loginAnonymous(): Promise<void> {

@@ -22,7 +22,7 @@
       "navigationBarStyle": "dark-content",
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.bolsosimples"
+      "package": "com.bolsosimples.app"
     },
     "web": {
       "output": "static",
@@ -47,7 +47,8 @@
           }
         }
       ],
-      "@react-native-community/datetimepicker"
+      "@react-native-community/datetimepicker",
+      "@react-native-google-signin/google-signin"
     ],
     "experiments": {
       "typedRoutes": true,

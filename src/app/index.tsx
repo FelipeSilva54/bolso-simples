@@ -25,7 +25,7 @@ export default function Index() {
   // Só redireciona quando AMBOS estiverem prontos: Firebase + timer
   useEffect(() => {
     if (loading || !minTimeDone) return;
-    router.replace('/(tabs)');
+    router.replace(user ? '/(tabs)' : '/login');
   }, [loading, minTimeDone, user]);
 
   const displayName = user?.isAnonymous ? t('common.visitor') : user?.email ?? null;

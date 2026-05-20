@@ -3,13 +3,13 @@ import { View, Text, Image, StyleSheet } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import * as NavigationBar from 'expo-navigation-bar';
-import { colors, fontSize as fs, fontWeight as fw, spacing, radius, lineHeight as lh } from '@/constants';
+import { colors, fontSize as fs, fontWeight as fw, spacing, lineHeight as lh } from '@/constants';
 import { Button } from '@/components/Button';
 import { useAuth } from '@/store/AuthContext';
 import { useLanguage } from '@/store/LanguageContext';
 
 export default function LoginRoute() {
-  const { loginAnonymous } = useAuth();
+  const { loginAnonymous, loginWithGoogle } = useAuth();
   const { t } = useLanguage();
   const insets = useSafeAreaInsets();
   const [loadingGoogle, setLoadingGoogle] = useState(false);
@@ -23,7 +23,7 @@ export default function LoginRoute() {
   const handleGoogleSignIn = async () => {
     setLoadingGoogle(true);
     try {
-      // TODO: signInWithGoogle
+      await loginWithGoogle();
     } finally {
       setLoadingGoogle(false);
     }

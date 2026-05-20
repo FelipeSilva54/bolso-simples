@@ -80,6 +80,11 @@ export function ProfileScreen() {
 
   const handleLogout = () => setLogoutDialogVisible(true);
 
+  const handleConfirmLogout = () => {
+    setLogoutDialogVisible(false);
+    logout();
+  };
+
   const handleClearHistory = () => setClearDataDialogVisible(true);
 
   const handleConfirmClearData = async () => {
@@ -88,6 +93,7 @@ export function ProfileScreen() {
     try {
       await clearAllUserData(user.uid);
       setClearDataDialogVisible(false);
+      setClearing(false);
       router.replace('/(tabs)');
       showToast(t('profile.clearDataSuccess'));
     } catch {
@@ -100,6 +106,7 @@ export function ProfileScreen() {
     setDeleting(true);
     try {
       await deleteAccount();
+      setDeleteAccountVisible(false);
     } catch {
       showToast(t('profile.deleteAccountError'), 'error');
       setDeleting(false);
@@ -271,7 +278,7 @@ export function ProfileScreen() {
         description={t('profile.logoutDialogDescription')}
         confirmLabel={t('profile.logoutDialogConfirm')}
         cancelLabel={t('common.cancel')}
-        onConfirm={logout}
+        onConfirm={handleConfirmLogout}
         onCancel={() => setLogoutDialogVisible(false)}
       />
 
