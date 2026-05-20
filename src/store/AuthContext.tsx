@@ -13,6 +13,7 @@ import { GoogleSignin, isErrorWithCode, statusCodes } from '@react-native-google
 import { useRouter, useSegments } from 'expo-router';
 import { auth, db } from '@/services/firebase';
 import { seedDefaultCategories } from '@/services/categories';
+import { clearNotifications } from '@/services/notifications';
 
 GoogleSignin.configure({
   webClientId: '552079077785-fienoalfospe047s005rl29nq0c2s046.apps.googleusercontent.com',
@@ -75,6 +76,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   async function logout(): Promise<void> {
+    if (!auth.currentUser?.isAnonymous) {
+      try { await GoogleSignin.signOut(); } catch {}
+    }
     await firebaseSignOut(auth);
   }
 
@@ -99,6 +103,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     batch.delete(doc(db, 'users', uid));
     await batch.commit();
+
+    await clearNotifications(uid);
+
+    if (!currentUser.isAnonymous) {
+      try { await GoogleSignin.revokeAccess(); } catch {}
+      try { await GoogleSignin.signOut(); } catch {}
+    }
 
     await deleteUser(currentUser);
   }

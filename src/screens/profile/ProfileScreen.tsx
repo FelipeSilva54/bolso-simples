@@ -286,6 +286,7 @@ export function ProfileScreen() {
         visible={clearDataDialogVisible}
         title={t('profile.clearDataDialogTitle')}
         description={t('profile.clearDataDialogDescription')}
+        icon={BroomIcon as IconComponent}
         confirmLabel={t('profile.clearDataDialogConfirm')}
         cancelLabel={t('common.cancel')}
         requireConfirmation={true}

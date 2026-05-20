@@ -6,16 +6,19 @@ import {
   StyleSheet,
   Pressable,
 } from 'react-native';
-import { Trash } from 'phosphor-react-native';
+import { TrashIcon } from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
 import { Button } from '@/components/Button';
 import { Checkbox } from '@/components/Checkbox';
 import { useLanguage } from '@/store/LanguageContext';
 
+type IconComponent = React.ComponentType<{ size?: number; color?: string; weight?: string }>;
+
 type DialogProps = {
   visible: boolean;
   title: string;
   description: string;
+  icon?: IconComponent;
   confirmLabel?: string;
   cancelLabel?: string;
   requireConfirmation?: boolean;
@@ -29,6 +32,7 @@ export function Dialog({
   visible,
   title,
   description,
+  icon: Icon,
   confirmLabel,
   cancelLabel,
   requireConfirmation = false,
@@ -66,7 +70,9 @@ export function Dialog({
         <Pressable style={styles.card} onPress={(e) => e.stopPropagation()}>
 
           <View style={styles.iconCircle}>
-            <Trash size={32} color={colors.danger} weight="regular" />
+            {Icon
+              ? <Icon size={32} color={colors.danger} weight="regular" />
+              : <TrashIcon size={32} color={colors.danger} weight="regular" />}
           </View>
 
           <View style={styles.content}>
