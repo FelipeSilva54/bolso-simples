@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
+  Animated,
   View,
   Text,
   TouchableOpacity,
@@ -51,11 +52,9 @@ export function SelectInput({
 }: SelectInputProps) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
-  const [focused, setFocused] = useState(false);
+  const focusAnim = useRef(new Animated.Value(0)).current;
 
   const hasError = error != null && error.length > 0;
-  const borderColor = hasError ? colors.danger : focused ? colors.content : colors.border;
-  const borderWidth = hasError || focused ? 2 : 1;
 
   const selectedOption = options.find((o) => o.value === value);
 
@@ -67,13 +66,13 @@ export function SelectInput({
 
   const handleOpen = () => {
     if (disabled) return;
-    setFocused(true);
+    Animated.timing(focusAnim, { toValue: 1, duration: 150, useNativeDriver: true }).start();
     setOpen(true);
   };
 
   const handleClose = () => {
+    Animated.timing(focusAnim, { toValue: 0, duration: 150, useNativeDriver: true }).start();
     setOpen(false);
-    setFocused(false);
     setSearch('');
   };
 
@@ -89,27 +88,29 @@ export function SelectInput({
         <Text style={styles.label}>{label}</Text>
       )}
 
-      <TouchableOpacity
-        onPress={handleOpen}
-        activeOpacity={0.7}
-        accessibilityRole="button"
-        accessibilityLabel={accessibilityLabel ?? label ?? 'Selecionar opção'}
-        style={[
-          styles.input,
-          {
-            borderBottomColor: borderColor,
-            borderBottomWidth: borderWidth,
-          },
-        ]}
-      >
-        {selectedOption?.icon != null && selectedOption.iconColor != null && (
-          <AvatarIcon icon={selectedOption.icon} iconColor={selectedOption.iconColor} size={24} />
+      <View style={styles.inputWrapper}>
+        <TouchableOpacity
+          onPress={handleOpen}
+          activeOpacity={0.7}
+          accessibilityRole="button"
+          accessibilityLabel={accessibilityLabel ?? label ?? 'Selecionar opção'}
+          style={styles.input}
+        >
+          {selectedOption?.icon != null && selectedOption.iconColor != null && (
+            <AvatarIcon icon={selectedOption.icon} iconColor={selectedOption.iconColor} size={24} />
+          )}
+          <Text style={[styles.valueText, !selectedOption && styles.placeholder]}>
+            {selectedOption ? selectedOption.label : placeholder}
+          </Text>
+          <CaretRight size={16} color={colors.muted} weight="regular" />
+        </TouchableOpacity>
+
+        <View style={styles.borderBase} />
+        {!hasError && (
+          <Animated.View style={[styles.borderActive, styles.borderFocus, { opacity: focusAnim }]} />
         )}
-        <Text style={[styles.valueText, !selectedOption && styles.placeholder]}>
-          {selectedOption ? selectedOption.label : placeholder}
-        </Text>
-        <CaretRight size={16} color={colors.muted} weight="regular" />
-      </TouchableOpacity>
+        {hasError && <View style={[styles.borderActive, styles.borderError]} />}
+      </View>
 
       {(hasError || helperText != null) && (
         <Text style={[styles.helperText, hasError && styles.errorText]}>
@@ -183,6 +184,9 @@ const styles = StyleSheet.create({
     color: colors.content,
     marginBottom: 6,
   },
+  inputWrapper: {
+    width: '100%',
+  },
   input: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -190,6 +194,23 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
     paddingHorizontal: 0,
     gap: spacing.md,
+  },
+  borderBase: {
+    height: 1,
+    backgroundColor: colors.border,
+  },
+  borderActive: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 2,
+  },
+  borderFocus: {
+    backgroundColor: colors.content,
+  },
+  borderError: {
+    backgroundColor: colors.danger,
   },
   valueText: {
     fontSize: fs.md,

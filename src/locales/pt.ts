@@ -114,7 +114,7 @@ export const pt = {
   wallet: {
     createTitle: 'Criar carteira',
     editTitle: 'Editar carteira',
-    nameLabel: 'Apelido',
+    nameLabel: 'Nome da carteira',
     namePlaceholder: 'Ex: Carteira do Thiago',
     balanceLabel: 'Saldo atual',
     balancePlaceholder: 'Ex: R$ 10.000,00',
@@ -124,7 +124,7 @@ export const pt = {
     infoAlert: 'Use carteiras para separar seu dinheiro por contas, cartões, bancos ou metas.',
     saveButton: 'Salvar carteira',
     saveChanges: 'Salvar alterações',
-    nameLabelA11y: 'Apelido da carteira',
+    nameLabelA11y: 'Nome da carteira',
     balanceLabelA11y: 'Saldo atual da carteira',
     colorA11yPrefix: 'Selecionar cor',
     actionsEdit: 'Editar carteira',

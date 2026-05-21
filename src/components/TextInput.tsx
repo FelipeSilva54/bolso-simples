@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
+  Animated,
   View,
   Text,
   TextInput as RNTextInput,
@@ -24,13 +25,22 @@ export function TextInput({
   ...rest
 }: TextInputProps) {
   const [focused, setFocused] = useState(false);
+  const focusAnim = useRef(new Animated.Value(0)).current;
 
   const isFilled = value != null && value.length > 0;
   const hasError = error != null && error.length > 0;
 
-  // Erro sempre vence — linha vermelha independente de foco
-  const borderColor = hasError ? colors.danger : focused ? colors.content : colors.border;
-  const borderWidth = hasError || focused ? 2 : 1;
+  function handleFocus(e: Parameters<NonNullable<RNTextInputProps['onFocus']>>[0]) {
+    setFocused(true);
+    Animated.timing(focusAnim, { toValue: 1, duration: 150, useNativeDriver: true }).start();
+    rest.onFocus?.(e);
+  }
+
+  function handleBlur(e: Parameters<NonNullable<RNTextInputProps['onBlur']>>[0]) {
+    setFocused(false);
+    Animated.timing(focusAnim, { toValue: 0, duration: 150, useNativeDriver: true }).start();
+    rest.onBlur?.(e);
+  }
 
   return (
     <View style={[styles.wrapper, disabled && styles.disabled]}>
@@ -43,24 +53,20 @@ export function TextInput({
         {...rest}
         value={value}
         editable={!disabled}
-        onFocus={(e) => {
-          setFocused(true);
-          rest.onFocus?.(e);
-        }}
-        onBlur={(e) => {
-          setFocused(false);
-          rest.onBlur?.(e);
-        }}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
         placeholderTextColor={colors.muted}
-        style={[
-          styles.input,
-          {
-            borderBottomColor: borderColor,
-            borderBottomWidth: borderWidth,
-            color: isFilled ? colors.content : colors.muted,
-          },
-        ]}
+        style={[styles.input, { color: isFilled ? colors.content : colors.muted }]}
       />
+
+      {/* Base border (always visible) */}
+      <View style={styles.borderBase} />
+      {/* Focus indicator fades in/out (hidden when error overrides) */}
+      {!hasError && (
+        <Animated.View style={[styles.borderActive, styles.borderFocus, { opacity: focusAnim }]} />
+      )}
+      {/* Error indicator (instant, on top) */}
+      {hasError && <View style={[styles.borderActive, styles.borderError]} />}
 
       {/* Erro tem prioridade sobre helperText quando os dois forem passados */}
       {(hasError || helperText != null) && (
@@ -91,6 +97,23 @@ const styles = StyleSheet.create({
     fontWeight: fw.regular,
     paddingVertical: spacing.md,
     paddingHorizontal: 0,
+  },
+  borderBase: {
+    height: 1,
+    backgroundColor: colors.border,
+  },
+  borderActive: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 2,
+  },
+  borderFocus: {
+    backgroundColor: colors.content,
+  },
+  borderError: {
+    backgroundColor: colors.danger,
   },
   helperText: {
     fontSize: fs.sm,

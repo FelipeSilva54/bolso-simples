@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
+  Animated,
   View,
   Text,
   TouchableOpacity,
@@ -54,7 +55,7 @@ export function DateInput({
 }: DateInputProps) {
   const { t } = useLanguage();
   const [showPicker, setShowPicker] = useState(false);
-  const [focused, setFocused] = useState(false);
+  const focusAnim = useRef(new Animated.Value(0)).current;
 
   const dateLabels = {
     today: t('date.today'),
@@ -63,18 +64,16 @@ export function DateInput({
   };
 
   const hasError = error != null && error.length > 0;
-  const borderColor = hasError ? colors.danger : focused ? colors.content : colors.border;
-  const borderWidth = hasError || focused ? 2 : 1;
 
   const handlePress = () => {
     if (disabled) return;
-    setFocused(true);
+    Animated.timing(focusAnim, { toValue: 1, duration: 150, useNativeDriver: true }).start();
     setShowPicker(true);
   };
 
   const handleChange = (_event: DateTimePickerEvent, selectedDate?: Date) => {
+    Animated.timing(focusAnim, { toValue: 0, duration: 150, useNativeDriver: true }).start();
     setShowPicker(false);
-    setFocused(false);
     if (selectedDate) {
       onChange(selectedDate);
     }
@@ -87,24 +86,26 @@ export function DateInput({
         <Text style={styles.label}>{label}</Text>
       )}
 
-      <TouchableOpacity
-        onPress={handlePress}
-        activeOpacity={0.7}
-        accessibilityRole="button"
-        accessibilityLabel={accessibilityLabel ?? label ?? t('date.selectDate')}
-        style={[
-          styles.input,
-          {
-            borderBottomColor: borderColor,
-            borderBottomWidth: borderWidth,
-          },
-        ]}
-      >
-        <Text style={styles.valueText}>
-          {formatDateLabel(value, dateLabels)}
-        </Text>
-        <CalendarBlank size={24} color={colors.content} weight="regular" />
-      </TouchableOpacity>
+      <View style={styles.inputWrapper}>
+        <TouchableOpacity
+          onPress={handlePress}
+          activeOpacity={0.7}
+          accessibilityRole="button"
+          accessibilityLabel={accessibilityLabel ?? label ?? t('date.selectDate')}
+          style={styles.input}
+        >
+          <Text style={styles.valueText}>
+            {formatDateLabel(value, dateLabels)}
+          </Text>
+          <CalendarBlank size={24} color={colors.content} weight="regular" />
+        </TouchableOpacity>
+
+        <View style={styles.borderBase} />
+        {!hasError && (
+          <Animated.View style={[styles.borderActive, styles.borderFocus, { opacity: focusAnim }]} />
+        )}
+        {hasError && <View style={[styles.borderActive, styles.borderError]} />}
+      </View>
 
       {(hasError || helperText != null) && (
         <Text style={[styles.helperText, hasError && styles.errorText]}>
@@ -139,12 +140,32 @@ const styles = StyleSheet.create({
     color: colors.content,
     marginBottom: 6,
   },
+  inputWrapper: {
+    width: '100%',
+  },
   input: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingVertical: spacing.md,
     paddingHorizontal: 0,
+  },
+  borderBase: {
+    height: 1,
+    backgroundColor: colors.border,
+  },
+  borderActive: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 2,
+  },
+  borderFocus: {
+    backgroundColor: colors.content,
+  },
+  borderError: {
+    backgroundColor: colors.danger,
   },
   valueText: {
     fontSize: fs.md,

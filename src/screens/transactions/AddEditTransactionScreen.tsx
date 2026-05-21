@@ -8,6 +8,7 @@ import {
   Alert,
   StyleSheet,
   ActivityIndicator,
+  LayoutAnimation,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
@@ -75,6 +76,11 @@ export function AddEditTransactionScreen() {
   const [date, setDate] = useState<Date>(new Date());
   const [observation, setObservation] = useState('');
   const [paymentType, setPaymentType] = useState<PaymentType>('cash');
+
+  function handlePaymentType(type: PaymentType) {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setPaymentType(type);
+  }
   const [installments, setInstallments] = useState('');
   const [recurrenceType, setRecurrenceType] = useState<string | null>(null);
 
@@ -368,7 +374,7 @@ export function AddEditTransactionScreen() {
                       variant="outlined"
                       size="sm"
                       selected={paymentType === 'cash'}
-                      onPress={() => setPaymentType('cash')}
+                      onPress={() => handlePaymentType('cash')}
                     >
                       {t('transaction.paymentTypeCash')}
                     </Button>
@@ -378,7 +384,7 @@ export function AddEditTransactionScreen() {
                       variant="outlined"
                       size="sm"
                       selected={paymentType === 'installment'}
-                      onPress={() => setPaymentType('installment')}
+                      onPress={() => handlePaymentType('installment')}
                     >
                       {t('transaction.paymentTypeInstallment')}
                     </Button>
@@ -388,7 +394,7 @@ export function AddEditTransactionScreen() {
                       variant="outlined"
                       size="sm"
                       selected={paymentType === 'recurring'}
-                      onPress={() => setPaymentType('recurring')}
+                      onPress={() => handlePaymentType('recurring')}
                     >
                       {t('transaction.paymentTypeRecurring')}
                     </Button>

@@ -116,7 +116,7 @@ export const en: Translations = {
   wallet: {
     createTitle: 'Create wallet',
     editTitle: 'Edit wallet',
-    nameLabel: 'Nickname',
+    nameLabel: 'Wallet name',
     namePlaceholder: 'E.g.: My Wallet',
     balanceLabel: 'Current balance',
     balancePlaceholder: 'E.g.: $ 1,000.00',
@@ -126,7 +126,7 @@ export const en: Translations = {
     infoAlert: 'Use wallets to separate your money by accounts, cards, banks, or goals.',
     saveButton: 'Save wallet',
     saveChanges: 'Save changes',
-    nameLabelA11y: 'Wallet nickname',
+    nameLabelA11y: 'Wallet name',
     balanceLabelA11y: 'Current wallet balance',
     colorA11yPrefix: 'Select color',
     actionsEdit: 'Edit wallet',

@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
+  Animated,
   TouchableOpacity,
   Text,
   ActivityIndicator,
@@ -44,6 +45,19 @@ export function Button({
   const isSelectedOutlined = variant === 'outlined' && selected;
   const textColor = isSelectedOutlined ? colors.white : textColorMap[variant];
 
+  const selectAnim = useRef(
+    new Animated.Value(variant === 'outlined' && selected ? 1 : 0)
+  ).current;
+
+  useEffect(() => {
+    if (variant !== 'outlined') return;
+    Animated.timing(selectAnim, {
+      toValue: selected ? 1 : 0,
+      duration: 150,
+      useNativeDriver: true,
+    }).start();
+  }, [selected, variant, selectAnim]);
+
   return (
     <TouchableOpacity
       activeOpacity={0.7}
@@ -59,6 +73,12 @@ export function Button({
         disabled && styles.disabled,
       ]}
     >
+      {variant === 'outlined' && (
+        <Animated.View
+          style={[styles.selectedOverlay, { opacity: selectAnim }]}
+          pointerEvents="none"
+        />
+      )}
       {loading ? (
         <ActivityIndicator size="small" color={textColor} />
       ) : (
@@ -97,8 +117,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   outlinedSelected: {
+    borderColor: 'transparent',
+  },
+  selectedOverlay: {
+    ...StyleSheet.absoluteFillObject,
     backgroundColor: colors.success,
-    borderWidth: 0,
+    borderRadius: radius.sm,
   },
   disabled: {
     opacity: 0.5,

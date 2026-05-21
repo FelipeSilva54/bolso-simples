@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
 import { Wallet, User } from 'phosphor-react-native';
-import { colors, fontSize as fs } from '@/constants';
+import { colors, fontSize as fs, spacing } from '@/constants';
 import { useLanguage } from '@/store/LanguageContext';
 
 export default function TabLayout() {
@@ -18,6 +18,7 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor: colors.white,
           borderTopColor: colors.border,
+          paddingBottom: spacing.sm,
         },
       }}
     >

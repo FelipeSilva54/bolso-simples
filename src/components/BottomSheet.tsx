@@ -54,7 +54,7 @@ export function BottomSheet({ visible, onClose, children, height }: BottomSheetP
             toValue: 0,
             useNativeDriver: true,
             bounciness: 0,
-            speed: 20,
+            speed: 35,
           }).start();
         }
       },
@@ -70,11 +70,11 @@ export function BottomSheet({ visible, onClose, children, height }: BottomSheetP
           toValue: 0,
           useNativeDriver: true,
           bounciness: 0,
-          speed: 20,
+          speed: 35,
         }),
         Animated.timing(opacity, {
           toValue: 1,
-          duration: 200,
+          duration: 180,
           useNativeDriver: true,
         }),
       ]).start();
