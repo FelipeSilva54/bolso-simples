@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
 
-type Variant = 'primary' | 'outlined' | 'danger' | 'dangerLight';
+type Variant = 'primary' | 'soft' | 'danger' | 'dangerLight';
 type Size = 'lg' | 'sm';
 
 type ButtonProps = {
@@ -26,7 +26,7 @@ type ButtonProps = {
 
 const textColorMap: Record<Variant, string> = {
   primary: colors.white,
-  outlined: colors.content,
+  soft: colors.content,
   danger: colors.white,
   dangerLight: colors.danger,
 };
@@ -42,15 +42,15 @@ export function Button({
   accessibilityLabel,
   children,
 }: ButtonProps) {
-  const isSelectedOutlined = variant === 'outlined' && selected;
+  const isSelectedOutlined = variant === 'soft' && selected;
   const textColor = isSelectedOutlined ? colors.white : textColorMap[variant];
 
   const selectAnim = useRef(
-    new Animated.Value(variant === 'outlined' && selected ? 1 : 0)
+    new Animated.Value(variant === 'soft' && selected ? 1 : 0)
   ).current;
 
   useEffect(() => {
-    if (variant !== 'outlined') return;
+    if (variant !== 'soft') return;
     Animated.timing(selectAnim, {
       toValue: selected ? 1 : 0,
       duration: 150,
@@ -69,11 +69,11 @@ export function Button({
         styles.base,
         sizeStyles[size],
         variantStyles[variant],
-        isSelectedOutlined && styles.outlinedSelected,
+        isSelectedOutlined && styles.softSelected,
         disabled && styles.disabled,
       ]}
     >
-      {variant === 'outlined' && (
+      {variant === 'soft' && (
         <Animated.View
           style={[styles.selectedOverlay, { opacity: selectAnim }]}
           pointerEvents="none"
@@ -95,7 +95,7 @@ export function Button({
 
 const variantStyles = StyleSheet.create({
   primary: { backgroundColor: colors.primary },
-  outlined: { backgroundColor: colors.white, borderWidth: 1, borderColor: colors.border },
+  soft: { backgroundColor: colors.background },
   danger: { backgroundColor: colors.danger },
   dangerLight: { backgroundColor: colors.dangerLight },
 });
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  outlinedSelected: {
+  softSelected: {
     borderColor: 'transparent',
   },
   selectedOverlay: {

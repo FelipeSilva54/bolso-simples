@@ -180,7 +180,7 @@ export function TransactionDetailSheet({
               </View>
               <View style={styles.actionItem}>
                 <Button
-                  variant="outlined"
+                  variant="soft"
                   size="sm"
                   leftIcon={<PencilSimple size={18} color={colors.content} weight="fill" />}
                   onPress={() => onEdit(transaction.id)}

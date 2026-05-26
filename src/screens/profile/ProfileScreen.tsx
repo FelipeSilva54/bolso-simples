@@ -177,7 +177,7 @@ export function ProfileScreen() {
               accessibilityLabel={t('profile.profileIllustration')}
             />
             <Button
-              variant="outlined"
+              variant="soft"
               onPress={loginWithGoogle}
               leftIcon={
                 <Image

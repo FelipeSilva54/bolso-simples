@@ -371,7 +371,7 @@ export function AddEditTransactionScreen() {
                 <View style={styles.paymentRow}>
                   <View style={styles.paymentItem}>
                     <Button
-                      variant="outlined"
+                      variant="soft"
                       size="sm"
                       selected={paymentType === 'cash'}
                       onPress={() => handlePaymentType('cash')}
@@ -381,7 +381,7 @@ export function AddEditTransactionScreen() {
                   </View>
                   <View style={styles.paymentItem}>
                     <Button
-                      variant="outlined"
+                      variant="soft"
                       size="sm"
                       selected={paymentType === 'installment'}
                       onPress={() => handlePaymentType('installment')}
@@ -391,7 +391,7 @@ export function AddEditTransactionScreen() {
                   </View>
                   <View style={styles.paymentItem}>
                     <Button
-                      variant="outlined"
+                      variant="soft"
                       size="sm"
                       selected={paymentType === 'recurring'}
                       onPress={() => handlePaymentType('recurring')}

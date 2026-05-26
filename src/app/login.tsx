@@ -60,7 +60,7 @@ export default function LoginRoute() {
         <View style={styles.gapXl} />
 
         <Button
-          variant="outlined"
+          variant="soft"
           onPress={handleGoogleSignIn}
           loading={loadingGoogle}
           disabled={loadingAnonymous}

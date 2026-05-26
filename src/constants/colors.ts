@@ -14,6 +14,8 @@ export const colors = {
   infoLight: '#EBF8FE',
   info: '#075A83',
   background: '#f3f3f3',
+  warning: '#D97706',
+  warningLight: '#FEF3C7',
 } as const;
 
 export const walletColors = [
