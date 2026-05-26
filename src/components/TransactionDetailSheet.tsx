@@ -197,6 +197,7 @@ export function TransactionDetailSheet({
       {transaction != null && (
         <Dialog
           visible={showDeleteDialog}
+          variant="delete"
           title={t('transaction.detailDeleteTitle')}
           description={t('transaction.detailDeleteDescription')}
           confirmLabel={t('transaction.detailDeleteButton')}

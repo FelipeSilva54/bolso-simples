@@ -9,7 +9,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { StatusBar, setStatusBarStyle } from 'expo-status-bar';
+import { setStatusBarStyle } from 'expo-status-bar';
 import { useRouter, useFocusEffect } from 'expo-router';
 import {
   Bell,
@@ -123,10 +123,8 @@ export function ProfileScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
-    <StatusBar style="dark"/>
-
       <Header
-        title={`${t('common.greetingPrefix')}${displayName}`}
+        title={`${t('common.greetingPrefix')}${displayName} 👋`}
         variant="home"
         theme="light"
         rightIcon={BellWithBadge}
@@ -274,6 +272,7 @@ export function ProfileScreen() {
 
       <Dialog
         visible={logoutDialogVisible}
+        variant="disconnect"
         title={t('profile.logoutDialogTitle')}
         description={t('profile.logoutDialogDescription')}
         confirmLabel={t('profile.logoutDialogConfirm')}
@@ -284,9 +283,9 @@ export function ProfileScreen() {
 
       <Dialog
         visible={clearDataDialogVisible}
+        variant="clear"
         title={t('profile.clearDataDialogTitle')}
         description={t('profile.clearDataDialogDescription')}
-        icon={BroomIcon as IconComponent}
         confirmLabel={t('profile.clearDataDialogConfirm')}
         cancelLabel={t('common.cancel')}
         requireConfirmation={true}
@@ -298,6 +297,7 @@ export function ProfileScreen() {
 
       <Dialog
         visible={deleteAccountVisible}
+        variant="delete"
         title={t('profile.deleteAccountDialogTitle')}
         description={deleteAccountDescription}
         confirmLabel={t('profile.deleteAccountDialogConfirm')}

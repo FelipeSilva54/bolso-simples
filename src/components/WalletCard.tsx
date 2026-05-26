@@ -84,6 +84,11 @@ const styles = StyleSheet.create({
     overflow: 'hidden',          // Corta os círculos decorativos nas bordas do card
     minHeight: 180,
     justifyContent: 'space-between',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.18,
+    shadowRadius: 10,
+    elevation: 6,
   },
   pressed: {
     opacity: 0.9,

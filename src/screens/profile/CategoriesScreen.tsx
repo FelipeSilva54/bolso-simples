@@ -97,20 +97,20 @@ export function CategoriesScreen() {
     Animated.spring(tabAnim, {
       toValue,
       useNativeDriver: true,
-      bounciness: 4,
-      speed: 20,
+      bounciness: 3,
+      speed: 32,
     }).start();
 
     Animated.spring(colorAnim, {
       toValue,
       useNativeDriver: false,
       bounciness: 0,
-      speed: 16,
+      speed: 28,
     }).start();
 
-    // Defere a troca de lista para o próximo frame — não bloqueia o início
-    // da animação. A pílula desliza enquanto a lista re-renderiza no fundo.
-    requestAnimationFrame(() => setActiveTab(next));
+    // setTimeout(16) garante que a animação já pintou pelo menos um quadro
+    // antes de a lista pesada re-renderizar — mais confiável que rAF no Android.
+    setTimeout(() => setActiveTab(next), 16);
   };
 
   const filteredCategories = useMemo(

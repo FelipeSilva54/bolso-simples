@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { Dialog } from '@/components/Dialog';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { StatusBar, setStatusBarStyle } from 'expo-status-bar';
+import { setStatusBarStyle, setStatusBarBackgroundColor } from 'expo-status-bar';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { Bell, Eye, EyeClosed } from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
@@ -63,11 +63,15 @@ export function HomeScreen() {
   useFocusEffect(
     React.useCallback(() => {
       setStatusBarStyle('light');
+      setStatusBarBackgroundColor(colors.primary, false);
     }, [])
   );
 
   useEffect(() => {
-    if (walletToDelete === null) setStatusBarStyle('light');
+    if (walletToDelete === null) {
+      setStatusBarStyle('light');
+      setStatusBarBackgroundColor(colors.primary, false);
+    }
   }, [walletToDelete]);
 
   const displayName =
@@ -108,10 +112,8 @@ export function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
-      <StatusBar style="light" />
-
       <Header
-        title={`${t('common.greetingPrefix')}${displayName}`}
+        title={`${t('common.greetingPrefix')}${displayName} 👋`}
         variant="home"
         theme="dark"
         secondaryRightIcon={(hideBalance ? EyeClosed : Eye) as IconComponent}
@@ -190,6 +192,7 @@ export function HomeScreen() {
 
       <Dialog
         visible={walletToDelete !== null}
+        variant="delete"
         title={t('home.deleteWalletTitle')}
         description={t('home.deleteWalletDescription')}
         confirmLabel={t('common.delete')}

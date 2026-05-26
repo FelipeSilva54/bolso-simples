@@ -434,7 +434,7 @@ export function AddEditTransactionScreen() {
         </KeyboardAvoidingView>
       )}
 
-      <View style={[styles.footer, { paddingBottom: spacing.xl }]}>
+      <View style={[styles.footer, { paddingBottom: spacing.md }]}>
         <Button
           variant="primary"
           onPress={handleSave}
@@ -512,9 +512,9 @@ const styles = StyleSheet.create({
   },
   footer: {
     paddingHorizontal: 20,
-    paddingTop: spacing.md,
+    paddingTop: spacing.lg,
     backgroundColor: colors.white,
     borderTopWidth: 1,
-    borderTopColor: colors.border,
+    borderTopColor: colors.borderLight,
   },
 });
