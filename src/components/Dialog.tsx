@@ -152,17 +152,20 @@ const styles = StyleSheet.create({
   },
   content: {
     gap: spacing.md,
+    alignItems: 'center',
   },
   title: {
     fontSize: fs.xl,
     fontWeight: fw.semibold,
     color: colors.content,
+    textAlign: 'center',
   },
   description: {
     fontSize: fs.md,
     fontWeight: fw.regular,
     color: colors.subcontent,
     lineHeight: 22,
+    textAlign: 'center',
   },
   iconCircle: {
     width: 56,
@@ -170,8 +173,7 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     alignItems: 'center',
     justifyContent: 'center',
-    alignSelf: 'flex-start',
-    marginBottom: spacing.sm,
+    alignSelf: 'center',
   },
   checkboxRow: {
     alignSelf: 'flex-start',
