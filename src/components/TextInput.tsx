@@ -49,24 +49,27 @@ export function TextInput({
         <Text style={styles.label}>{label}</Text>
       )}
 
-      <RNTextInput
-        {...rest}
-        value={value}
-        editable={!disabled}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-        placeholderTextColor={colors.muted}
-        style={[styles.input, { color: isFilled ? colors.content : colors.muted }]}
-      />
+      {/* Isolate the absolute-positioned borders so they anchor to the input line, not the wrapper */}
+      <View style={styles.inputContainer}>
+        <RNTextInput
+          {...rest}
+          value={value}
+          editable={!disabled}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          placeholderTextColor={colors.muted}
+          style={[styles.input, { color: isFilled ? colors.content : colors.muted }]}
+        />
 
-      {/* Base border (always visible) */}
-      <View style={styles.borderBase} />
-      {/* Focus indicator fades in/out (hidden when error overrides) */}
-      {!hasError && (
-        <Animated.View style={[styles.borderActive, styles.borderFocus, { opacity: focusAnim }]} />
-      )}
-      {/* Error indicator (instant, on top) */}
-      {hasError && <View style={[styles.borderActive, styles.borderError]} />}
+        {/* Base border (always visible) */}
+        <View style={styles.borderBase} />
+        {/* Focus indicator fades in/out (hidden when error overrides) */}
+        {!hasError && (
+          <Animated.View style={[styles.borderActive, styles.borderFocus, { opacity: focusAnim }]} />
+        )}
+        {/* Error indicator (instant, on top) */}
+        {hasError && <View style={[styles.borderActive, styles.borderError]} />}
+      </View>
 
       {/* Erro tem prioridade sobre helperText quando os dois forem passados */}
       {(hasError || helperText != null) && (
@@ -83,6 +86,9 @@ const styles = StyleSheet.create({
   wrapper: {
     width: '100%',
   },
+  inputContainer: {
+    position: 'relative',
+  },
   disabled: {
     opacity: 0.5,
   },
@@ -90,7 +96,7 @@ const styles = StyleSheet.create({
     fontSize: fs.md,
     fontWeight: fw.medium,
     color: colors.content,
-    marginBottom: 6,           // 6px — não existe token para esse valor
+    marginBottom: 4,          
   },
   input: {
     fontSize: fs.md,

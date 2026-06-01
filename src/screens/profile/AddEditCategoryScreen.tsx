@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Check } from 'phosphor-react-native';
 import * as Phosphor from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
@@ -59,8 +59,12 @@ const colorRows = chunk(CATEGORY_COLORS, 8);
 
 export function AddEditCategoryScreen() {
   const router = useRouter();
+  const { categoryId } = useLocalSearchParams<{ categoryId?: string }>();
   const { user } = useAuth();
-  const { addCategory } = useCategories();
+  const { categories, addCategory, updateCategory } = useCategories();
+
+  const isEditing = !!categoryId;
+  const existingCategory = isEditing ? categories.find((c) => c.id === categoryId) : undefined;
 
   const [name, setName] = useState('');
   const [type, setType] = useState<CategoryType>('expense');
@@ -70,20 +74,39 @@ export function AddEditCategoryScreen() {
   const { showToast } = useToast();
   const { t } = useLanguage();
 
+  useEffect(() => {
+    if (existingCategory) {
+      setName(existingCategory.name);
+      setType(existingCategory.type);
+      setSelectedIcon(existingCategory.icon);
+      setSelectedColor(existingCategory.color);
+    }
+  }, [existingCategory?.id]);
+
   const isValid = name.trim().length > 0 && selectedIcon !== null && selectedColor !== null;
 
   async function handleSave() {
     if (!isValid || !user) return;
     setSaving(true);
     try {
-      await addCategory({
-        name: name.trim(),
-        icon: selectedIcon!,
-        color: selectedColor!,
-        type,
-      });
+      if (isEditing && categoryId) {
+        await updateCategory(categoryId, {
+          name: name.trim(),
+          icon: selectedIcon!,
+          color: selectedColor!,
+          type,
+        });
+        showToast(t('category.updated'));
+      } else {
+        await addCategory({
+          name: name.trim(),
+          icon: selectedIcon!,
+          color: selectedColor!,
+          type,
+        });
+        showToast(t('category.added'));
+      }
       router.back();
-      showToast(t('category.added'));
     } catch {
       showToast(t('category.saveError'), 'error');
       setSaving(false);
@@ -97,7 +120,7 @@ export function AddEditCategoryScreen() {
       <StatusBar style="dark" backgroundColor={colors.white} />
 
       <Header
-        title={t('category.addTitle')}
+        title={isEditing ? t('category.editTitle') : t('category.addTitle')}
         variant="screen"
         theme="light"
         showBackButton

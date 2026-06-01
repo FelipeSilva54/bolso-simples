@@ -201,7 +201,7 @@ export const pt = {
     recurrenceAnnually: 'Anual',
     validationValue: 'Informe um valor maior que zero',
     validationCategory: 'Selecione uma categoria',
-    validationInstallments: 'Informe um número inteiro maior que 1',
+    validationInstallments: 'A quantidade de parcelas é obrigatória',
     validationRecurrence: 'Selecione o tipo de recorrência',
   },
   category: {
@@ -217,7 +217,9 @@ export const pt = {
     colorLabel: 'Cor',
     saveButton: 'Salvar categoria',
     added: 'Categoria adicionada com sucesso',
+    updated: 'Categoria atualizada com sucesso',
     saveError: 'Erro ao salvar categoria',
+    editTitle: 'Editar categoria',
   },
   categories: {
     title: 'Categorias',

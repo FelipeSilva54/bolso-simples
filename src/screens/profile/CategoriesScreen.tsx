@@ -245,9 +245,7 @@ export function CategoriesScreen() {
             {filteredCategories.map((category, index) => (
               <TouchableOpacity
                 key={category.id}
-                onPress={() => {
-                  // TODO: navegar para tela de editar categoria
-                }}
+                onPress={() => router.push(`/(stack)/add-category?categoryId=${category.id}`)}
                 activeOpacity={0.7}
                 accessibilityRole="button"
                 accessibilityLabel={category.name}

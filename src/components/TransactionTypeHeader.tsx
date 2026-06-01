@@ -7,6 +7,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Easing,
 } from 'react-native';
 import { PencilSimple } from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
@@ -46,26 +47,34 @@ export function TransactionTypeHeader({
 
   const colorAnim = useRef(new Animated.Value(type === 'expense' ? 0 : 1)).current;
   const tabAnim = useRef(new Animated.Value(type === 'expense' ? 0 : 1)).current;
+  const fadeAnim = useRef(new Animated.Value(1)).current;
 
   function handleTypeChange(newType: TransactionType) {
     if (newType === type) return;
-    onTypeChange(newType);
 
     const toValue = newType === 'expense' ? 0 : 1;
 
     Animated.spring(colorAnim, {
       toValue,
-      useNativeDriver: false, // false — animando backgroundColor (propriedade de layout)
+      useNativeDriver: false,
       bounciness: 0,
       speed: 16,
     }).start();
 
     Animated.spring(tabAnim, {
       toValue,
-      useNativeDriver: true, // true — animando transform (propriedade nativa)
+      useNativeDriver: true,
       bounciness: 4,
       speed: 20,
     }).start();
+
+    Animated.sequence([
+      Animated.timing(fadeAnim, { toValue: 0.45, duration: 90, useNativeDriver: true, easing: Easing.out(Easing.ease) }),
+      Animated.timing(fadeAnim, { toValue: 1, duration: 200, useNativeDriver: true, easing: Easing.out(Easing.ease) }),
+    ]).start();
+
+    // Defer parent state update to next frame so the animation initializes before re-render
+    requestAnimationFrame(() => onTypeChange(newType));
   }
 
   const backgroundColor = colorAnim.interpolate({
@@ -84,27 +93,29 @@ export function TransactionTypeHeader({
 
       <View style={{ height: spacing.xxl }} />
 
-      <Text style={styles.valueLabel}>Valor</Text>
+      <Animated.View style={{ opacity: fadeAnim }}>
+        <Text style={styles.valueLabel}>Valor</Text>
 
-      <TouchableOpacity
-        style={styles.valueRow}
-        activeOpacity={0.7}
-        onPress={() => valueInputRef.current?.focus()}
-        accessibilityLabel="Editar valor da transação"
-      >
-        <TextInput
-          ref={valueInputRef}
-          value={value}
-          onChangeText={(text) => onValueChange(maskInput(text, preferences.currency))}
-          autoFocus={true}
-          keyboardType="numeric"
-          style={styles.valueInput}
-          placeholderTextColor="rgba(255,255,255,0.6)"
-          placeholder={maskInput('', preferences.currency)}
-          selectionColor="rgba(255,255,255,0.8)"
-        />
-        <PencilSimple size={20} color={colors.white} weight="regular" />
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.valueRow}
+          activeOpacity={0.7}
+          onPress={() => valueInputRef.current?.focus()}
+          accessibilityLabel="Editar valor da transação"
+        >
+          <TextInput
+            ref={valueInputRef}
+            value={value}
+            onChangeText={(text) => onValueChange(maskInput(text, preferences.currency))}
+            autoFocus={true}
+            keyboardType="numeric"
+            style={styles.valueInput}
+            placeholderTextColor="rgba(255,255,255,0.6)"
+            placeholder={maskInput('', preferences.currency)}
+            selectionColor="rgba(255,255,255,0.8)"
+          />
+          <PencilSimple size={20} color={colors.white} weight="regular" />
+        </TouchableOpacity>
+      </Animated.View>
 
     </Animated.View>
   );

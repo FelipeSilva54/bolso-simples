@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     fontSize: fs.md,
     fontWeight: fw.medium,
     color: colors.content,
-    marginBottom: 6,
+    marginBottom: 4,
   },
   inputWrapper: {
     width: '100%',

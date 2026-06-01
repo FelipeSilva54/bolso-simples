@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -84,16 +84,20 @@ export function AddEditTransactionScreen() {
   const [installments, setInstallments] = useState('');
   const [recurrenceType, setRecurrenceType] = useState<string | null>(null);
 
-  const [errors, setErrors] = useState<{
-    value?: string;
-    category?: string;
-    installments?: string;
-    recurrence?: string;
-  }>({});
+  const [submitAttempted, setSubmitAttempted] = useState(false);
 
   const { showToast } = useToast();
   const { t } = useLanguage();
   const [saving, setSaving] = useState(false);
+  const scrollRef = useRef<ScrollView>(null);
+
+  useEffect(() => {
+    if (paymentType === 'cash') return;
+    const timer = setTimeout(() => {
+      scrollRef.current?.scrollToEnd({ animated: true });
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [paymentType]);
 
   const RECURRENCE_OPTIONS = useMemo(() => [
     { value: 'daily', label: t('transaction.recurrenceDaily') },
@@ -174,26 +178,33 @@ export function AddEditTransactionScreen() {
     value: o.value,
   }));
 
+  const errors = {
+    value:       submitAttempted && numericValue <= 0                                                                      ? t('transaction.validationValue')        : undefined,
+    category:    submitAttempted && !categoryId                                                                            ? t('transaction.validationCategory')     : undefined,
+    installments: submitAttempted && paymentType === 'installment' && (!Number.isInteger(installmentsCount) || installmentsCount < 2) ? t('transaction.validationInstallments') : undefined,
+    recurrence:  submitAttempted && paymentType === 'recurring' && !recurrenceType                                         ? t('transaction.validationRecurrence')   : undefined,
+  };
+
   function validate(): boolean {
-    const next: typeof errors = {};
+    setSubmitAttempted(true);
 
-    if (numericValue <= 0) {
-      next.value = t('transaction.validationValue');
-    }
-    if (!categoryId) {
-      next.category = t('transaction.validationCategory');
-    }
-    if (paymentType === 'installment') {
-      if (!Number.isInteger(installmentsCount) || installmentsCount < 2) {
-        next.installments = t('transaction.validationInstallments');
-      }
-    }
-    if (paymentType === 'recurring' && !recurrenceType) {
-      next.recurrence = t('transaction.validationRecurrence');
+    const hasValueError       = numericValue <= 0;
+    const hasCategoryError    = !categoryId;
+    const hasInstallmentError = paymentType === 'installment' && (!Number.isInteger(installmentsCount) || installmentsCount < 2);
+    const hasRecurrenceError  = paymentType === 'recurring' && !recurrenceType;
+    const hasErrors           = hasValueError || hasCategoryError || hasInstallmentError || hasRecurrenceError;
+
+    if (hasErrors) {
+      setTimeout(() => {
+        if (hasValueError || hasCategoryError) {
+          scrollRef.current?.scrollTo({ y: 0, animated: true });
+        } else {
+          scrollRef.current?.scrollToEnd({ animated: true });
+        }
+      }, 50);
     }
 
-    setErrors(next);
-    return Object.keys(next).length === 0;
+    return !hasErrors;
   }
 
   async function handleSave() {
@@ -291,6 +302,7 @@ export function AddEditTransactionScreen() {
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
           <ScrollView
+            ref={scrollRef}
             style={styles.scroll}
             contentContainerStyle={styles.scrollContent}
             keyboardShouldPersistTaps="handled"
@@ -478,8 +490,8 @@ const styles = StyleSheet.create({
   },
   form: {
     paddingHorizontal: 20,
-    paddingTop: spacing.xl,
-    gap: spacing.xl,
+    paddingTop: spacing.xxl,
+    gap: spacing.xxl,
   },
   toggleRow: {
     flexDirection: 'row',

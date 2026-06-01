@@ -219,7 +219,9 @@ export const en: Translations = {
     colorLabel: 'Color',
     saveButton: 'Save category',
     added: 'Category added successfully',
+    updated: 'Category updated successfully',
     saveError: 'Error saving category',
+    editTitle: 'Edit category',
   },
   categories: {
     title: 'Categories',

@@ -162,6 +162,8 @@ export function HomeScreen() {
             {wallets.map((wallet) => (
               <WalletCard
                 key={wallet.id}
+                walletId={wallet.id}
+                initialBalance={wallet.balance}
                 name={wallet.name}
                 balance={balanceByWallet[wallet.id] ?? 0}
                 color={wallet.color}

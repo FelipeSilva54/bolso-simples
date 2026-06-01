@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { onSnapshot } from 'firebase/firestore';
 import { Category, CategoryType } from '@/types/category';
-import { getCategoriesRef, createCategory } from '@/services/categories';
+import { getCategoriesRef, createCategory, updateCategory as updateCategoryService } from '@/services/categories';
 import { useAuth } from '@/store/AuthContext';
 
 type UseCategoriesResult = {
   categories: Category[];
   loading: boolean;
   addCategory: (data: { name: string; icon: string; color: string; type: CategoryType }) => Promise<void>;
+  updateCategory: (categoryId: string, data: { name: string; icon: string; color: string; type: CategoryType }) => Promise<void>;
 };
 
 export function useCategories(): UseCategoriesResult {
@@ -47,5 +48,10 @@ export function useCategories(): UseCategoriesResult {
     await createCategory(user.uid, data);
   }
 
-  return { categories, loading, addCategory };
+  async function updateCategory(categoryId: string, data: { name: string; icon: string; color: string; type: CategoryType }): Promise<void> {
+    if (!user) throw new Error('Usuário não autenticado');
+    await updateCategoryService(user.uid, categoryId, data);
+  }
+
+  return { categories, loading, addCategory, updateCategory };
 }

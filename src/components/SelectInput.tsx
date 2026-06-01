@@ -102,7 +102,7 @@ export function SelectInput({
           <Text style={[styles.valueText, !selectedOption && styles.placeholder]}>
             {selectedOption ? selectedOption.label : placeholder}
           </Text>
-          <CaretRight size={16} color={colors.muted} weight="regular" />
+          <CaretRight size={20} color={colors.content} weight="regular" />
         </TouchableOpacity>
 
         <View style={styles.borderBase} />
@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
     fontSize: fs.md,
     fontWeight: fw.medium,
     color: colors.content,
-    marginBottom: 6,
+    marginBottom: 4,
   },
   inputWrapper: {
     width: '100%',
