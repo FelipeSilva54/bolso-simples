@@ -138,13 +138,7 @@ export function ProfileScreen() {
       >
         {/* Card de perfil */}
         {!user?.isAnonymous ? (
-          <TouchableOpacity
-            style={styles.profileCard}
-            onPress={() => router.push('/(stack)/edit-profile' as never)}
-            activeOpacity={0.7}
-            accessibilityRole="button"
-            accessibilityLabel={t('profile.editProfile')}
-          >
+          <View style={styles.profileCard}>
             {user?.photoURL ? (
               <Image
                 source={{ uri: user.photoURL }}
@@ -165,9 +159,7 @@ export function ProfileScreen() {
                 {user?.email ?? ''}
               </Text>
             </View>
-
-            <CaretRight size={16} color={colors.muted} weight="regular" />
-          </TouchableOpacity>
+          </View>
         ) : (
           <View style={styles.profileCardAnonymous}>
             <Image

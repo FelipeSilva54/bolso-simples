@@ -45,7 +45,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // se falhar (ex: offline ou regra do Firestore), só logamos.
       if (firebaseUser) {
         seedDefaultCategories(firebaseUser.uid).catch((err) => {
-          console.warn('seedDefaultCategories falhou:', err);
+          if (__DEV__) console.warn('seedDefaultCategories falhou:', err);
         });
       }
     });

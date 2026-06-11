@@ -142,6 +142,11 @@ export function SelectInput({
           showsVerticalScrollIndicator={false}
           style={styles.listFlex}
           contentContainerStyle={styles.listContent}
+          ListEmptyComponent={
+            searchable ? (
+              <Text style={styles.emptyText}>Nenhuma categoria encontrada</Text>
+            ) : null
+          }
           renderItem={({ item }) => {
             const isSelected = item.value === value;
             return (
@@ -270,5 +275,12 @@ const styles = StyleSheet.create({
   optionLabelSelected: {
     fontWeight: fw.semibold,
     color: colors.success,
+  },
+  emptyText: {
+    fontSize: fs.md,
+    fontWeight: fw.regular,
+    color: colors.muted,
+    textAlign: 'center',
+    paddingVertical: spacing.xl,
   },
 });

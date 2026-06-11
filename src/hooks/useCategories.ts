@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { onSnapshot } from 'firebase/firestore';
 import { Category, CategoryType } from '@/types/category';
-import { getCategoriesRef, createCategory, updateCategory as updateCategoryService } from '@/services/categories';
+import { getCategoriesRef, createCategory, updateCategory as updateCategoryService, seedDefaultCategories } from '@/services/categories';
 import { useAuth } from '@/store/AuthContext';
 
 type UseCategoriesResult = {
@@ -24,6 +24,10 @@ export function useCategories(): UseCategoriesResult {
     }
 
     const unsubscribe = onSnapshot(getCategoriesRef(user.uid), (snapshot) => {
+      if (snapshot.empty) {
+        seedDefaultCategories(user.uid).catch(console.warn);
+      }
+
       setCategories(
         snapshot.docs.map((doc) => {
           const data = doc.data();

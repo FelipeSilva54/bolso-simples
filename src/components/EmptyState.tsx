@@ -6,11 +6,12 @@ type EmptyStateProps = {
   image: ImageSourcePropType;
   title: string;
   subtitle?: string;
+  centered?: boolean;
 };
 
-export function EmptyState({ image, title, subtitle }: EmptyStateProps) {
+export function EmptyState({ image, title, subtitle, centered = false }: EmptyStateProps) {
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, centered && styles.containerCentered]}>
       <Image source={image} style={styles.image} resizeMode="contain" />
 
       <Text style={styles.title}>{title}</Text>
@@ -30,6 +31,11 @@ const styles = StyleSheet.create({
     paddingTop: 110,
     paddingHorizontal: spacing.xxxl,
     gap: spacing.md,
+  },
+  containerCentered: {
+    flex: 0,
+    justifyContent: undefined,
+    paddingTop: 0,
   },
   image: {
     width: 160,

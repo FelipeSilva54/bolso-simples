@@ -296,9 +296,10 @@ function filterCategories(
   search: string,
 ): Category[] {
   const byType = list.filter((c) => c.type === type);
-  if (search.trim().length === 0) return byType;
-  const needle = normalize(search.trim());
-  return byType.filter((c) => normalize(c.name).includes(needle));
+  const filtered = search.trim().length === 0
+    ? byType
+    : byType.filter((c) => normalize(c.name).includes(normalize(search.trim())));
+  return filtered.sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
 }
 
 function emptyTitle(type: CategoryType, search: string, t: (key: string) => string): string {

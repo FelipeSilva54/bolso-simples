@@ -29,7 +29,7 @@ export const pt = {
     notReceived: 'Não recebido',
   },
   loading: {
-    syncing: 'Estamos sincronizando os seus dados,\nauguarde alguns segundos...',
+    syncing: 'Estamos sincronizando os seus dados,\naguarde alguns segundos...',
     signingAs: 'Você está entrando como:',
   },
   login: {
@@ -265,7 +265,7 @@ export const pt = {
     support: 'Apoie o Bolso Simples',
     clearData: 'Limpar dados',
     deleteAccount: 'Excluir conta',
-    logoutDialogTitle: 'Desconectar',
+    logoutDialogTitle: 'Sair do aplicativo',
     logoutDialogDescription: 'Tem certeza que deseja sair?',
     logoutDialogConfirm: 'Sair',
     clearDataDialogTitle: 'Limpar dados?',
@@ -298,7 +298,7 @@ export const pt = {
   },
   notifications: {
     title: 'Notificações',
-    emptyTitle: 'Nenhuma notificação',
+    emptyTitle: 'Ops! Tem nada aqui',
     emptySubtitle: 'Você está em dia com tudo por aqui.',
   },
   support: {

@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import {
+  View,
   FlatList,
   StyleSheet,
   ListRenderItem,
@@ -46,21 +47,24 @@ export function NotificationsScreen() {
         onBackPress={() => router.back()}
       />
 
-      <FlatList
-        data={sorted}
-        keyExtractor={(item) => item.id}
-        renderItem={renderItem}
-        ListEmptyComponent={
+      {sorted.length === 0 ? (
+        <View style={styles.emptyContainer}>
           <EmptyState
             image={require('@/assets/images/Notification.png')}
             title={t('notifications.emptyTitle')}
             subtitle={t('notifications.emptySubtitle')}
+            centered
           />
-        }
-        showsVerticalScrollIndicator={false}
-        style={styles.list}
-        contentContainerStyle={sorted.length === 0 ? styles.listContentEmpty : undefined}
-      />
+        </View>
+      ) : (
+        <FlatList
+          data={sorted}
+          keyExtractor={(item) => item.id}
+          renderItem={renderItem}
+          showsVerticalScrollIndicator={false}
+          style={styles.list}
+        />
+      )}
     </SafeAreaView>
   );
 }
@@ -70,10 +74,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
   },
-  list: {
+  emptyContainer: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  listContentEmpty: {
+  list: {
     flex: 1,
   },
 });

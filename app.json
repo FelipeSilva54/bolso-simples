@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "bolso-simples",
+    "name": "Bolso Simples",
     "slug": "bolso-simples",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -22,7 +22,8 @@
       "navigationBarStyle": "dark-content",
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.bolsosimples.app"
+      "package": "com.bolsosimples.app",
+      "versionCode": 1
     },
     "web": {
       "output": "static",

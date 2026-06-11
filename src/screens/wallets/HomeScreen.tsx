@@ -246,7 +246,7 @@ const styles = StyleSheet.create({
   list: {
     paddingHorizontal: 20,
     paddingBottom: spacing.xxxl + spacing.xxl,
-    gap: spacing.md,
+    gap: spacing.lg,
   },
   fab: {
     position: 'absolute',
