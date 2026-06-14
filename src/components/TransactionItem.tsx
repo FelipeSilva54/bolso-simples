@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing } from '@/constants';
 import { StatusBadge } from '@/components/StatusBadge';
@@ -6,6 +6,7 @@ import { AvatarIcon } from '@/components/AvatarIcon';
 type BadgeVariant = 'danger' | 'success' | 'info';
 
 type TransactionItemProps = {
+  id: string;
   icon: React.ComponentType<{ size?: number; color?: string; weight?: string }>;
   iconColor: string;    // Cor de fundo do círculo do avatar
   title: string;
@@ -15,10 +16,11 @@ type TransactionItemProps = {
   badgeLabel: string;
   installmentIndex?: number;
   installmentTotal?: number;
-  onPress: () => void;
+  onPress: (id: string) => void;
 };
 
-export function TransactionItem({
+export const TransactionItem = React.memo(function TransactionItem({
+  id,
   icon: IconComponent,
   iconColor,
   title,
@@ -41,9 +43,11 @@ export function TransactionItem({
       ? `${title} ${installmentIndex}/${installmentTotal}`
       : title;
 
+  const handlePress = useCallback(() => onPress(id), [onPress, id]);
+
   return (
     <TouchableOpacity
-      onPress={onPress}
+      onPress={handlePress}
       activeOpacity={0.7}
       accessibilityRole="button"
       accessibilityLabel={`${displayTitle}, ${formattedAmount}`}
@@ -68,7 +72,7 @@ export function TransactionItem({
       </View>
     </TouchableOpacity>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: {

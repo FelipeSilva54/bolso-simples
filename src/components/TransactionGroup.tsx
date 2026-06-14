@@ -24,7 +24,7 @@ type TransactionGroupProps = {
   onTransactionPress: (id: string) => void;
 };
 
-export function TransactionGroup({
+export const TransactionGroup = React.memo(function TransactionGroup({
   date,
   transactions,
   onTransactionPress,
@@ -41,6 +41,7 @@ export function TransactionGroup({
       {transactions.map((transaction) => (
         <TransactionItem
           key={transaction.id}
+          id={transaction.id}
           icon={transaction.icon}
           iconColor={transaction.iconColor}
           title={transaction.title}
@@ -50,13 +51,13 @@ export function TransactionGroup({
           badgeLabel={transaction.badgeLabel}
           installmentIndex={transaction.installmentIndex}
           installmentTotal={transaction.installmentTotal}
-          onPress={() => onTransactionPress(transaction.id)}
+          onPress={onTransactionPress}
         />
       ))}
 
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: {

@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useRef, useEffect } from 'react';
+import React, { useMemo, useState, useRef, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -404,10 +404,18 @@ export function WalletDetailScreen() {
     setPeriod({ mode: 'yearly', year: period.year + 1 });
   };
 
-  const handleTransactionPress = (id: string) => {
+  const handleTransactionPress = useCallback((id: string) => {
     setSelectedTransactionId(id);
     setDetailSheetVisible(true);
-  };
+  }, []);
+
+  const renderTransactionGroup = useCallback(({ item }: { item: (typeof groupedTransactions)[0] }) => (
+    <TransactionGroup
+      date={item.date}
+      transactions={item.transactions}
+      onTransactionPress={handleTransactionPress}
+    />
+  ), [handleTransactionPress]);
 
   const handleDetailClose = () => {
     setDetailSheetVisible(false);
@@ -591,13 +599,7 @@ export function WalletDetailScreen() {
           <FlatList
             data={groupedTransactions}
             keyExtractor={(item) => item.date}
-            renderItem={({ item }) => (
-              <TransactionGroup
-                date={item.date}
-                transactions={item.transactions}
-                onTransactionPress={handleTransactionPress}
-              />
-            )}
+            renderItem={renderTransactionGroup}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.list}
             onScroll={Animated.event(

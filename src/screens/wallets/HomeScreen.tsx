@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -77,28 +77,28 @@ export function HomeScreen() {
   const displayName =
     user?.isAnonymous || !user?.displayName ? t('common.visitor') : user.displayName;
 
-  function handleOptionsPress(id: string, name: string) {
+  const handleOptionsPress = useCallback((id: string, name: string) => {
     setSelectedWallet({ id, name });
-  }
+  }, []);
 
-  function handleSheetClose() {
+  const handleSheetClose = useCallback(() => {
     setSelectedWallet(null);
-  }
+  }, []);
 
-  function handleEdit() {
+  const handleEdit = useCallback(() => {
     if (!selectedWallet) return;
     const { id } = selectedWallet;
     setSelectedWallet(null);
     router.push(`/(stack)/edit-wallet/${id}` as never);
-  }
+  }, [selectedWallet, router]);
 
-  function handleDeletePress() {
+  const handleDeletePress = useCallback(() => {
     if (!selectedWallet) return;
     setWalletToDelete(selectedWallet);
     setSelectedWallet(null);
-  }
+  }, [selectedWallet]);
 
-  async function handleDeleteConfirm() {
+  const handleDeleteConfirm = useCallback(async () => {
     if (!user || !walletToDelete) return;
     const wallet = walletToDelete;
     setWalletToDelete(null);
@@ -108,7 +108,7 @@ export function HomeScreen() {
     } catch {
       Alert.alert(t('common.error'), t('home.walletDeleteError'));
     }
-  }
+  }, [user, walletToDelete, showToast, t]);
 
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>

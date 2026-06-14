@@ -65,6 +65,18 @@ export function ProfileScreen() {
   const [deleteAccountVisible, setDeleteAccountVisible] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [clearing, setClearing] = useState(false);
+  const [loadingGoogle, setLoadingGoogle] = useState(false);
+
+  const handleGoogleSignIn = async () => {
+    setLoadingGoogle(true);
+    try {
+      await loginWithGoogle();
+    } catch (err: any) {
+      showToast(err?.message ?? t('login.googleErrorGeneric'), 'error');
+    } finally {
+      setLoadingGoogle(false);
+    }
+  };
 
   useFocusEffect(
     React.useCallback(() => {
@@ -170,7 +182,8 @@ export function ProfileScreen() {
             />
             <Button
               variant="soft"
-              onPress={loginWithGoogle}
+              onPress={handleGoogleSignIn}
+              loading={loadingGoogle}
               leftIcon={
                 <Image
                   source={require('@/assets/images/Logo-Google.png')}

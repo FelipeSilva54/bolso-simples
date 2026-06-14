@@ -26,6 +26,7 @@ type AuthContextValue = {
   loginAnonymous: () => Promise<void>;
   logout: () => Promise<void>;
   deleteAccount: () => Promise<void>;
+  isGuestDetached: boolean;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -33,6 +34,10 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  // When an anonymous user "logs out", we keep the Firebase session alive
+  // and use this flag to send them back to the login screen. This preserves
+  // the anonymous UID so their Firestore data remains accessible on re-entry.
+  const [isGuestDetached, setIsGuestDetached] = useState(false);
   const router = useRouter();
   const segments = useSegments();
 
@@ -40,6 +45,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setUser(firebaseUser);
       setLoading(false);
+
+      // When a real (non-anonymous) user signs in, clear the detached flag.
+      if (firebaseUser && !firebaseUser.isAnonymous) {
+        setIsGuestDetached(false);
+      }
 
       // Seed das categorias padrão no primeiro acesso. Não bloqueia a UI:
       // se falhar (ex: offline ou regra do Firestore), só logamos.
@@ -56,12 +66,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (loading) return;
     const inProtectedRoute = segments[0] === '(tabs)' || segments[0] === '(stack)';
     const inAuthRoute = segments[0] === 'login';
-    if (!user && inProtectedRoute) {
+    if ((!user || isGuestDetached) && inProtectedRoute) {
       router.replace('/login');
-    } else if (user && inAuthRoute) {
+    } else if (user && !isGuestDetached && inAuthRoute) {
       router.replace('/(tabs)');
     }
-  }, [user, loading, segments]);
+  }, [user, loading, isGuestDetached, segments]);
 
   async function loginWithGoogle(): Promise<void> {
     await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
@@ -72,13 +82,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   async function loginAnonymous(): Promise<void> {
+    if (user?.isAnonymous) {
+      // Session is still alive — just bring the user back into the app.
+      setIsGuestDetached(false);
+      return;
+    }
     await firebaseSignInAnonymously(auth);
   }
 
   async function logout(): Promise<void> {
-    if (!auth.currentUser?.isAnonymous) {
-      try { await GoogleSignin.signOut(); } catch {}
+    if (auth.currentUser?.isAnonymous) {
+      // Keep the Firebase anonymous session intact so the UID (and all
+      // Firestore data) survives. Just navigate away from protected routes.
+      setIsGuestDetached(true);
+      return;
     }
+    try { await GoogleSignin.signOut(); } catch {}
     await firebaseSignOut(auth);
   }
 
@@ -115,7 +134,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, loginWithGoogle, loginAnonymous, logout, deleteAccount }}>
+    <AuthContext.Provider value={{ user, loading, isGuestDetached, loginWithGoogle, loginAnonymous, logout, deleteAccount }}>
       {children}
     </AuthContext.Provider>
   );

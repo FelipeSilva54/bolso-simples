@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet, Alert } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import * as NavigationBar from 'expo-navigation-bar';
@@ -24,6 +24,9 @@ export default function LoginRoute() {
     setLoadingGoogle(true);
     try {
       await loginWithGoogle();
+    } catch (err: any) {
+      const message = err?.message ?? t('login.googleErrorGeneric');
+      Alert.alert(t('login.googleErrorTitle'), message);
     } finally {
       setLoadingGoogle(false);
     }
