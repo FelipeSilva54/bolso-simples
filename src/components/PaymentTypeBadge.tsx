@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Money, CreditCard, ArrowsClockwise } from 'phosphor-react-native';
 import { fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
+import { useLanguage } from '@/store/LanguageContext';
 
 type PaymentType = 'cash' | 'installment' | 'recurring';
 
@@ -16,10 +17,16 @@ const INSTALLMENT_COLOR = '#1565C0';
 const RECURRING_BG = '#EDE7F6';
 const RECURRING_COLOR = '#4527A0';
 
-const variantConfig: Record<PaymentType, { background: string; color: string; label: string }> = {
-  cash:        { background: CASH_BG,        color: CASH_COLOR,        label: 'À VISTA'    },
-  installment: { background: INSTALLMENT_BG, color: INSTALLMENT_COLOR, label: 'PARCELADO'  },
-  recurring:   { background: RECURRING_BG,   color: RECURRING_COLOR,   label: 'RECORRENTE' },
+const variantColors: Record<PaymentType, { background: string; color: string }> = {
+  cash:        { background: CASH_BG,        color: CASH_COLOR        },
+  installment: { background: INSTALLMENT_BG, color: INSTALLMENT_COLOR },
+  recurring:   { background: RECURRING_BG,   color: RECURRING_COLOR   },
+};
+
+const variantTranslationKey: Record<PaymentType, string> = {
+  cash:        'transaction.paymentTypeCash',
+  installment: 'transaction.paymentTypeInstallment',
+  recurring:   'transaction.paymentTypeRecurring',
 };
 
 function BadgeIcon({ variant, color }: { variant: PaymentType; color: string }) {
@@ -31,7 +38,9 @@ function BadgeIcon({ variant, color }: { variant: PaymentType; color: string }) 
 }
 
 export function PaymentTypeBadge({ variant }: PaymentTypeBadgeProps) {
-  const { background, color, label } = variantConfig[variant];
+  const { t } = useLanguage();
+  const { background, color } = variantColors[variant];
+  const label = t(variantTranslationKey[variant]).toUpperCase();
 
   return (
     <View

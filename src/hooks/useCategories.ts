@@ -1,8 +1,20 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { onSnapshot } from 'firebase/firestore';
 import { Category, CategoryType } from '@/types/category';
 import { getCategoriesRef, createCategory, updateCategory as updateCategoryService, seedDefaultCategories } from '@/services/categories';
 import { useAuth } from '@/store/AuthContext';
+import { useLanguage } from '@/store/LanguageContext';
+import { PT_NAME_TO_TRANSLATION_KEY } from '@/constants/categories';
+
+type RawCategory = {
+  id: string;
+  name: string;
+  nameKey?: string;
+  icon: string;
+  color: string;
+  type: CategoryType;
+  isDefault: boolean;
+};
 
 type UseCategoriesResult = {
   categories: Category[];
@@ -13,12 +25,13 @@ type UseCategoriesResult = {
 
 export function useCategories(): UseCategoriesResult {
   const { user } = useAuth();
-  const [categories, setCategories] = useState<Category[]>([]);
+  const { t } = useLanguage();
+  const [rawCategories, setRawCategories] = useState<RawCategory[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!user) {
-      setCategories([]);
+      setRawCategories([]);
       setLoading(false);
       return;
     }
@@ -28,12 +41,13 @@ export function useCategories(): UseCategoriesResult {
         seedDefaultCategories(user.uid).catch(console.warn);
       }
 
-      setCategories(
+      setRawCategories(
         snapshot.docs.map((doc) => {
           const data = doc.data();
           return {
             id: doc.id,
             name: data.name as string,
+            nameKey: data.nameKey as string | undefined,
             icon: data.icon as string,
             color: data.color as string,
             type: (data.type as CategoryType) ?? 'expense',
@@ -46,6 +60,24 @@ export function useCategories(): UseCategoriesResult {
 
     return unsubscribe;
   }, [user]);
+
+  // Traduz nomes de categorias padrão reativamente quando o idioma muda.
+  // Categorias criadas pelo usuário (isDefault=false) mantêm o nome original.
+  const categories = useMemo<Category[]>(() =>
+    rawCategories.map((cat) => {
+      if (!cat.isDefault) return { ...cat };
+      const key = cat.nameKey ?? PT_NAME_TO_TRANSLATION_KEY[cat.name];
+      return {
+        id: cat.id,
+        name: key ? t(key) : cat.name,
+        icon: cat.icon,
+        color: cat.color,
+        type: cat.type,
+        isDefault: cat.isDefault,
+      };
+    }),
+    [rawCategories, t],
+  );
 
   async function addCategory(data: { name: string; icon: string; color: string; type: CategoryType }): Promise<void> {
     if (!user) throw new Error('Usuário não autenticado');

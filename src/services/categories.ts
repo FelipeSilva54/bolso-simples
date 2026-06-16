@@ -55,6 +55,7 @@ export async function seedDefaultCategories(userId: string): Promise<void> {
     const newDocRef = doc(ref);
     batch.set(newDocRef, {
       name: category.name,
+      nameKey: category.nameKey,
       icon: category.icon,
       color: category.color,
       type: category.type,
