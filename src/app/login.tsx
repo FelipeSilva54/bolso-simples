@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet, Alert } from 'react-native';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { View, Text, Image, StyleSheet, Alert, useWindowDimensions } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import * as NavigationBar from 'expo-navigation-bar';
 import { colors, fontSize as fs, fontWeight as fw, spacing, lineHeight as lh } from '@/constants';
@@ -12,6 +12,7 @@ export default function LoginRoute() {
   const { loginAnonymous, loginWithGoogle } = useAuth();
   const { t } = useLanguage();
   const insets = useSafeAreaInsets();
+  const { height } = useWindowDimensions();
   const [loadingGoogle, setLoadingGoogle] = useState(false);
   const [loadingAnonymous, setLoadingAnonymous] = useState(false);
 
@@ -42,13 +43,15 @@ export default function LoginRoute() {
   };
 
   return (
-    <SafeAreaView style={styles.screen} edges={['top']}>
+    <View style={styles.screen}>
       <StatusBar style="light" translucent backgroundColor="transparent" />
-      <Image
-        source={require('@/assets/images/Capa-Login.webp')}
-        style={styles.banner}
-        resizeMode="cover"
-      />
+      <View style={[styles.bannerContainer, { height: height * 0.55 }]}>
+        <Image
+          source={require('@/assets/images/Capa-Login.webp')}
+          style={styles.banner}
+          resizeMode="cover"
+        />
+      </View>
 
       <View style={[styles.card, { paddingBottom: spacing.xxl + insets.bottom }]}>
         <Text style={styles.title}>{t('login.title')}</Text>
@@ -97,7 +100,7 @@ export default function LoginRoute() {
           {t('login.signInAnonymous')}
         </Button>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -106,8 +109,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.primary,
   },
+  bannerContainer: {
+    width: '100%',
+    overflow: 'hidden',
+    justifyContent: 'flex-end',
+  },
   banner: {
-    flex: 1,
+    width: '100%',
+    height: '100%',
   },
   card: {
     backgroundColor: colors.white,

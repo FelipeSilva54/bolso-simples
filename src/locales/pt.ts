@@ -33,7 +33,7 @@ export const pt = {
     signingAs: 'Você está entrando como:',
   },
   login: {
-    title: 'Olá! Seja bem-vindo ao Bolso Simples!',
+    title: 'Olá, Seja bem-vindo ao Bolso Simples!',
     subtitleBase: 'Seu app de bolso para finanças ',
     featureBrazilian: '100% brasileiro',
     featureFree: 'gratuito',
