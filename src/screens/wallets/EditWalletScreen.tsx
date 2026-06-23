@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
   View,
-  Text,
   ScrollView,
   TouchableOpacity,
   KeyboardAvoidingView,
@@ -10,6 +9,7 @@ import {
   ActivityIndicator,
   StyleSheet,
 } from 'react-native';
+import AppText from '@/components/AppText';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter, useLocalSearchParams } from 'expo-router';
@@ -116,19 +116,19 @@ export function EditWalletScreen() {
           {/* Preview */}
           <View style={[styles.preview, { backgroundColor: selectedColor }]}>
             <View style={styles.previewHeader}>
-              <Text
+              <AppText
                 style={[styles.previewName, name.length === 0 && styles.previewNamePlaceholder]}
                 numberOfLines={1}
                 ellipsizeMode="tail"
               >
                 {name.length > 0 ? name : t('wallet.namePreview')}
-              </Text>
+              </AppText>
             </View>
             <View style={styles.previewBalanceContainer}>
-              <Text style={styles.previewBalanceLabel}>{t('wallet.balanceSubtitle')}</Text>
-              <Text style={styles.previewBalanceValue} numberOfLines={1} ellipsizeMode="tail">
+              <AppText style={styles.previewBalanceLabel}>{t('wallet.balanceSubtitle')}</AppText>
+              <AppText style={styles.previewBalanceValue} numberOfLines={1} ellipsizeMode="tail">
                 {formattedBalance}
-              </Text>
+              </AppText>
             </View>
             <View style={styles.decorContainer} pointerEvents="none">
               <View style={styles.decorCircleBack} />
@@ -148,7 +148,7 @@ export function EditWalletScreen() {
             />
 
             <View>
-              <Text style={styles.colorLabel}>{t('wallet.colorLabel')}</Text>
+              <AppText style={styles.colorLabel}>{t('wallet.colorLabel')}</AppText>
               <View style={styles.colorGrid}>
                 {COLOR_PALETTE.map((color) => (
                   <TouchableOpacity

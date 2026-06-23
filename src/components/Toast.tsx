@@ -1,5 +1,10 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, StyleSheet, Text, View } from 'react-native';
+import {
+  Animated,
+  StyleSheet,
+  View,
+} from 'react-native';
+import AppText from '@/components/AppText';
 import { CheckCircleIcon } from 'phosphor-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Portal } from '@/components/PortalProvider';
@@ -46,7 +51,7 @@ export function Toast({ message, variant = 'default' }: ToastProps) {
           {variant === 'default' && (
             <CheckCircleIcon weight="fill" color={colors.successLight} size={fs.xl} style={styles.icon} />
           )}
-          <Text style={styles.text}>{message ?? ''}</Text>
+          <AppText style={styles.text}>{message ?? ''}</AppText>
         </View>
       </Animated.View>
     </Portal>

@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import {
+  View,
+  StyleSheet,
+} from 'react-native';
+import AppText from '@/components/AppText';
 import { Trash, PencilSimple } from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
 import { BottomSheet } from '@/components/BottomSheet';
@@ -78,7 +82,7 @@ export function TransactionDetailSheet({
             {/* 1. Avatar + valor */}
             <View style={styles.avatarRow}>
               <AvatarIcon icon={transaction.icon} iconColor={transaction.iconColor} size={56} />
-              <Text
+              <AppText
                 style={[
                   styles.amount,
                   { color: transaction.type === 'expense' ? colors.danger : colors.success },
@@ -89,22 +93,22 @@ export function TransactionDetailSheet({
                   transaction.type === 'expense' ? -transaction.amount : transaction.amount,
                   preferences.currency,
                 )}
-              </Text>
+              </AppText>
             </View>
 
             {/* 2. Título + observação */}
             <View style={styles.titleSection}>
-              <Text style={styles.title} numberOfLines={1}>
+              <AppText style={styles.title} numberOfLines={1}>
                 {transaction.installmentTotal != null &&
                 transaction.installmentTotal > 1 &&
                 transaction.installmentIndex != null
                   ? `${transaction.title} ${transaction.installmentIndex}/${transaction.installmentTotal}`
                   : transaction.title}
-              </Text>
+              </AppText>
               {transaction.description?.trim() ? (
-                <Text style={styles.description}>
+                <AppText style={styles.description}>
                   {transaction.description.trim()}
-                </Text>
+                </AppText>
               ) : null}
             </View>
 
@@ -114,12 +118,12 @@ export function TransactionDetailSheet({
             {/* 4. Linhas de informação */}
             <View style={styles.infoSection}>
               <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>{t('transaction.detailAddedOn')}</Text>
-                <Text style={styles.infoValue}>{formatDate(transaction.date)}</Text>
+                <AppText style={styles.infoLabel}>{t('transaction.detailAddedOn')}</AppText>
+                <AppText style={styles.infoValue}>{formatDate(transaction.date)}</AppText>
               </View>
 
               <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>{t('transaction.detailPaymentType')}</Text>
+                <AppText style={styles.infoLabel}>{t('transaction.detailPaymentType')}</AppText>
                 {transaction.isRecurring
                   ? <PaymentTypeBadge variant="recurring" />
                   : transaction.installmentTotal != null && transaction.installmentTotal > 1
@@ -129,16 +133,16 @@ export function TransactionDetailSheet({
               </View>
 
               <View style={[styles.infoRow, styles.infoRowLast]}>
-                <Text style={styles.infoLabel}>{t('transaction.detailStatus')}</Text>
+                <AppText style={styles.infoLabel}>{t('transaction.detailStatus')}</AppText>
                 {statusBadge(transaction.status)}
               </View>
             </View>
 
             {/* 5. Toggle dentro de box */}
             <View style={styles.toggleBox}>
-              <Text style={styles.toggleLabel}>
+              <AppText style={styles.toggleLabel}>
                 {statusToggleLabel(transaction.type)}
-              </Text>
+              </AppText>
               <Toggle
                 value={
                   transaction.type === 'expense'
@@ -161,9 +165,9 @@ export function TransactionDetailSheet({
           <View style={styles.footer}>
             <InfoAlert>
               {t('transaction.detailInfoPrefix')}
-              <Text style={styles.infoTextBold}>{t('transaction.detailInfoBold1')}</Text>
+              <AppText style={styles.infoTextBold}>{t('transaction.detailInfoBold1')}</AppText>
               {t('transaction.detailInfoMiddle')}
-              <Text style={styles.infoTextBold}>{t('transaction.detailInfoBold2')}</Text>
+              <AppText style={styles.infoTextBold}>{t('transaction.detailInfoBold2')}</AppText>
               {t('transaction.detailInfoSuffix')}
             </InfoAlert>
 

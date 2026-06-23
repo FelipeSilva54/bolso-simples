@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet, Alert, useWindowDimensions } from 'react-native';
+import {
+  View,
+  Image,
+  StyleSheet,
+  Alert,
+  useWindowDimensions,
+} from 'react-native';
+import AppText from '@/components/AppText';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import * as NavigationBar from 'expo-navigation-bar';
@@ -54,18 +61,18 @@ export default function LoginRoute() {
       </View>
 
       <View style={[styles.card, { paddingBottom: spacing.xxl + insets.bottom }]}>
-        <Text style={styles.title}>{t('login.title')}</Text>
+        <AppText style={styles.title}>{t('login.title')}</AppText>
 
         <View style={styles.gapSm} />
 
-        <Text style={styles.subtitle}>
+        <AppText style={styles.subtitle}>
           {t('login.subtitleBase')}
-          <Text style={styles.bold}>{t('login.featureBrazilian')}</Text>
+          <AppText style={styles.bold}>{t('login.featureBrazilian')}</AppText>
           {', '}
-          <Text style={styles.bold}>{t('login.featureFree')}</Text>
+          <AppText style={styles.bold}>{t('login.featureFree')}</AppText>
           {t('login.and')}
-          <Text style={styles.bold}>{t('login.featureNoAds')}</Text>
-        </Text>
+          <AppText style={styles.bold}>{t('login.featureNoAds')}</AppText>
+        </AppText>
 
         <View style={styles.gapXl} />
 
@@ -87,7 +94,7 @@ export default function LoginRoute() {
 
         <View style={styles.separator}>
           <View style={styles.separatorLine} />
-          <Text style={styles.separatorText}>{t('common.or')}</Text>
+          <AppText style={styles.separatorText}>{t('common.or')}</AppText>
           <View style={styles.separatorLine} />
         </View>
 

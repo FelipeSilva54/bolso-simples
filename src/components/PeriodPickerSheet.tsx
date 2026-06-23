@@ -1,5 +1,10 @@
 import React, { useMemo } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import {
+  View,
+  TouchableOpacity,
+  StyleSheet,
+} from 'react-native';
+import AppText from '@/components/AppText';
 import {
   CalendarBlank,
   CalendarDot,
@@ -47,7 +52,7 @@ export function PeriodPickerSheet({
   return (
     <BottomSheet visible={visible} onClose={onClose}>
       <View style={styles.wrapper}>
-        <Text style={styles.title}>{t('period.title')}</Text>
+        <AppText style={styles.title}>{t('period.title')}</AppText>
         {options.map((option) => {
           const isActive = option.mode === currentMode;
           const Icon = option.icon;
@@ -66,9 +71,9 @@ export function PeriodPickerSheet({
                 color={isActive ? colors.success : colors.primary}
                 weight="regular"
               />
-              <Text style={[styles.rowLabel, isActive && styles.rowLabelActive]}>
+              <AppText style={[styles.rowLabel, isActive && styles.rowLabelActive]}>
                 {option.label}
-              </Text>
+              </AppText>
               {isActive && <Check size={18} color={colors.success} weight="bold" />}
             </TouchableOpacity>
           );

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import {
   View,
-  Text,
   ScrollView,
   TouchableOpacity,
   StyleSheet,
 } from 'react-native';
+import AppText from '@/components/AppText';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -140,9 +140,9 @@ export function AddEditCategoryScreen() {
               <PreviewIcon size={28} color={colors.white} weight="fill" />
             )}
           </View>
-          <Text style={styles.previewName} numberOfLines={1}>
+          <AppText style={styles.previewName} numberOfLines={1}>
             {name.trim().length > 0 ? name.trim() : t('category.namePreview')}
-          </Text>
+          </AppText>
         </View>
 
         {/* Nome */}
@@ -159,7 +159,7 @@ export function AddEditCategoryScreen() {
 
         {/* Tipo */}
         <View style={styles.field}>
-          <Text style={styles.label}>{t('category.typeLabel')}</Text>
+          <AppText style={styles.label}>{t('category.typeLabel')}</AppText>
           <View style={styles.typeRow}>
             {(['expense', 'income'] as CategoryType[]).map((catType) => {
               const isChecked = type === catType;
@@ -176,7 +176,7 @@ export function AddEditCategoryScreen() {
                   <View style={styles.radioOuter}>
                     {isChecked && <View style={styles.radioInner} />}
                   </View>
-                  <Text style={styles.radioLabel}>{label}</Text>
+                  <AppText style={styles.radioLabel}>{label}</AppText>
                 </TouchableOpacity>
               );
             })}
@@ -185,7 +185,7 @@ export function AddEditCategoryScreen() {
 
         {/* Ícone */}
         <View style={styles.field}>
-          <Text style={styles.label}>{t('category.iconLabel')}</Text>
+          <AppText style={styles.label}>{t('category.iconLabel')}</AppText>
           <ScrollView
             style={styles.iconGrid}
             nestedScrollEnabled
@@ -226,7 +226,7 @@ export function AddEditCategoryScreen() {
 
         {/* Cor */}
         <View style={styles.field}>
-          <Text style={styles.label}>{t('category.colorLabel')}</Text>
+          <AppText style={styles.label}>{t('category.colorLabel')}</AppText>
           {colorRows.map((row, rowIdx) => (
             <View key={rowIdx} style={[styles.colorRow, rowIdx < colorRows.length - 1 && styles.colorRowGap]}>
               {row.map((color) => {

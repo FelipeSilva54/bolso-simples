@@ -1,13 +1,13 @@
 import React from 'react';
 import {
   View,
-  Text,
   Image,
   TouchableOpacity,
   ScrollView,
   StyleSheet,
   Linking,
 } from 'react-native';
+import AppText from '@/components/AppText';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
@@ -43,24 +43,24 @@ export function AboutScreen() {
               accessibilityLabel={t('about.appIconLabel')}
             />
           </View>
-          <Text style={styles.appName}>
-            <Text style={styles.appNameRegular}>bolso</Text>
-            <Text style={styles.appNameBold}>simples</Text>
-          </Text>
-          <Text style={styles.tagline}>{t('about.tagline')}</Text>
-          <Text style={styles.version}>{t('about.version')}</Text>
+          <AppText style={styles.appName}>
+            <AppText style={styles.appNameRegular}>bolso</AppText>
+            <AppText style={styles.appNameBold}>simples</AppText>
+          </AppText>
+          <AppText style={styles.tagline}>{t('about.tagline')}</AppText>
+          <AppText style={styles.version}>{t('about.version')}</AppText>
         </View>
 
         {/* Seção de informações */}
         <View style={styles.section}>
           <View style={styles.infoRow}>
-            <Text style={styles.label}>{t('about.contactLabel')}</Text>
-            <Text style={styles.value}>{t('about.contactValue')}</Text>
+            <AppText style={styles.label}>{t('about.contactLabel')}</AppText>
+            <AppText style={styles.value}>{t('about.contactValue')}</AppText>
           </View>
           <View style={styles.separator} />
           <View style={styles.infoRow}>
-            <Text style={styles.label}>{t('about.versionLabel')}</Text>
-            <Text style={styles.value}>{t('about.versionValue')}</Text>
+            <AppText style={styles.label}>{t('about.versionLabel')}</AppText>
+            <AppText style={styles.value}>{t('about.versionValue')}</AppText>
           </View>
         </View>
 
@@ -73,7 +73,7 @@ export function AboutScreen() {
             accessibilityRole="link"
             accessibilityLabel={t('about.termsA11y')}
           >
-            <Text style={styles.label}>{t('about.termsLabel')}</Text>
+            <AppText style={styles.label}>{t('about.termsLabel')}</AppText>
             <ArrowSquareOut size={20} color={colors.primary} />
           </TouchableOpacity>
           <View style={styles.separator} />
@@ -84,15 +84,15 @@ export function AboutScreen() {
             accessibilityRole="link"
             accessibilityLabel={t('about.privacyA11y')}
           >
-            <Text style={styles.label}>{t('about.privacyLabel')}</Text>
+            <AppText style={styles.label}>{t('about.privacyLabel')}</AppText>
             <ArrowSquareOut size={20} color={colors.primary} />
           </TouchableOpacity>
         </View>
 
         {/* Rodapé */}
         <View style={styles.footer}>
-          <Text style={styles.footerLine}>{t('about.footer')}</Text>
-          <Text style={styles.footerLineLast}>{t('about.copyright')}</Text>
+          <AppText style={styles.footerLine}>{t('about.footer')}</AppText>
+          <AppText style={styles.footerLineLast}>{t('about.copyright')}</AppText>
         </View>
       </ScrollView>
     </SafeAreaView>

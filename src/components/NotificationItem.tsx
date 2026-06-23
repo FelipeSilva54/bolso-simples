@@ -1,5 +1,10 @@
 import React from 'react';
-import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
+import {
+  TouchableOpacity,
+  View,
+  StyleSheet,
+} from 'react-native';
+import AppText from '@/components/AppText';
 import {
   CalendarX,
   ClockCountdown,
@@ -58,13 +63,13 @@ export function NotificationItem({ notification, onPress }: NotificationItemProp
       </View>
 
       <View style={styles.info}>
-        <Text style={styles.title} numberOfLines={1}>
+        <AppText style={styles.title} numberOfLines={1}>
           {notification.title}
-        </Text>
-        <Text style={styles.body} numberOfLines={2}>
+        </AppText>
+        <AppText style={styles.body} numberOfLines={2}>
           {notification.body}
-        </Text>
-        <Text style={styles.time}>{relativeTime}</Text>
+        </AppText>
+        <AppText style={styles.time}>{relativeTime}</AppText>
       </View>
     </TouchableOpacity>
   );

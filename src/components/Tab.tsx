@@ -1,5 +1,9 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import {
+  TouchableOpacity,
+  StyleSheet,
+} from 'react-native';
+import AppText from '@/components/AppText';
 import { colors, fontSize as fs, fontWeight as fw, spacing } from '@/constants';
 
 type TabProps = {
@@ -19,9 +23,9 @@ export function Tab({ label, active, onPress, accessibilityLabel }: TabProps) {
       accessibilityLabel={accessibilityLabel ?? label}
       style={styles.container}
     >
-      <Text style={[styles.label, active && styles.labelActive]}>
+      <AppText style={[styles.label, active && styles.labelActive]}>
         {label}
-      </Text>
+      </AppText>
     </TouchableOpacity>
   );
 }

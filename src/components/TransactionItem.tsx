@@ -1,5 +1,10 @@
 import React, { useCallback } from 'react';
-import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
+import {
+  TouchableOpacity,
+  View,
+  StyleSheet,
+} from 'react-native';
+import AppText from '@/components/AppText';
 import { colors, fontSize as fs, fontWeight as fw, spacing } from '@/constants';
 import { StatusBadge } from '@/components/StatusBadge';
 import { AvatarIcon } from '@/components/AvatarIcon';
@@ -57,17 +62,17 @@ export const TransactionItem = React.memo(function TransactionItem({
 
       {/* Título e descrição — flex: 1 para não colidir com o lado direito */}
       <View style={styles.info}>
-        <Text style={styles.title} numberOfLines={1}>{displayTitle}</Text>
+        <AppText style={styles.title} numberOfLines={1}>{displayTitle}</AppText>
         {description != null && (
-          <Text style={styles.description} numberOfLines={1}>{description}</Text>
+          <AppText style={styles.description} numberOfLines={1}>{description}</AppText>
         )}
       </View>
 
       {/* Valor e badge — alinhados à direita */}
       <View style={styles.right}>
-        <Text style={[styles.amount, isNegative ? styles.negative : styles.positive]}>
+        <AppText style={[styles.amount, isNegative ? styles.negative : styles.positive]}>
           {formattedAmount}
-        </Text>
+        </AppText>
         <StatusBadge variant={badgeVariant} label={badgeLabel} />
       </View>
     </TouchableOpacity>

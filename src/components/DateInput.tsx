@@ -2,11 +2,11 @@ import React, { useRef, useState } from 'react';
 import {
   Animated,
   View,
-  Text,
   TouchableOpacity,
   Platform,
   StyleSheet,
 } from 'react-native';
+import AppText from '@/components/AppText';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { CalendarBlank } from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing } from '@/constants';
@@ -83,7 +83,7 @@ export function DateInput({
     <View style={[styles.wrapper, disabled && styles.disabled]}>
 
       {label != null && (
-        <Text style={styles.label}>{label}</Text>
+        <AppText style={styles.label}>{label}</AppText>
       )}
 
       <View style={styles.inputWrapper}>
@@ -94,9 +94,9 @@ export function DateInput({
           accessibilityLabel={accessibilityLabel ?? label ?? t('date.selectDate')}
           style={styles.input}
         >
-          <Text style={styles.valueText}>
+          <AppText style={styles.valueText}>
             {formatDateLabel(value, dateLabels)}
-          </Text>
+          </AppText>
           <CalendarBlank size={24} color={colors.content} weight="regular" />
         </TouchableOpacity>
 
@@ -108,9 +108,9 @@ export function DateInput({
       </View>
 
       {(hasError || helperText != null) && (
-        <Text style={[styles.helperText, hasError && styles.errorText]}>
+        <AppText style={[styles.helperText, hasError && styles.errorText]}>
           {error ?? helperText}
-        </Text>
+        </AppText>
       )}
 
       {showPicker && (

@@ -1,13 +1,13 @@
 import React, { useMemo, useState, useRef, useEffect, useCallback } from 'react';
 import {
   View,
-  Text,
   FlatList,
   Animated,
   TouchableOpacity,
   StyleSheet,
   PanResponder,
 } from 'react-native';
+import AppText from '@/components/AppText';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -502,9 +502,9 @@ export function WalletDetailScreen() {
             >
               <CaretLeft size={20} color={colors.subcontent} weight="bold" />
             </TouchableOpacity>
-            <Text style={styles.periodNavLabel} numberOfLines={1}>
+            <AppText style={styles.periodNavLabel} numberOfLines={1}>
               {formatDayLabel(period.date, weekdays, months)}
-            </Text>
+            </AppText>
             <TouchableOpacity
               onPress={handleNextDay}
               style={styles.periodNavButton}
@@ -526,7 +526,7 @@ export function WalletDetailScreen() {
             >
               <CaretLeft size={20} color={colors.subcontent} weight="bold" />
             </TouchableOpacity>
-            <Text style={styles.periodNavLabel}>{period.year}</Text>
+            <AppText style={styles.periodNavLabel}>{period.year}</AppText>
             <TouchableOpacity
               onPress={handleNextYear}
               style={styles.periodNavButton}
@@ -540,7 +540,7 @@ export function WalletDetailScreen() {
 
         {period.mode === 'all' && (
           <View style={styles.periodNav}>
-            <Text style={styles.periodNavLabel}>{t('wallet.allTransactions')}</Text>
+            <AppText style={styles.periodNavLabel}>{t('wallet.allTransactions')}</AppText>
           </View>
         )}
 
@@ -551,9 +551,9 @@ export function WalletDetailScreen() {
             accessibilityLabel={t('wallet.editCustomRange')}
             accessibilityRole="button"
           >
-            <Text style={styles.periodNavLabel} numberOfLines={1}>
+            <AppText style={styles.periodNavLabel} numberOfLines={1}>
               {formatShortDate(period.start)}  →  {formatShortDate(period.end)}
-            </Text>
+            </AppText>
           </TouchableOpacity>
         )}
 

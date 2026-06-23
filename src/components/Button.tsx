@@ -2,12 +2,12 @@ import React, { useEffect, useRef } from 'react';
 import {
   Animated,
   TouchableOpacity,
-  Text,
   ActivityIndicator,
   StyleSheet,
   View,
   ViewStyle,
 } from 'react-native';
+import AppText from '@/components/AppText';
 import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
 
 type Variant = 'primary' | 'soft' | 'danger' | 'dangerLight';
@@ -88,9 +88,9 @@ export function Button({
       ) : (
         <>
           {leftIcon != null && <View style={styles.iconWrapper}>{leftIcon}</View>}
-          <Text style={[styles.text, textSizeStyles[size], { color: textColor }]}>
+          <AppText style={[styles.text, textSizeStyles[size], { color: textColor }]}>
             {children}
-          </Text>
+          </AppText>
         </>
       )}
     </TouchableOpacity>
@@ -135,6 +135,6 @@ const styles = StyleSheet.create({
     marginRight: spacing.sm,
   },
   text: {
-    fontWeight: fw.medium,
+    fontWeight: fw.semibold,
   },
 });

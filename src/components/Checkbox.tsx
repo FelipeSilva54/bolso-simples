@@ -1,5 +1,11 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
+import {
+  Animated,
+  Pressable,
+  StyleSheet,
+  View,
+} from 'react-native';
+import AppText from '@/components/AppText';
 import { Check } from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
 
@@ -69,9 +75,9 @@ export function Checkbox({
 
       {/* Label opcional ao lado — clicável junto com a caixa */}
       {label != null && (
-        <Text style={[styles.label, value && styles.labelChecked]}>
+        <AppText style={[styles.label, value && styles.labelChecked]}>
           {label}
-        </Text>
+        </AppText>
       )}
     </Pressable>
   );

@@ -1,5 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import {
+  Pressable,
+  StyleSheet,
+  View,
+} from 'react-native';
+import AppText from '@/components/AppText';
 import { CaretLeft, CaretRight } from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing } from '@/constants';
 import { BottomSheet } from '@/components/BottomSheet';
@@ -154,9 +159,9 @@ export function DateRangePicker({
           >
             <CaretLeft size={20} color={colors.content} weight="regular" />
           </Pressable>
-          <Text style={styles.headerTitle}>
+          <AppText style={styles.headerTitle}>
             {MONTH_NAMES[currentMonth]} {currentYear}
-          </Text>
+          </AppText>
           <Pressable
             onPress={goToNextMonth}
             accessibilityLabel="Próximo mês"
@@ -169,9 +174,9 @@ export function DateRangePicker({
 
         <View style={styles.weekDaysRow}>
           {WEEK_DAYS.map((label) => (
-            <Text key={label} style={styles.weekDayLabel}>
+            <AppText key={label} style={styles.weekDayLabel}>
               {label}
-            </Text>
+            </AppText>
           ))}
         </View>
 
@@ -209,7 +214,7 @@ export function DateRangePicker({
                     {showRightBar && <View style={[styles.rangeBar, styles.rangeBarRight]} />}
                     {showLeftBar && <View style={[styles.rangeBar, styles.rangeBarLeft]} />}
                     <View style={[styles.dayCircle, isSelected && styles.dayCircleSelected]}>
-                      <Text
+                      <AppText
                         style={[
                           styles.dayText,
                           !isCurrentMonth && styles.dayTextMuted,
@@ -217,7 +222,7 @@ export function DateRangePicker({
                         ]}
                       >
                         {day.getDate()}
-                      </Text>
+                      </AppText>
                     </View>
                   </Pressable>
                 );

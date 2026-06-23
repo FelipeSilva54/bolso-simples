@@ -1,5 +1,10 @@
 import React from 'react';
-import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
+import {
+  TouchableOpacity,
+  View,
+  StyleSheet,
+} from 'react-native';
+import AppText from '@/components/AppText';
 import { colors, fontSize as fs, fontWeight as fw, spacing } from '@/constants';
 import { formatCurrency } from '@/utils/currency';
 import { usePreferences } from '@/store/PreferencesContext';
@@ -40,12 +45,12 @@ export const SummaryCard = React.memo(function SummaryCard({
         accessibilityRole={onIncomePress ? 'button' : undefined}
         accessibilityLabel={`${t('common.income')}: ${displayIncome}`}
       >
-        <Text style={[styles.value, styles.incomeColor]} numberOfLines={1}>
+        <AppText style={[styles.value, styles.incomeColor]} numberOfLines={1}>
           {displayIncome}
-        </Text>
-        <Text style={styles.label} numberOfLines={1}>
+        </AppText>
+        <AppText style={styles.label} numberOfLines={1}>
           {t('common.income')}
-        </Text>
+        </AppText>
       </IncomeWrapper>
 
       <View style={styles.divider} />
@@ -57,23 +62,23 @@ export const SummaryCard = React.memo(function SummaryCard({
         accessibilityRole={onExpensePress ? 'button' : undefined}
         accessibilityLabel={`${t('common.expense')}: ${displayExpense}`}
       >
-        <Text style={[styles.value, styles.expenseColor]} numberOfLines={1}>
+        <AppText style={[styles.value, styles.expenseColor]} numberOfLines={1}>
           {displayExpense}
-        </Text>
-        <Text style={styles.label} numberOfLines={1}>
+        </AppText>
+        <AppText style={styles.label} numberOfLines={1}>
           {t('common.expense')}
-        </Text>
+        </AppText>
       </ExpenseWrapper>
 
       <View style={styles.divider} />
 
       <View style={styles.column}>
-        <Text style={[styles.value, styles.balanceColor]} numberOfLines={1}>
+        <AppText style={[styles.value, styles.balanceColor]} numberOfLines={1}>
           {displayBalance}
-        </Text>
-        <Text style={styles.label} numberOfLines={1}>
+        </AppText>
+        <AppText style={styles.label} numberOfLines={1}>
           {t('common.balance')}
-        </Text>
+        </AppText>
       </View>
     </View>
   );

@@ -1,5 +1,9 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import {
+  View,
+  StyleSheet,
+} from 'react-native';
+import AppText from '@/components/AppText';
 import { X, ArrowsClockwise, Check } from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
 
@@ -32,9 +36,9 @@ export function StatusBadge({ variant, label }: StatusBadgeProps) {
   return (
     <View style={[styles.container, { backgroundColor: background }]}>
       <BadgeIcon variant={variant} color={color} />
-      <Text style={[styles.label, { color }]}>
+      <AppText style={[styles.label, { color }]}>
         {label}
-      </Text>
+      </AppText>
     </View>
   );
 }

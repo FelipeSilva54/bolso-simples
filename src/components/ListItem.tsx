@@ -1,5 +1,9 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import {
+  TouchableOpacity,
+  StyleSheet,
+} from 'react-native';
+import AppText from '@/components/AppText';
 import { CaretRight } from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing } from '@/constants';
 
@@ -28,7 +32,7 @@ export function ListItem({
     >
       <IconComponent size={24} color={color ?? colors.primary} weight="regular" />
 
-      <Text style={[styles.label, color ? { color } : undefined]} numberOfLines={1}>{label}</Text>
+      <AppText style={[styles.label, color ? { color } : undefined]} numberOfLines={1}>{label}</AppText>
 
       <CaretRight size={16} color={colors.muted} weight="regular" />
     </TouchableOpacity>

@@ -1,5 +1,9 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import {
+  View,
+  StyleSheet,
+} from 'react-native';
+import AppText from '@/components/AppText';
 import { Info } from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
 
@@ -17,9 +21,9 @@ export function InfoAlert({ children }: InfoAlertProps) {
         weight="fill"
         style={styles.icon}
       />
-      <Text style={styles.text}>
+      <AppText style={styles.text}>
         {children}
-      </Text>
+      </AppText>
     </View>
   );
 }

@@ -1,5 +1,9 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import {
+  View,
+  StyleSheet,
+} from 'react-native';
+import AppText from '@/components/AppText';
 import { Money, CreditCard, ArrowsClockwise } from 'phosphor-react-native';
 import { fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
 import { useLanguage } from '@/store/LanguageContext';
@@ -48,7 +52,7 @@ export function PaymentTypeBadge({ variant }: PaymentTypeBadgeProps) {
       accessibilityLabel={label}
     >
       <BadgeIcon variant={variant} color={color} />
-      <Text style={[styles.label, { color }]}>{label}</Text>
+      <AppText style={[styles.label, { color }]}>{label}</AppText>
     </View>
   );
 }

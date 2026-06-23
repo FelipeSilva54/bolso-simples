@@ -1,5 +1,11 @@
 import React from 'react';
-import { View, Text, Image, ImageSourcePropType, StyleSheet } from 'react-native';
+import {
+  View,
+  Image,
+  ImageSourcePropType,
+  StyleSheet,
+} from 'react-native';
+import AppText from '@/components/AppText';
 import { colors, fontSize as fs, fontWeight as fw, spacing, lineHeight as lh } from '@/constants';
 
 type EmptyStateProps = {
@@ -14,10 +20,10 @@ export function EmptyState({ image, title, subtitle, centered = false }: EmptySt
     <View style={[styles.container, centered && styles.containerCentered]}>
       <Image source={image} style={styles.image} resizeMode="contain" />
 
-      <Text style={styles.title}>{title}</Text>
+      <AppText style={styles.title}>{title}</AppText>
 
       {subtitle != null && (
-        <Text style={styles.subtitle}>{subtitle}</Text>
+        <AppText style={styles.subtitle}>{subtitle}</AppText>
       )}
     </View>
   );

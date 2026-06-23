@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import {
   Modal,
   View,
-  Text,
   StyleSheet,
   Pressable,
 } from 'react-native';
+import AppText from '@/components/AppText';
 import Svg, { Path } from 'react-native-svg';
 import { Broom } from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
@@ -96,8 +96,8 @@ export function Dialog({
           )}
 
           <View style={styles.content}>
-            <Text style={styles.title}>{title}</Text>
-            <Text style={styles.description}>{description}</Text>
+            <AppText style={styles.title}>{title}</AppText>
+            <AppText style={styles.description}>{description}</AppText>
           </View>
 
           {requireConfirmation && (

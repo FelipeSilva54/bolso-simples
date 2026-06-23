@@ -1,11 +1,11 @@
 import React from 'react';
 import {
   View,
-  Text,
   TouchableOpacity,
   StyleSheet,
   Pressable,
 } from 'react-native';
+import AppText from '@/components/AppText';
 import { DotsThreeVertical } from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
 import { formatCurrency } from '@/utils/currency';
@@ -47,7 +47,7 @@ export const WalletCard = React.memo(function WalletCard({
     >
       {/* Linha superior: nome + botão de opções */}
       <View style={styles.header}>
-        <Text style={styles.name} numberOfLines={1}>{name}</Text>
+        <AppText style={styles.name} numberOfLines={1}>{name}</AppText>
 
         <TouchableOpacity
           onPress={(e) => {
@@ -65,10 +65,10 @@ export const WalletCard = React.memo(function WalletCard({
 
       {/* Linha inferior: label + valor */}
       <View style={styles.balanceContainer}>
-        <Text style={styles.balanceLabel}>Saldo da carteira:</Text>
-        <Text style={styles.balanceValue}>
+        <AppText style={styles.balanceLabel}>Saldo da carteira:</AppText>
+        <AppText style={styles.balanceValue}>
           {hideBalance ? '••••••' : formattedBalance}
-        </Text>
+        </AppText>
       </View>
 
       <View style={styles.decorContainer} pointerEvents="none">

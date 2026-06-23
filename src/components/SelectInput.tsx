@@ -2,12 +2,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
   Animated,
   View,
-  Text,
   TouchableOpacity,
   FlatList,
   StyleSheet,
   Dimensions,
 } from 'react-native';
+import AppText from '@/components/AppText';
 import { CaretRight, Check } from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing } from '@/constants';
 import { BottomSheet } from '@/components/BottomSheet';
@@ -85,7 +85,7 @@ export function SelectInput({
     <View style={[styles.wrapper, disabled && styles.disabled]}>
 
       {label != null && (
-        <Text style={styles.label}>{label}</Text>
+        <AppText style={styles.label}>{label}</AppText>
       )}
 
       <View style={styles.inputWrapper}>
@@ -99,9 +99,9 @@ export function SelectInput({
           {selectedOption?.icon != null && selectedOption.iconColor != null && (
             <AvatarIcon icon={selectedOption.icon} iconColor={selectedOption.iconColor} size={24} />
           )}
-          <Text style={[styles.valueText, !selectedOption && styles.placeholder]}>
+          <AppText style={[styles.valueText, !selectedOption && styles.placeholder]}>
             {selectedOption ? selectedOption.label : placeholder}
-          </Text>
+          </AppText>
           <CaretRight size={20} color={colors.content} weight="regular" />
         </TouchableOpacity>
 
@@ -113,14 +113,14 @@ export function SelectInput({
       </View>
 
       {(hasError || helperText != null) && (
-        <Text style={[styles.helperText, hasError && styles.errorText]}>
+        <AppText style={[styles.helperText, hasError && styles.errorText]}>
           {error ?? helperText}
-        </Text>
+        </AppText>
       )}
 
       <BottomSheet visible={open} onClose={handleClose} height={SCREEN_HEIGHT * 0.85}>
         {sheetTitle != null && (
-          <Text style={styles.sheetTitle}>{sheetTitle}</Text>
+          <AppText style={styles.sheetTitle}>{sheetTitle}</AppText>
         )}
 
         {searchable && (
@@ -144,7 +144,7 @@ export function SelectInput({
           contentContainerStyle={styles.listContent}
           ListEmptyComponent={
             searchable ? (
-              <Text style={styles.emptyText}>Nenhuma categoria encontrada</Text>
+              <AppText style={styles.emptyText}>Nenhuma categoria encontrada</AppText>
             ) : null
           }
           renderItem={({ item }) => {
@@ -161,9 +161,9 @@ export function SelectInput({
                 {item.icon != null && item.iconColor != null && (
                   <AvatarIcon icon={item.icon} iconColor={item.iconColor} size={36} />
                 )}
-                <Text style={[styles.optionLabel, isSelected && styles.optionLabelSelected]}>
+                <AppText style={[styles.optionLabel, isSelected && styles.optionLabelSelected]}>
                   {item.label}
-                </Text>
+                </AppText>
                 {isSelected && (
                   <Check size={18} color={colors.success} weight="bold" />
                 )}

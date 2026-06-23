@@ -2,11 +2,11 @@ import React, { useRef, useState } from 'react';
 import {
   Animated,
   View,
-  Text,
   TextInput as RNTextInput,
   StyleSheet,
   TextInputProps as RNTextInputProps,
 } from 'react-native';
+import AppText from '@/components/AppText';
 import { colors, fontSize as fs, fontWeight as fw, spacing } from '@/constants';
 
 type TextInputProps = RNTextInputProps & {
@@ -46,7 +46,7 @@ export function TextInput({
     <View style={[styles.wrapper, disabled && styles.disabled]}>
 
       {label != null && (
-        <Text style={styles.label}>{label}</Text>
+        <AppText style={styles.label}>{label}</AppText>
       )}
 
       {/* Isolate the absolute-positioned borders so they anchor to the input line, not the wrapper */}
@@ -73,9 +73,9 @@ export function TextInput({
 
       {/* Erro tem prioridade sobre helperText quando os dois forem passados */}
       {(hasError || helperText != null) && (
-        <Text style={[styles.helperText, hasError && styles.errorText]}>
+        <AppText style={[styles.helperText, hasError && styles.errorText]}>
           {error ?? helperText}
-        </Text>
+        </AppText>
       )}
 
     </View>

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import {
   View,
-  Text,
   ScrollView,
   TextInput,
   TouchableOpacity,
@@ -9,6 +8,7 @@ import {
   Image,
   StyleSheet,
 } from 'react-native';
+import AppText from '@/components/AppText';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
@@ -90,13 +90,13 @@ export function SupportScreen() {
         {/* Seção 1 — Hero */}
         <View style={styles.hero}>
           <Image source={require('@/assets/images/Support-Image.png')} style={styles.heroImage} />
-          <Text style={styles.heroTitle}>{t('support.heroTitle')}</Text>
-          <Text style={styles.heroSubtitle}>{t('support.heroSubtitle')}</Text>
+          <AppText style={styles.heroTitle}>{t('support.heroTitle')}</AppText>
+          <AppText style={styles.heroSubtitle}>{t('support.heroSubtitle')}</AppText>
         </View>
 
         {/* Seção 2 — Seletor de valor */}
         <View style={styles.section}>
-          <Text style={styles.sectionLabel}>{t('support.chooseValue')}</Text>
+          <AppText style={styles.sectionLabel}>{t('support.chooseValue')}</AppText>
 
           <View style={styles.chipsRow}>
             {PRESET_VALUES.map((value) => (
@@ -108,15 +108,15 @@ export function SupportScreen() {
                 accessibilityRole="button"
                 accessibilityLabel={`${t('support.contributeA11yPrefix')}${value}`}
               >
-                <Text style={[styles.chipText, selectedPreset === value && styles.chipTextSelected]}>
+                <AppText style={[styles.chipText, selectedPreset === value && styles.chipTextSelected]}>
                   R$ {value}
-                </Text>
+                </AppText>
               </TouchableOpacity>
             ))}
           </View>
 
           <View style={styles.inputRow}>
-            <Text style={styles.inputPrefix}>R$</Text>
+            <AppText style={styles.inputPrefix}>R$</AppText>
             <TextInput
               style={styles.input}
               placeholder={t('support.otherValuePlaceholder')}
@@ -131,10 +131,10 @@ export function SupportScreen() {
 
         {/* Seção 3 — Chave Pix */}
         <View style={styles.pixCard}>
-          <Text style={styles.pixLabel}>{t('support.pixLabel')}</Text>
-          <Text style={styles.pixValue}>{PIX_KEY}</Text>
+          <AppText style={styles.pixLabel}>{t('support.pixLabel')}</AppText>
+          <AppText style={styles.pixValue}>{PIX_KEY}</AppText>
         </View>
-        <Text style={styles.pixHint}>{t('support.pixHint')}</Text>
+        <AppText style={styles.pixHint}>{t('support.pixHint')}</AppText>
 
         {/* Seção 4 — Botão */}
         <Button

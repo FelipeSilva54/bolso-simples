@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   View,
-  Text,
   ScrollView,
   StyleSheet,
   Alert,
 } from 'react-native';
+import AppText from '@/components/AppText';
 import { Dialog } from '@/components/Dialog';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { setStatusBarStyle, setStatusBarBackgroundColor } from 'expo-status-bar';
@@ -45,9 +45,9 @@ export function HomeScreen() {
           <Bell size={size} color={color} weight={weight as any} />
           {unreadCount > 0 && (
             <View style={styles.badge}>
-              <Text style={styles.badgeText}>
+              <AppText style={styles.badgeText}>
                 {unreadCount > 99 ? '99+' : unreadCount}
-              </Text>
+              </AppText>
             </View>
           )}
         </View>
@@ -144,7 +144,7 @@ export function HomeScreen() {
       />
 
       <View style={styles.body}>
-        <Text style={styles.sectionTitle}>{t('home.myWallets')}</Text>
+        <AppText style={styles.sectionTitle}>{t('home.myWallets')}</AppText>
 
         {loading ? (
           <View style={styles.skeletonList}>

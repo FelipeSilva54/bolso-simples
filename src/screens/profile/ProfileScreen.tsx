@@ -1,7 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import {
   View,
-  Text,
   ScrollView,
   TouchableOpacity,
   Image,
@@ -9,6 +8,7 @@ import {
   Linking,
   StyleSheet,
 } from 'react-native';
+import AppText from '@/components/AppText';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { setStatusBarStyle } from 'expo-status-bar';
 import { useRouter, useFocusEffect } from 'expo-router';
@@ -51,9 +51,9 @@ export function ProfileScreen() {
           <Bell size={size} color={color} weight={weight as any} />
           {unreadCount > 0 && (
             <View style={styles.badge}>
-              <Text style={styles.badgeText}>
+              <AppText style={styles.badgeText}>
                 {unreadCount > 99 ? '99+' : unreadCount}
-              </Text>
+              </AppText>
             </View>
           )}
         </View>
@@ -171,17 +171,17 @@ export function ProfileScreen() {
               />
             ) : (
               <View style={styles.avatarPlaceholder}>
-                <Text style={styles.avatarInitial}>{avatarInitial}</Text>
+                <AppText style={styles.avatarInitial}>{avatarInitial}</AppText>
               </View>
             )}
 
             <View style={styles.profileInfo}>
-              <Text style={styles.profileName} numberOfLines={1}>
+              <AppText style={styles.profileName} numberOfLines={1}>
                 {user?.displayName ?? ''}
-              </Text>
-              <Text style={styles.profileEmail} numberOfLines={1}>
+              </AppText>
+              <AppText style={styles.profileEmail} numberOfLines={1}>
                 {user?.email ?? ''}
-              </Text>
+              </AppText>
             </View>
           </View>
         ) : (
@@ -212,7 +212,7 @@ export function ProfileScreen() {
 
         {/* Seção: Seu app */}
         <View>
-          <Text style={styles.sectionLabel}>{t('profile.sectionApp')}</Text>
+          <AppText style={styles.sectionLabel}>{t('profile.sectionApp')}</AppText>
           <ListItem
             icon={List as IconComponent}
             label={t('profile.categories')}
@@ -229,7 +229,7 @@ export function ProfileScreen() {
 
         {/* Seção: Informações e ajuda */}
         <View>
-          <Text style={styles.sectionLabel}>{t('profile.sectionHelp')}</Text>
+          <AppText style={styles.sectionLabel}>{t('profile.sectionHelp')}</AppText>
           <ListItem
             icon={Info as IconComponent}
             label={t('profile.about')}
@@ -258,7 +258,7 @@ export function ProfileScreen() {
 
         {/* Seção: Outros */}
         <View>
-          <Text style={styles.sectionLabel}>{t('profile.sectionOther')}</Text>
+          <AppText style={styles.sectionLabel}>{t('profile.sectionOther')}</AppText>
           <TouchableOpacity
             onPress={() => router.push('/(stack)/support' as never)}
             activeOpacity={0.7}
@@ -267,9 +267,9 @@ export function ProfileScreen() {
             style={styles.listItem}
           >
             <HandHeart size={24} color={colors.success} weight="regular" />
-            <Text style={[styles.listItemLabel, styles.listItemLabelSuccess]} numberOfLines={1}>
+            <AppText style={[styles.listItemLabel, styles.listItemLabelSuccess]} numberOfLines={1}>
               {t('profile.support')}
-            </Text>
+            </AppText>
             <CaretRight size={16} color={colors.muted} weight="regular" />
           </TouchableOpacity>
           <ListItem

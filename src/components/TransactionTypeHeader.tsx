@@ -3,12 +3,12 @@ import {
   Animated,
   Pressable,
   StyleSheet,
-  Text,
   TextInput,
   TouchableOpacity,
   View,
   Easing,
 } from 'react-native';
+import AppText from '@/components/AppText';
 import { PencilSimple } from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
 import { formatCurrency as formatCurrencyUtil } from '@/utils/currency';
@@ -94,7 +94,7 @@ export function TransactionTypeHeader({
       <View style={{ height: spacing.xxl }} />
 
       <Animated.View style={{ opacity: fadeAnim }}>
-        <Text style={styles.valueLabel}>Valor</Text>
+        <AppText style={styles.valueLabel}>Valor</AppText>
 
         <TouchableOpacity
           style={styles.valueRow}
@@ -159,9 +159,9 @@ function TypeSelector({
         accessibilityState={{ selected: type === 'expense' }}
         accessibilityLabel="Despesa"
       >
-        <Text style={[styles.typeText, type === 'expense' && styles.typeTextActive]}>
+        <AppText style={[styles.typeText, type === 'expense' && styles.typeTextActive]}>
           Despesa
-        </Text>
+        </AppText>
       </Pressable>
 
       <Pressable
@@ -171,9 +171,9 @@ function TypeSelector({
         accessibilityState={{ selected: type === 'income' }}
         accessibilityLabel="Receita"
       >
-        <Text style={[styles.typeText, type === 'income' && styles.typeTextActive]}>
+        <AppText style={[styles.typeText, type === 'income' && styles.typeTextActive]}>
           Receita
-        </Text>
+        </AppText>
       </Pressable>
     </View>
   );

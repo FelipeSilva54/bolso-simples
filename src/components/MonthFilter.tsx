@@ -2,12 +2,12 @@ import React, { useRef, useEffect, useCallback, useMemo } from 'react';
 import {
   FlatList,
   TouchableOpacity,
-  Text,
   View,
   StyleSheet,
   Dimensions,
   ListRenderItem,
 } from 'react-native';
+import AppText from '@/components/AppText';
 import { colors, fontSize as fs, fontWeight as fw, spacing } from '@/constants';
 import { useLanguage } from '@/store/LanguageContext';
 
@@ -86,9 +86,9 @@ export function MonthFilter({ activeMonth, activeYear, onChange }: MonthFilterPr
           accessibilityRole="button"
           accessibilityState={{ selected: isActive }}
         >
-          <Text style={[styles.monthText, isActive && styles.monthTextActive]}>
+          <AppText style={[styles.monthText, isActive && styles.monthTextActive]}>
             {MONTHS_SHORT[item.month]}/{item.year}
-          </Text>
+          </AppText>
           {isActive && <View style={styles.indicator} />}
         </TouchableOpacity>
       );

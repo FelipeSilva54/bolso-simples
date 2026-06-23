@@ -1,5 +1,10 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, ViewStyle } from 'react-native';
+import {
+  TouchableOpacity,
+  StyleSheet,
+  ViewStyle,
+} from 'react-native';
+import AppText from '@/components/AppText';
 import { Plus } from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
 
@@ -40,7 +45,7 @@ export function FAB({
 
       {/* Texto só renderiza se label foi passado */}
       {label != null && (
-        <Text style={styles.label}>{label}</Text>
+        <AppText style={styles.label}>{label}</AppText>
       )}
     </TouchableOpacity>
   );

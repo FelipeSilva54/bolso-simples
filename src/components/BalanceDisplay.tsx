@@ -1,5 +1,10 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import {
+  View,
+  TouchableOpacity,
+  StyleSheet,
+} from 'react-native';
+import AppText from '@/components/AppText';
 import { CalendarDots } from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
 import { formatCurrency } from '@/utils/currency';
@@ -32,14 +37,14 @@ export const BalanceDisplay = React.memo(function BalanceDisplay({
 
       {/* Linha superior: subtitle apenas */}
       <View style={styles.subtitleRow}>
-        <Text style={styles.subtitle}>{subtitle}</Text>
+        <AppText style={styles.subtitle}>{subtitle}</AppText>
       </View>
 
       {/* Linha do valor + botão Hoje */}
       <View style={styles.balanceRow}>
-        <Text style={styles.balanceValue}>
+        <AppText style={styles.balanceValue}>
           {hideBalance ? '••••••' : formattedBalance}
-        </Text>
+        </AppText>
 
         {isWallet && onTodayPress != null && (
           <TouchableOpacity
@@ -49,7 +54,7 @@ export const BalanceDisplay = React.memo(function BalanceDisplay({
             accessibilityRole="button"
           >
             <CalendarDots size={16} color={colors.primary} weight="fill" />
-            <Text style={styles.todayText}>Hoje</Text>
+            <AppText style={styles.todayText}>Hoje</AppText>
           </TouchableOpacity>
         )}
       </View>

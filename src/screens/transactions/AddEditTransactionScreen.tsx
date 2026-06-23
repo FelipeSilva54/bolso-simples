@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   View,
-  Text,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
@@ -10,6 +9,7 @@ import {
   ActivityIndicator,
   LayoutAnimation,
 } from 'react-native';
+import AppText from '@/components/AppText';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter, useLocalSearchParams } from 'expo-router';
@@ -329,7 +329,7 @@ export function AddEditTransactionScreen() {
 
             {errors.value != null && (
               <View style={styles.valueErrorWrapper}>
-                <Text style={styles.errorText}>{errors.value}</Text>
+                <AppText style={styles.errorText}>{errors.value}</AppText>
               </View>
             )}
 
@@ -377,14 +377,14 @@ export function AddEditTransactionScreen() {
                   onValueChange={setStatusOn}
                   accessibilityLabel={type === 'expense' ? t('transaction.alreadyPaid') : t('transaction.alreadyReceived')}
                 />
-                <Text style={styles.toggleLabel}>
+                <AppText style={styles.toggleLabel}>
                   {type === 'expense' ? t('transaction.alreadyPaid') : t('transaction.alreadyReceived')}
-                </Text>
+                </AppText>
               </View>
 
               {/* Tipo de pagamento */}
               <View>
-                <Text style={styles.sectionLabel}>{t('transaction.paymentTypeLabel')}</Text>
+                <AppText style={styles.sectionLabel}>{t('transaction.paymentTypeLabel')}</AppText>
                 <View style={styles.paymentRow}>
                   <View style={styles.paymentItem}>
                     <Button

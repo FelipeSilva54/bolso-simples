@@ -1,5 +1,10 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import {
+  View,
+  TouchableOpacity,
+  StyleSheet,
+} from 'react-native';
+import AppText from '@/components/AppText';
 import { PencilSimple, Trash } from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
 import { BottomSheet } from '@/components/BottomSheet';
@@ -23,9 +28,9 @@ export function WalletActionsSheet({
   return (
     <BottomSheet visible={isVisible} onClose={onClose}>
       <View style={styles.wrapper}>
-        <Text style={styles.title} numberOfLines={1}>
+        <AppText style={styles.title} numberOfLines={1}>
           {walletName}
-        </Text>
+        </AppText>
 
         <TouchableOpacity
           style={styles.row}
@@ -35,7 +40,7 @@ export function WalletActionsSheet({
           accessibilityLabel="Editar carteira"
         >
           <PencilSimple size={22} color={colors.content} weight="regular" />
-          <Text style={styles.rowLabel}>Editar carteira</Text>
+          <AppText style={styles.rowLabel}>Editar carteira</AppText>
         </TouchableOpacity>
 
         <View style={styles.separator} />
@@ -48,7 +53,7 @@ export function WalletActionsSheet({
           accessibilityLabel="Excluir carteira"
         >
           <Trash size={22} color={colors.danger} weight="regular" />
-          <Text style={[styles.rowLabel, styles.rowLabelDanger]}>Excluir carteira</Text>
+          <AppText style={[styles.rowLabel, styles.rowLabelDanger]}>Excluir carteira</AppText>
         </TouchableOpacity>
       </View>
     </BottomSheet>

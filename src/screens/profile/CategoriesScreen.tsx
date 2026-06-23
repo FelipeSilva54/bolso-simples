@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   View,
-  Text,
   ScrollView,
   TouchableOpacity,
   Pressable,
@@ -10,6 +9,7 @@ import {
   Platform,
   StyleSheet,
 } from 'react-native';
+import AppText from '@/components/AppText';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
@@ -190,14 +190,14 @@ export function CategoriesScreen() {
               accessibilityLabel={t('categories.expenseTab')}
               style={styles.tabItem}
             >
-              <Text
+              <AppText
                 style={[
                   styles.tabLabel,
                   activeTab === 'expense' && styles.tabLabelActive,
                 ]}
               >
                 {t('categories.expenseTab')}
-              </Text>
+              </AppText>
             </Pressable>
 
             <Pressable
@@ -207,14 +207,14 @@ export function CategoriesScreen() {
               accessibilityLabel={t('categories.incomeTab')}
               style={styles.tabItem}
             >
-              <Text
+              <AppText
                 style={[
                   styles.tabLabel,
                   activeTab === 'income' && styles.tabLabelActive,
                 ]}
               >
                 {t('categories.incomeTab')}
-              </Text>
+              </AppText>
             </Pressable>
           </View>
         </View>
@@ -259,9 +259,9 @@ export function CategoriesScreen() {
                   iconColor={category.color}
                   size={40}
                 />
-                <Text style={styles.rowLabel} numberOfLines={1}>
+                <AppText style={styles.rowLabel} numberOfLines={1}>
                   {category.name}
-                </Text>
+                </AppText>
               </TouchableOpacity>
             ))}
           </ScrollView>

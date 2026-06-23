@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import {
   View,
-  Text,
   TouchableOpacity,
   ScrollView,
   StyleSheet,
 } from 'react-native';
+import AppText from '@/components/AppText';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
@@ -59,8 +59,8 @@ function PrefItem({ icon: Icon, title, value, onPress, accessibilityLabel, isLas
     >
       <Icon size={22} color={colors.subcontent} weight="regular" />
       <View style={styles.itemCenter}>
-        <Text style={styles.itemTitle}>{title}</Text>
-        <Text style={styles.itemValue} numberOfLines={1}>{value}</Text>
+        <AppText style={styles.itemTitle}>{title}</AppText>
+        <AppText style={styles.itemValue} numberOfLines={1}>{value}</AppText>
       </View>
       <CaretRight size={16} color={colors.muted} weight="regular" />
     </TouchableOpacity>
@@ -130,7 +130,7 @@ export function PreferencesScreen() {
       {/* Language Sheet */}
       <BottomSheet visible={sheet === 'language'} onClose={() => setSheet(null)}>
         <View style={styles.sheetWrapper}>
-          <Text style={styles.sheetTitle}>{t('preferences.language')}</Text>
+          <AppText style={styles.sheetTitle}>{t('preferences.language')}</AppText>
           {LANGUAGE_OPTIONS.map((option) => {
             const isActive = option.value === language;
             const label = langLabel(option.value);
@@ -144,9 +144,9 @@ export function PreferencesScreen() {
                 accessibilityLabel={label}
                 accessibilityState={{ selected: isActive }}
               >
-                <Text style={[styles.sheetRowLabel, isActive && styles.sheetRowLabelActive]}>
+                <AppText style={[styles.sheetRowLabel, isActive && styles.sheetRowLabelActive]}>
                   {label}
-                </Text>
+                </AppText>
                 {isActive && <Check size={18} color={colors.success} weight="bold" />}
               </TouchableOpacity>
             );
@@ -157,7 +157,7 @@ export function PreferencesScreen() {
       {/* Currency Sheet */}
       <BottomSheet visible={sheet === 'currency'} onClose={() => setSheet(null)}>
         <View style={styles.sheetWrapper}>
-          <Text style={styles.sheetTitle}>{t('preferences.currency')}</Text>
+          <AppText style={styles.sheetTitle}>{t('preferences.currency')}</AppText>
           {SUPPORTED_CURRENCIES.map((currency) => {
             const isActive = currency.code === preferences.currency;
             return (
@@ -170,9 +170,9 @@ export function PreferencesScreen() {
                 accessibilityLabel={`${currency.namePtBR}, ${currency.code}, ${currency.symbol}`}
                 accessibilityState={{ selected: isActive }}
               >
-                <Text style={[styles.sheetRowLabel, isActive && styles.sheetRowLabelActive]}>
+                <AppText style={[styles.sheetRowLabel, isActive && styles.sheetRowLabelActive]}>
                   {currency.namePtBR}
-                </Text>
+                </AppText>
                 {isActive && <Check size={18} color={colors.success} weight="bold" />}
               </TouchableOpacity>
             );
@@ -183,7 +183,7 @@ export function PreferencesScreen() {
       {/* Theme Sheet */}
       <BottomSheet visible={sheet === 'theme'} onClose={() => setSheet(null)}>
         <View style={styles.sheetWrapper}>
-          <Text style={styles.sheetTitle}>{t('preferences.theme')}</Text>
+          <AppText style={styles.sheetTitle}>{t('preferences.theme')}</AppText>
           {THEME_OPTIONS.map((option) => {
             const isActive = option.value === preferences.theme;
             return (
@@ -200,16 +200,16 @@ export function PreferencesScreen() {
                 accessibilityLabel={option.label}
                 accessibilityState={{ selected: isActive, disabled: option.disabled }}
               >
-                <Text style={[
+                <AppText style={[
                   styles.sheetRowLabel,
                   isActive && styles.sheetRowLabelActive,
                   option.disabled && styles.sheetRowLabelDisabled,
                 ]}>
                   {option.label}
-                </Text>
+                </AppText>
                 {option.disabled && (
                   <View style={styles.badge}>
-                    <Text style={styles.badgeLabel}>{t('preferences.comingSoon')}</Text>
+                    <AppText style={styles.badgeLabel}>{t('preferences.comingSoon')}</AppText>
                   </View>
                 )}
                 {isActive && !option.disabled && (

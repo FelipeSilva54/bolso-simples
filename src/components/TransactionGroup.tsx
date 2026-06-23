@@ -1,5 +1,9 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import {
+  View,
+  StyleSheet,
+} from 'react-native';
+import AppText from '@/components/AppText';
 import { TransactionItem } from '@/components/TransactionItem';
 import { colors, fontSize as fs, fontWeight as fw, spacing } from '@/constants';
 
@@ -34,7 +38,7 @@ export const TransactionGroup = React.memo(function TransactionGroup({
 
       {/* Header com a data do grupo */}
       <View style={styles.dateHeader}>
-        <Text style={styles.dateText}>{date}</Text>
+        <AppText style={styles.dateText}>{date}</AppText>
       </View>
 
       {/* Lista de transações do dia */}

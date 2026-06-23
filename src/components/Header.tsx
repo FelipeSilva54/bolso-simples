@@ -1,5 +1,11 @@
 import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import {
+  View,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+} from 'react-native';
+import AppText from '@/components/AppText';
 import { ArrowLeft, XCircle } from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing } from '@/constants';
 
@@ -101,7 +107,7 @@ export function Header({
         )}
       </View>
 
-      <Text
+      <AppText
         style={[
           styles.title,
           { color: contentColor },
@@ -110,7 +116,7 @@ export function Header({
         numberOfLines={1}
       >
         {title}
-      </Text>
+      </AppText>
 
       <View style={[styles.side, styles.sideRight]}>
         {SecondaryRightIcon != null && (
