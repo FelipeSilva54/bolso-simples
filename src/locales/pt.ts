@@ -303,17 +303,17 @@ export const pt = {
     logoutDialogTitle: 'Sair do aplicativo',
     logoutDialogDescription: 'Tem certeza que deseja sair?',
     logoutDialogConfirm: 'Sair',
-    clearDataDialogTitle: 'Limpar dados?',
+    clearDataDialogTitle: 'Deseja limpar os dados?',
     clearDataDialogDescription:
-      'Todas as suas carteiras, transações e categorias serão removidas permanentemente.',
+      'Ao limpar os dados, todas as informações serão removidas deste dispositivo, mas sua conta permanecerá ativa.',
     clearDataDialogConfirm: 'Limpar tudo',
     clearDataSuccess: 'Dados limpados com sucesso',
     clearDataError: 'Não foi possível apagar os dados. Tente novamente.',
-    deleteAccountDialogTitle: 'Excluir conta',
+    deleteAccountDialogTitle: 'Deseja excluir a conta?',
     deleteAccountDialogDescAnonymous:
-      'Ao excluir sua conta, todas as suas carteiras, transações e categorias serão apagadas permanentemente. Como você está usando o app sem cadastro, não será possível recuperar essas informações depois.',
+      'Ao excluir sua conta, todos os seus dados serão apagados permanentemente e não poderão ser recuperados.',
     deleteAccountDialogDescLoggedIn:
-      'Ao excluir sua conta, todas as suas carteiras, transações e categorias serão apagadas permanentemente. Essa ação não pode ser desfeita e não afeta sua conta Google.',
+      'Ao excluir sua conta, todos os seus dados serão apagados permanentemente e não poderão ser recuperados.',
     deleteAccountDialogConfirm: 'Excluir conta',
     deleteAccountError: 'Não foi possível excluir a conta. Tente novamente.',
   },
