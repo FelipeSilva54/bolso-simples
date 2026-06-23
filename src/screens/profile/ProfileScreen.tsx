@@ -196,6 +196,7 @@ export function ProfileScreen() {
               variant="soft"
               onPress={handleGoogleSignIn}
               loading={loadingGoogle}
+              style={{ backgroundColor: colors.white, borderWidth: 1, borderColor: colors.borderLight }}
               leftIcon={
                 <Image
                   source={require('@/assets/images/Logo-Google.png')}

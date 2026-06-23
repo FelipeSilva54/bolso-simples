@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   StyleSheet,
   View,
+  ViewStyle,
 } from 'react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
 
@@ -21,6 +22,7 @@ type ButtonProps = {
   leftIcon?: React.ReactNode;
   selected?: boolean;
   accessibilityLabel?: string;
+  style?: ViewStyle;
   children: React.ReactNode;
 };
 
@@ -40,6 +42,7 @@ export function Button({
   leftIcon,
   selected = false,
   accessibilityLabel,
+  style,
   children,
 }: ButtonProps) {
   const isSelectedOutlined = variant === 'soft' && selected;
@@ -71,6 +74,7 @@ export function Button({
         variantStyles[variant],
         isSelectedOutlined && styles.softSelected,
         disabled && styles.disabled,
+        style,
       ]}
     >
       {variant === 'soft' && (
