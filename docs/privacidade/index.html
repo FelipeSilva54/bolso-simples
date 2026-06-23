@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Política de Privacidade — Bolso Simples</title>
+  <meta name="description" content="Política de Privacidade do aplicativo Bolso Simples. Saiba como coletamos, usamos e protegemos seus dados." />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary: #181719;
+      --content: #080808;
+      --subcontent: #5D5D5D;
+      --muted: #8C8C8C;
+      --border: #DBDBDB;
+      --bg: #F6F6F6;
+      --white: #FFFFFF;
+      --accent-bg: #E6F4FE;
+      --accent-text: #1A6FAB;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--content);
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    /* ─── Cabeçalho ─── */
+    header {
+      background: var(--primary);
+      color: var(--white);
+      padding: 0 24px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+    }
+
+    .header-inner {
+      max-width: 760px;
+      margin: 0 auto;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-brand {
+      font-size: 17px;
+      font-weight: 700;
+      text-decoration: none;
+      color: var(--white);
+      letter-spacing: -0.2px;
+    }
+
+    .header-nav a {
+      color: rgba(255,255,255,0.75);
+      text-decoration: none;
+      font-size: 14px;
+      margin-left: 20px;
+      transition: color 0.15s;
+    }
+
+    .header-nav a:hover { color: #fff; }
+    .header-nav a.active { color: #fff; font-weight: 600; }
+
+    /* ─── Hero ─── */
+    .hero {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 40px 24px;
+    }
+
+    .hero-inner {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .badge {
+      display: inline-block;
+      background: var(--accent-bg);
+      color: var(--accent-text);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+    }
+
+    .hero h1 {
+      font-size: 30px;
+      font-weight: 800;
+      color: var(--content);
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+    }
+
+    .hero-meta {
+      margin-top: 12px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .hero-summary {
+      margin-top: 16px;
+      font-size: 16px;
+      color: var(--subcontent);
+      max-width: 600px;
+      line-height: 1.6;
+    }
+
+    /* ─── Layout ─── */
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    /* ─── Índice ─── */
+    .toc {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px 28px;
+      margin-bottom: 40px;
+    }
+
+    .toc h2 {
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .toc ol {
+      padding-left: 20px;
+    }
+
+    .toc li {
+      margin: 6px 0;
+    }
+
+    .toc a {
+      color: var(--accent-text);
+      text-decoration: none;
+      font-size: 15px;
+    }
+
+    .toc a:hover { text-decoration: underline; }
+
+    /* ─── Seções ─── */
+    section {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 32px 32px;
+      margin-bottom: 20px;
+    }
+
+    section h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--content);
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      letter-spacing: -0.2px;
+    }
+
+    section h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--content);
+      margin: 20px 0 8px;
+    }
+
+    section p {
+      font-size: 15px;
+      color: var(--subcontent);
+      margin-bottom: 12px;
+      line-height: 1.7;
+    }
+
+    section p:last-child { margin-bottom: 0; }
+
+    section ul, section ol {
+      padding-left: 22px;
+      margin: 8px 0 12px;
+    }
+
+    section li {
+      font-size: 15px;
+      color: var(--subcontent);
+      margin-bottom: 6px;
+      line-height: 1.6;
+    }
+
+    section li strong { color: var(--content); }
+
+    /* ─── Callouts ─── */
+    .callout {
+      border-radius: 10px;
+      padding: 16px 18px;
+      margin: 16px 0;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .callout-blue {
+      background: var(--accent-bg);
+      color: #1A5F95;
+      border-left: 4px solid #4AA8E8;
+    }
+
+    .callout-green {
+      background: #EDFBF3;
+      color: #1A6B44;
+      border-left: 4px solid #34C977;
+    }
+
+    .callout p { color: inherit; margin: 0; }
+
+    /* ─── Tabela ─── */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 14px;
+    }
+
+    .data-table th {
+      background: var(--bg);
+      text-align: left;
+      padding: 10px 14px;
+      font-weight: 700;
+      color: var(--content);
+      border-bottom: 2px solid var(--border);
+    }
+
+    .data-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--subcontent);
+      vertical-align: top;
+    }
+
+    .data-table tr:last-child td { border-bottom: none; }
+
+    /* ─── Rodapé ─── */
+    footer {
+      background: var(--primary);
+      color: rgba(255,255,255,0.65);
+      text-align: center;
+      padding: 28px 24px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    footer a { color: rgba(255,255,255,0.8); }
+
+    /* ─── Responsivo ─── */
+    @media (max-width: 600px) {
+      .hero h1 { font-size: 24px; }
+      section { padding: 24px 20px; }
+      .toc { padding: 20px; }
+      .header-nav { display: none; }
+      .data-table { font-size: 13px; }
+      .data-table th, .data-table td { padding: 8px 10px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <a href="../" class="header-brand">bolso<strong>simples</strong></a>
+      <nav class="header-nav">
+        <a href="./" class="active">Privacidade</a>
+        <a href="../termos/">Termos de Uso</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div class="hero-inner">
+      <span class="badge">🔒 Documento Legal</span>
+      <h1>Política de Privacidade</h1>
+      <p class="hero-meta">Última atualização: 23 de junho de 2026 · Versão 1.0</p>
+      <p class="hero-summary">
+        Esta política explica de forma clara e objetiva quais dados o aplicativo Bolso Simples coleta,
+        como os utiliza e como os protege. Comprometemo-nos com a transparência total.
+      </p>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <div class="toc">
+      <h2>Índice</h2>
+      <ol>
+        <li><a href="#introducao">Introdução e identificação do responsável</a></li>
+        <li><a href="#dados-coletados">Dados que coletamos</a></li>
+        <li><a href="#como-usamos">Como usamos seus dados</a></li>
+        <li><a href="#armazenamento">Armazenamento e segurança</a></li>
+        <li><a href="#terceiros">Serviços de terceiros</a></li>
+        <li><a href="#direitos">Seus direitos (LGPD)</a></li>
+        <li><a href="#retencao">Retenção e exclusão de dados</a></li>
+        <li><a href="#menores">Menores de idade</a></li>
+        <li><a href="#alteracoes">Alterações nesta política</a></li>
+        <li><a href="#contato">Contato</a></li>
+      </ol>
+    </div>
+
+    <!-- 1 -->
+    <section id="introducao">
+      <h2>1. Introdução e identificação do responsável</h2>
+      <p>
+        O <strong>Bolso Simples</strong> é um aplicativo de controle financeiro pessoal desenvolvido e mantido
+        por <strong>Felipe Silva</strong> (doravante "nós", "nosso" ou "desenvolvedor").
+      </p>
+      <p>
+        Esta Política de Privacidade descreve como coletamos, utilizamos, armazenamos e protegemos as informações
+        pessoais dos usuários do aplicativo Bolso Simples disponível para Android
+        (pacote: <code>com.bolsosimples.app</code>).
+      </p>
+      <p>
+        Ao utilizar o aplicativo, você concorda com as práticas descritas neste documento. Caso não concorde com
+        qualquer parte desta política, recomendamos que não utilize o aplicativo.
+      </p>
+      <div class="callout callout-green">
+        <p>
+          <strong>Nosso compromisso:</strong> O Bolso Simples é 100% gratuito, sem anúncios e sem rastreamento
+          de comportamento. Seus dados financeiros pertencem exclusivamente a você.
+        </p>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section id="dados-coletados">
+      <h2>2. Dados que coletamos</h2>
+
+      <p>Coletamos apenas os dados estritamente necessários para o funcionamento do aplicativo:</p>
+
+      <h3>2.1 Dados de autenticação — Login com Google</h3>
+      <p>Quando você opta por entrar com sua conta Google, recebemos do Google as seguintes informações:</p>
+      <ul>
+        <li><strong>Nome completo</strong> — exibido no perfil do aplicativo</li>
+        <li><strong>Endereço de e-mail</strong> — utilizado como identificador de conta</li>
+        <li><strong>Foto de perfil</strong> (URL) — exibida no perfil do aplicativo</li>
+        <li><strong>ID único (UID)</strong> gerado pelo Firebase — identifica sua conta de forma anônima nos servidores</li>
+      </ul>
+      <p>
+        Não armazenamos senhas. A autenticação é realizada integralmente pelo serviço Firebase Authentication
+        (Google), por meio de um token de acesso seguro (OAuth 2.0).
+      </p>
+
+      <h3>2.2 Dados de autenticação — Login anônimo</h3>
+      <p>
+        Caso escolha entrar sem uma conta, o Firebase Authentication gera automaticamente um
+        <strong>identificador único anônimo</strong>. Nenhuma informação pessoal identificável é coletada
+        neste modo. O acesso anônimo permite o uso completo do aplicativo, mas os dados não podem ser
+        recuperados caso o aplicativo seja desinstalado.
+      </p>
+
+      <h3>2.3 Dados financeiros inseridos por você</h3>
+      <p>Todos os dados financeiros são criados e inseridos manualmente por você. Coletamos:</p>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Tipo</th>
+            <th>Dados</th>
+            <th>Onde é armazenado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Carteiras</strong></td>
+            <td>Nome, cor escolhida, saldo, data de criação</td>
+            <td>Firebase Firestore (nuvem)</td>
+          </tr>
+          <tr>
+            <td><strong>Transações</strong></td>
+            <td>Tipo (receita/despesa/transferência), título, descrição, valor, categoria, status, data, informações de parcelamento e recorrência</td>
+            <td>Firebase Firestore (nuvem)</td>
+          </tr>
+          <tr>
+            <td><strong>Categorias</strong></td>
+            <td>Nome, ícone, cor, tipo (receita/despesa)</td>
+            <td>Firebase Firestore (nuvem)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>2.4 Preferências do dispositivo</h3>
+      <p>Armazenamos localmente no seu dispositivo (sem envio à nuvem) as seguintes preferências:</p>
+      <ul>
+        <li><strong>Idioma</strong> — Português ou Inglês</li>
+        <li><strong>Moeda padrão</strong> — BRL, USD, EUR, entre outras</li>
+        <li><strong>Tema visual</strong> — claro ou escuro</li>
+        <li><strong>Visibilidade do saldo</strong> — mostrar ou ocultar</li>
+      </ul>
+
+      <h3>2.5 Notificações internas</h3>
+      <p>
+        O aplicativo gera notificações informativas localmente no seu dispositivo (ex.: despesas com vencimento
+        próximo, saldo negativo). Essas notificações são armazenadas apenas no próprio dispositivo e
+        <strong>não são enviadas a servidores externos</strong>.
+      </p>
+
+      <div class="callout callout-blue">
+        <p>
+          <strong>O que NÃO coletamos:</strong> Localização geográfica · Câmera ou fotos · Contatos · Microfone ·
+          Dados bancários ou números de cartão · Informações demográficas · Comportamento de navegação ·
+          Dados de telemetria ou crash reports.
+        </p>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section id="como-usamos">
+      <h2>3. Como usamos seus dados</h2>
+      <p>Utilizamos seus dados exclusivamente para:</p>
+      <ul>
+        <li><strong>Autenticar sua identidade</strong> e garantir que apenas você acesse suas informações</li>
+        <li><strong>Armazenar e sincronizar</strong> suas carteiras, transações e categorias entre dispositivos</li>
+        <li><strong>Exibir seu nome e foto</strong> no perfil do aplicativo (apenas usuários Google)</li>
+        <li><strong>Calcular saldos e resumos financeiros</strong> exibidos no aplicativo</li>
+        <li><strong>Personalizar a experiência</strong> com base nas suas preferências de idioma, moeda e tema</li>
+      </ul>
+      <p>
+        <strong>Não utilizamos seus dados para:</strong> publicidade, análise de comportamento, treinamento de
+        modelos de inteligência artificial, venda a terceiros ou qualquer finalidade além das listadas acima.
+      </p>
+    </section>
+
+    <!-- 4 -->
+    <section id="armazenamento">
+      <h2>4. Armazenamento e segurança</h2>
+
+      <h3>4.1 Infraestrutura em nuvem (Firebase)</h3>
+      <p>
+        Os dados de autenticação e financeiros são armazenados nos serviços <strong>Firebase Authentication</strong>
+        e <strong>Firebase Firestore</strong>, operados pelo Google. O servidor utilizado está localizado na região
+        <strong>southamerica-east1 (São Paulo, Brasil)</strong>, garantindo que seus dados permaneçam em
+        território nacional.
+      </p>
+      <p>
+        O Firebase aplica automaticamente criptografia em trânsito (TLS) e em repouso (AES-256). O acesso
+        aos dados é controlado por regras de segurança do Firestore, garantindo que cada usuário acesse
+        somente seus próprios dados.
+      </p>
+
+      <h3>4.2 Armazenamento local no dispositivo</h3>
+      <p>
+        Preferências e notificações internas são armazenadas localmente usando <strong>AsyncStorage</strong>,
+        uma biblioteca padrão do React Native. Esses dados ficam no armazenamento interno do seu dispositivo
+        e não são transmitidos a servidores externos.
+      </p>
+
+      <h3>4.3 Sessão de autenticação</h3>
+      <p>
+        Sua sessão de login é mantida localmente pelo Firebase Authentication com AsyncStorage,
+        evitando que você precise fazer login toda vez que abrir o aplicativo.
+      </p>
+
+      <div class="callout callout-blue">
+        <p>
+          <strong>Importante:</strong> Apesar dos esforços para garantir a segurança dos dados, nenhum sistema
+          é 100% inviolável. Recomendamos que você mantenha seu dispositivo protegido com senha ou biometria.
+        </p>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section id="terceiros">
+      <h2>5. Serviços de terceiros</h2>
+      <p>O Bolso Simples utiliza apenas os seguintes serviços de terceiros:</p>
+
+      <h3>Google / Firebase</h3>
+      <ul>
+        <li><strong>Firebase Authentication</strong> — gerenciamento de login e sessão</li>
+        <li><strong>Firebase Firestore</strong> — banco de dados na nuvem para armazenar seus dados financeiros</li>
+        <li><strong>Google Sign-In SDK</strong> — autenticação via conta Google</li>
+      </ul>
+      <p>
+        Ao utilizar o login com Google, você também está sujeito à
+        <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Política de Privacidade do Google</a>.
+        O Firebase é operado pelo Google e está em conformidade com o GDPR, LGPD e outras regulamentações
+        internacionais de privacidade.
+      </p>
+
+      <div class="callout callout-green">
+        <p>
+          <strong>Sem rastreamento:</strong> O Bolso Simples não integra nenhum serviço de analytics, publicidade,
+          rastreamento de comportamento, crash reporting (Sentry, Crashlytics) ou qualquer outro serviço
+          de coleta de dados além do Firebase listado acima.
+        </p>
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section id="direitos">
+      <h2>6. Seus direitos (LGPD)</h2>
+      <p>
+        Em conformidade com a <strong>Lei Geral de Proteção de Dados (LGPD — Lei nº 13.709/2018)</strong>,
+        você tem os seguintes direitos em relação aos seus dados pessoais:
+      </p>
+
+      <h3>6.1 Acesso</h3>
+      <p>
+        Você pode visualizar todos os seus dados financeiros diretamente no aplicativo, a qualquer momento.
+      </p>
+
+      <h3>6.2 Correção</h3>
+      <p>
+        Você pode editar ou corrigir qualquer informação diretamente no aplicativo (carteiras, transações,
+        categorias).
+      </p>
+
+      <h3>6.3 Exclusão</h3>
+      <p>
+        Você pode excluir dados específicos (transações, carteiras, categorias) ou <strong>excluir sua conta
+        inteiramente</strong> através da tela de perfil do aplicativo. A exclusão de conta remove
+        permanentemente todos os seus dados de nossos servidores.
+      </p>
+
+      <h3>6.4 Portabilidade</h3>
+      <p>
+        Caso deseje exportar seus dados, entre em contato conosco pelo e-mail
+        <a href="mailto:bolsosimples@gmail.com">bolsosimples@gmail.com</a>
+        e processaremos sua solicitação.
+      </p>
+
+      <h3>6.5 Revogação do consentimento</h3>
+      <p>
+        Você pode revogar o consentimento para tratamento de dados a qualquer momento, excluindo sua conta
+        diretamente no aplicativo ou solicitando via e-mail.
+      </p>
+    </section>
+
+    <!-- 7 -->
+    <section id="retencao">
+      <h2>7. Retenção e exclusão de dados</h2>
+      <p>
+        Seus dados são mantidos pelo tempo que você utilizar o aplicativo. Ao excluir sua conta pelo aplicativo,
+        os seguintes dados são removidos permanentemente e de forma imediata:
+      </p>
+      <ul>
+        <li>Todas as carteiras e suas transações</li>
+        <li>Todas as categorias personalizadas</li>
+        <li>Dados do perfil (nome, e-mail, foto — referência no Firestore)</li>
+        <li>Conta de autenticação no Firebase</li>
+        <li>Notificações e preferências armazenadas localmente</li>
+      </ul>
+      <p>
+        Dados de sessão gerenciados pelo Firebase Auth podem levar até 90 dias para serem completamente
+        removidos dos sistemas do Google, conforme a política de retenção deles.
+      </p>
+    </section>
+
+    <!-- 8 -->
+    <section id="menores">
+      <h2>8. Menores de idade</h2>
+      <p>
+        O Bolso Simples é um aplicativo destinado a usuários com <strong>13 anos de idade ou mais</strong>.
+        Não coletamos intencionalmente dados de crianças menores de 13 anos.
+      </p>
+      <p>
+        Se você acredita que uma criança menor de 13 anos utilizou o aplicativo e forneceu dados pessoais,
+        entre em contato conosco pelo e-mail
+        <a href="mailto:bolsosimples@gmail.com">bolsosimples@gmail.com</a>
+        para que possamos tomar as medidas necessárias.
+      </p>
+    </section>
+
+    <!-- 9 -->
+    <section id="alteracoes">
+      <h2>9. Alterações nesta política</h2>
+      <p>
+        Podemos atualizar esta Política de Privacidade periodicamente para refletir mudanças no aplicativo
+        ou em requisitos legais. Quando houver alterações relevantes, a data de "Última atualização"
+        no topo desta página será atualizada.
+      </p>
+      <p>
+        Recomendamos que você revise esta política periodicamente. O uso continuado do aplicativo após
+        alterações constitui aceitação da política atualizada.
+      </p>
+    </section>
+
+    <!-- 10 -->
+    <section id="contato">
+      <h2>10. Contato</h2>
+      <p>
+        Para dúvidas, solicitações ou exercício dos seus direitos previstos na LGPD, entre em contato:
+      </p>
+      <ul>
+        <li><strong>E-mail:</strong> <a href="mailto:bolsosimples@gmail.com">bolsosimples@gmail.com</a></li>
+        <li><strong>Responsável:</strong> Felipe Silva</li>
+        <li><strong>Aplicativo:</strong> Bolso Simples (com.bolsosimples.app)</li>
+      </ul>
+      <p>
+        Nos comprometemos a responder todas as solicitações em até <strong>15 dias úteis</strong>.
+      </p>
+    </section>
+
+  </div><!-- /container -->
+
+  <footer>
+    <p>© 2026 Bolso Simples · Felipe Silva · <a href="mailto:bolsosimples@gmail.com">bolsosimples@gmail.com</a></p>
+    <p style="margin-top:8px;">
+      <a href="../">Início</a> &nbsp;·&nbsp;
+      <a href="./">Política de Privacidade</a> &nbsp;·&nbsp;
+      <a href="../termos/">Termos de Uso</a>
+    </p>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Termos de Uso — Bolso Simples</title>
+  <meta name="description" content="Termos de Uso do aplicativo Bolso Simples. Leia antes de utilizar o aplicativo." />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary: #181719;
+      --content: #080808;
+      --subcontent: #5D5D5D;
+      --muted: #8C8C8C;
+      --border: #DBDBDB;
+      --bg: #F6F6F6;
+      --white: #FFFFFF;
+      --accent-bg: #E6F4FE;
+      --accent-text: #1A6FAB;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--content);
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    /* ─── Cabeçalho ─── */
+    header {
+      background: var(--primary);
+      color: var(--white);
+      padding: 0 24px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+    }
+
+    .header-inner {
+      max-width: 760px;
+      margin: 0 auto;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-brand {
+      font-size: 17px;
+      font-weight: 700;
+      text-decoration: none;
+      color: var(--white);
+      letter-spacing: -0.2px;
+    }
+
+    .header-nav a {
+      color: rgba(255,255,255,0.75);
+      text-decoration: none;
+      font-size: 14px;
+      margin-left: 20px;
+      transition: color 0.15s;
+    }
+
+    .header-nav a:hover { color: #fff; }
+    .header-nav a.active { color: #fff; font-weight: 600; }
+
+    /* ─── Hero ─── */
+    .hero {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 40px 24px;
+    }
+
+    .hero-inner {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .badge {
+      display: inline-block;
+      background: var(--accent-bg);
+      color: var(--accent-text);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+    }
+
+    .hero h1 {
+      font-size: 30px;
+      font-weight: 800;
+      color: var(--content);
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+    }
+
+    .hero-meta {
+      margin-top: 12px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .hero-summary {
+      margin-top: 16px;
+      font-size: 16px;
+      color: var(--subcontent);
+      max-width: 600px;
+      line-height: 1.6;
+    }
+
+    /* ─── Layout ─── */
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    /* ─── Índice ─── */
+    .toc {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px 28px;
+      margin-bottom: 40px;
+    }
+
+    .toc h2 {
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .toc ol { padding-left: 20px; }
+    .toc li { margin: 6px 0; }
+    .toc a {
+      color: var(--accent-text);
+      text-decoration: none;
+      font-size: 15px;
+    }
+    .toc a:hover { text-decoration: underline; }
+
+    /* ─── Seções ─── */
+    section {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 32px 32px;
+      margin-bottom: 20px;
+    }
+
+    section h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--content);
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      letter-spacing: -0.2px;
+    }
+
+    section h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--content);
+      margin: 20px 0 8px;
+    }
+
+    section p {
+      font-size: 15px;
+      color: var(--subcontent);
+      margin-bottom: 12px;
+      line-height: 1.7;
+    }
+
+    section p:last-child { margin-bottom: 0; }
+
+    section ul, section ol {
+      padding-left: 22px;
+      margin: 8px 0 12px;
+    }
+
+    section li {
+      font-size: 15px;
+      color: var(--subcontent);
+      margin-bottom: 6px;
+      line-height: 1.6;
+    }
+
+    section li strong { color: var(--content); }
+
+    /* ─── Callouts ─── */
+    .callout {
+      border-radius: 10px;
+      padding: 16px 18px;
+      margin: 16px 0;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .callout-blue {
+      background: var(--accent-bg);
+      color: #1A5F95;
+      border-left: 4px solid #4AA8E8;
+    }
+
+    .callout-yellow {
+      background: #FFFBEB;
+      color: #7A5A00;
+      border-left: 4px solid #F5C842;
+    }
+
+    .callout p { color: inherit; margin: 0; }
+
+    /* ─── Rodapé ─── */
+    footer {
+      background: var(--primary);
+      color: rgba(255,255,255,0.65);
+      text-align: center;
+      padding: 28px 24px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    footer a { color: rgba(255,255,255,0.8); }
+
+    /* ─── Responsivo ─── */
+    @media (max-width: 600px) {
+      .hero h1 { font-size: 24px; }
+      section { padding: 24px 20px; }
+      .toc { padding: 20px; }
+      .header-nav { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <a href="../" class="header-brand">bolso<strong>simples</strong></a>
+      <nav class="header-nav">
+        <a href="../privacidade/">Privacidade</a>
+        <a href="./" class="active">Termos de Uso</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div class="hero-inner">
+      <span class="badge">📄 Documento Legal</span>
+      <h1>Termos de Uso</h1>
+      <p class="hero-meta">Última atualização: 23 de junho de 2026 · Versão 1.0</p>
+      <p class="hero-summary">
+        Estes Termos de Uso regem o acesso e a utilização do aplicativo Bolso Simples. Ao instalar e
+        utilizar o aplicativo, você declara ter lido, compreendido e concordado com todas as condições
+        aqui estabelecidas.
+      </p>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <div class="toc">
+      <h2>Índice</h2>
+      <ol>
+        <li><a href="#aceitacao">Aceitação dos termos</a></li>
+        <li><a href="#servico">Descrição do serviço</a></li>
+        <li><a href="#conta">Conta de usuário</a></li>
+        <li><a href="#uso-permitido">Uso permitido</a></li>
+        <li><a href="#proibicoes">Atividades proibidas</a></li>
+        <li><a href="#dados">Dados e privacidade</a></li>
+        <li><a href="#propriedade">Propriedade intelectual</a></li>
+        <li><a href="#responsabilidade">Limitação de responsabilidade</a></li>
+        <li><a href="#disponibilidade">Disponibilidade do serviço</a></li>
+        <li><a href="#encerramento">Encerramento e exclusão de conta</a></li>
+        <li><a href="#alteracoes">Alterações nestes termos</a></li>
+        <li><a href="#lei">Lei aplicável e foro</a></li>
+        <li><a href="#contato">Contato</a></li>
+      </ol>
+    </div>
+
+    <!-- 1 -->
+    <section id="aceitacao">
+      <h2>1. Aceitação dos termos</h2>
+      <p>
+        Ao instalar, acessar ou utilizar o aplicativo <strong>Bolso Simples</strong>, você ("usuário") concorda
+        integralmente com estes Termos de Uso e com a
+        <a href="../privacidade/">Política de Privacidade</a> do aplicativo.
+      </p>
+      <p>
+        Caso você não concorde com qualquer disposição destes Termos, deverá interromper imediatamente
+        o uso do aplicativo e desinstalá-lo do seu dispositivo.
+      </p>
+      <p>
+        Estes Termos constituem um contrato vinculante entre você e o desenvolvedor
+        <strong>Felipe Silva</strong> ("nós", "nosso").
+      </p>
+    </section>
+
+    <!-- 2 -->
+    <section id="servico">
+      <h2>2. Descrição do serviço</h2>
+      <p>
+        O <strong>Bolso Simples</strong> é um aplicativo mobile de controle financeiro pessoal que permite ao
+        usuário:
+      </p>
+      <ul>
+        <li>Criar e gerenciar carteiras financeiras personalizadas</li>
+        <li>Registrar receitas, despesas e transferências entre carteiras</li>
+        <li>Organizar transações por categorias</li>
+        <li>Visualizar resumos de entradas e saídas por período</li>
+        <li>Acompanhar o saldo de cada carteira em tempo real</li>
+        <li>Registrar transações parceladas e recorrentes</li>
+      </ul>
+      <p>
+        O aplicativo é disponibilizado gratuitamente, <strong>sem anúncios</strong>, e não exige vinculação a
+        contas bancárias ou qualquer integração com instituições financeiras.
+      </p>
+      <div class="callout callout-yellow">
+        <p>
+          <strong>Atenção:</strong> O Bolso Simples é uma ferramenta de organização pessoal e
+          <strong>não constitui assessoria financeira, de investimentos ou tributária</strong>. As informações
+          exibidas no aplicativo refletem exclusivamente os dados inseridos manualmente pelo usuário.
+        </p>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section id="conta">
+      <h2>3. Conta de usuário</h2>
+
+      <h3>3.1 Login com Google</h3>
+      <p>
+        Ao optar pelo login com Google, você autoriza o Bolso Simples a receber informações básicas de perfil
+        (nome, e-mail e foto) fornecidas pelo Google para fins de identificação. Você é responsável por manter
+        a segurança da sua conta Google.
+      </p>
+      <p>
+        Seus dados financeiros ficam vinculados à sua conta Google e podem ser acessados em qualquer
+        dispositivo onde você se autentique com a mesma conta.
+      </p>
+
+      <h3>3.2 Acesso anônimo</h3>
+      <p>
+        O acesso anônimo permite utilizar o aplicativo sem fornecer dados pessoais. Nesse modo:
+      </p>
+      <ul>
+        <li>Um identificador anônimo é gerado automaticamente</li>
+        <li>Todos os dados são armazenados normalmente na nuvem</li>
+        <li>
+          <strong>Os dados não podem ser recuperados</strong> caso o aplicativo seja desinstalado ou o
+          dispositivo seja trocado sem antes fazer login com Google
+        </li>
+      </ul>
+      <p>
+        Recomendamos que usuários anônimos migrem para uma conta Google para evitar perda de dados.
+        Essa migração pode ser feita diretamente na tela de perfil do aplicativo.
+      </p>
+
+      <h3>3.3 Responsabilidade pela conta</h3>
+      <p>
+        Você é inteiramente responsável pelo uso do aplicativo sob sua conta e por qualquer atividade que
+        ocorra nela. Em caso de suspeita de uso não autorizado, entre em contato conosco imediatamente.
+      </p>
+    </section>
+
+    <!-- 4 -->
+    <section id="uso-permitido">
+      <h2>4. Uso permitido</h2>
+      <p>O aplicativo é disponibilizado exclusivamente para:</p>
+      <ul>
+        <li>Uso pessoal, individual e não comercial</li>
+        <li>Registro e organização das suas próprias finanças pessoais</li>
+        <li>Acesso por usuários com 13 anos de idade ou mais</li>
+      </ul>
+      <p>
+        O uso do aplicativo deve estar em conformidade com toda a legislação aplicável, incluindo a Lei Geral
+        de Proteção de Dados (LGPD — Lei nº 13.709/2018) e o Marco Civil da Internet (Lei nº 12.965/2014).
+      </p>
+    </section>
+
+    <!-- 5 -->
+    <section id="proibicoes">
+      <h2>5. Atividades proibidas</h2>
+      <p>É expressamente proibido ao usuário:</p>
+      <ul>
+        <li>Utilizar o aplicativo para fins ilegais ou fraudulentos</li>
+        <li>Tentar acessar dados de outros usuários</li>
+        <li>Realizar engenharia reversa, descompilar ou modificar o aplicativo</li>
+        <li>Automatizar o uso do aplicativo sem autorização prévia por escrito</li>
+        <li>Tentar sobrecarregar, danificar ou comprometer a infraestrutura do serviço</li>
+        <li>Usar o aplicativo para armazenar ou transmitir conteúdo ilegal, difamatório ou prejudicial</li>
+        <li>Remover ou alterar avisos de direitos autorais ou marcas registradas presentes no aplicativo</li>
+        <li>Revender, sublicenciar ou disponibilizar comercialmente o aplicativo a terceiros</li>
+      </ul>
+      <p>
+        Violações poderão resultar na suspensão ou exclusão imediata da conta sem aviso prévio, além de
+        responsabilização civil e criminal conforme a legislação vigente.
+      </p>
+    </section>
+
+    <!-- 6 -->
+    <section id="dados">
+      <h2>6. Dados e privacidade</h2>
+      <p>
+        O tratamento de dados pessoais pelo Bolso Simples é regido pela nossa
+        <a href="../privacidade/">Política de Privacidade</a>, que é parte integrante destes Termos de Uso.
+      </p>
+      <p>
+        Você é o único proprietário dos dados financeiros que insere no aplicativo. Esses dados são
+        utilizados exclusivamente para fornecer as funcionalidades do serviço, conforme descrito na
+        Política de Privacidade.
+      </p>
+    </section>
+
+    <!-- 7 -->
+    <section id="propriedade">
+      <h2>7. Propriedade intelectual</h2>
+      <p>
+        O Bolso Simples, incluindo seu código-fonte, design, logotipo, nome, ícones, textos e demais
+        elementos, é protegido por leis de direitos autorais e propriedade intelectual. Todos os direitos
+        são reservados a <strong>Felipe Silva</strong>.
+      </p>
+      <p>
+        Estes Termos não transferem qualquer direito de propriedade intelectual para o usuário. É vedada
+        a reprodução, modificação, distribuição ou exploração comercial de qualquer elemento do aplicativo
+        sem autorização prévia e expressa por escrito.
+      </p>
+    </section>
+
+    <!-- 8 -->
+    <section id="responsabilidade">
+      <h2>8. Limitação de responsabilidade</h2>
+
+      <h3>8.1 Ferramenta de organização pessoal</h3>
+      <p>
+        O Bolso Simples é uma ferramenta de organização de dados inseridos pelo próprio usuário. Não somos
+        responsáveis por decisões financeiras tomadas com base nas informações exibidas no aplicativo.
+      </p>
+
+      <h3>8.2 Precisão dos dados</h3>
+      <p>
+        Os cálculos e resumos exibidos no aplicativo são baseados exclusivamente nos dados inseridos pelo
+        usuário. Não garantimos a precisão de informações derivadas de dados incorretos ou incompletos
+        inseridos pelo próprio usuário.
+      </p>
+
+      <h3>8.3 Perdas e danos</h3>
+      <p>
+        Na máxima extensão permitida pela lei, o desenvolvedor não será responsável por quaisquer danos
+        diretos, indiretos, incidentais, consequenciais ou especiais decorrentes do uso ou da impossibilidade
+        de uso do aplicativo, incluindo, mas não se limitando a:
+      </p>
+      <ul>
+        <li>Perda de dados devido à desinstalação do aplicativo em conta anônima</li>
+        <li>Decisões financeiras baseadas em informações do aplicativo</li>
+        <li>Interrupção ou indisponibilidade temporária do serviço</li>
+        <li>Falhas de segurança fora do nosso controle razoável</li>
+      </ul>
+
+      <div class="callout callout-yellow">
+        <p>
+          <strong>Usuários anônimos:</strong> Ao optar pelo acesso anônimo, você reconhece e aceita o risco
+          de perda definitiva de dados em caso de desinstalação ou troca de dispositivo.
+        </p>
+      </div>
+    </section>
+
+    <!-- 9 -->
+    <section id="disponibilidade">
+      <h2>9. Disponibilidade do serviço</h2>
+      <p>
+        Buscamos oferecer o aplicativo de forma contínua e estável, mas não garantimos disponibilidade
+        ininterrupta. O serviço pode ser suspenso temporariamente para manutenção, atualizações ou por
+        fatores fora do nosso controle, como interrupções nos serviços da Google/Firebase.
+      </p>
+      <p>
+        Reservamos o direito de descontinuar o aplicativo a qualquer momento, com aviso prévio sempre
+        que possível. Em caso de descontinuação, faremos o melhor esforço para notificar os usuários
+        e orientá-los sobre como exportar seus dados.
+      </p>
+    </section>
+
+    <!-- 10 -->
+    <section id="encerramento">
+      <h2>10. Encerramento e exclusão de conta</h2>
+      <p>
+        Você pode encerrar sua conta e excluir todos os seus dados a qualquer momento, diretamente na tela
+        de perfil do aplicativo, na opção <strong>"Excluir conta"</strong>. Essa ação é irreversível e
+        remove permanentemente todos os dados associados à sua conta.
+      </p>
+      <p>
+        Também podemos suspender ou encerrar sua conta, sem aviso prévio, caso identifiquemos violação
+        destes Termos de Uso.
+      </p>
+    </section>
+
+    <!-- 11 -->
+    <section id="alteracoes">
+      <h2>11. Alterações nestes termos</h2>
+      <p>
+        Podemos atualizar estes Termos de Uso a qualquer momento. Quando houver alterações relevantes, a
+        data de "Última atualização" no topo desta página será modificada.
+      </p>
+      <p>
+        O uso continuado do aplicativo após a publicação de novos termos constitui aceitação das alterações.
+        Recomendamos que você revise estes Termos periodicamente.
+      </p>
+    </section>
+
+    <!-- 12 -->
+    <section id="lei">
+      <h2>12. Lei aplicável e foro</h2>
+      <p>
+        Estes Termos de Uso são regidos pelas leis da <strong>República Federativa do Brasil</strong>,
+        especialmente o Código de Defesa do Consumidor (Lei nº 8.078/1990), o Marco Civil da Internet
+        (Lei nº 12.965/2014) e a Lei Geral de Proteção de Dados (Lei nº 13.709/2018).
+      </p>
+      <p>
+        Para a resolução de quaisquer controvérsias decorrentes destes Termos, fica eleito o foro da
+        comarca do domicílio do usuário no Brasil, conforme previsto no Código de Defesa do Consumidor.
+      </p>
+    </section>
+
+    <!-- 13 -->
+    <section id="contato">
+      <h2>13. Contato</h2>
+      <p>
+        Para dúvidas, sugestões ou solicitações relacionadas a estes Termos de Uso:
+      </p>
+      <ul>
+        <li><strong>E-mail:</strong> <a href="mailto:bolsosimples@gmail.com">bolsosimples@gmail.com</a></li>
+        <li><strong>Responsável:</strong> Felipe Silva</li>
+        <li><strong>Aplicativo:</strong> Bolso Simples (com.bolsosimples.app)</li>
+      </ul>
+      <p>
+        Nos comprometemos a responder todas as solicitações em até <strong>15 dias úteis</strong>.
+      </p>
+    </section>
+
+  </div><!-- /container -->
+
+  <footer>
+    <p>© 2026 Bolso Simples · Felipe Silva · <a href="mailto:bolsosimples@gmail.com">bolsosimples@gmail.com</a></p>
+    <p style="margin-top:8px;">
+      <a href="../">Início</a> &nbsp;·&nbsp;
+      <a href="../privacidade/">Política de Privacidade</a> &nbsp;·&nbsp;
+      <a href="./">Termos de Uso</a>
+    </p>
+  </footer>
+
+</body>
+</html>

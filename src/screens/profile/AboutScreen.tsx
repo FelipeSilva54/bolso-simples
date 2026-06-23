@@ -68,7 +68,7 @@ export function AboutScreen() {
         <View style={[styles.section, styles.legalSection]}>
           <TouchableOpacity
             style={styles.linkRow}
-            onPress={() => Linking.openURL('https://bolsosimples.com/termos')}
+            onPress={() => Linking.openURL('https://felipe-silva-18.github.io/bolso-simples/termos/')}
             activeOpacity={0.7}
             accessibilityRole="link"
             accessibilityLabel={t('about.termsA11y')}
@@ -79,7 +79,7 @@ export function AboutScreen() {
           <View style={styles.separator} />
           <TouchableOpacity
             style={styles.linkRow}
-            onPress={() => Linking.openURL('https://bolsosimples.com/privacidade')}
+            onPress={() => Linking.openURL('https://felipe-silva-18.github.io/bolso-simples/privacidade/')}
             activeOpacity={0.7}
             accessibilityRole="link"
             accessibilityLabel={t('about.privacyA11y')}
