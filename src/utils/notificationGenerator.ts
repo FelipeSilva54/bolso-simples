@@ -82,7 +82,7 @@ export function buildMonthlySummary(
   year: number,
   currency = 'BRL',
   monthNames?: string[],
-): Notification {
+): Notification | null {
   const now = new Date();
 
   const DEFAULT_MONTH_NAMES = [
@@ -103,6 +103,9 @@ export function buildMonthlySummary(
   const totalPaid = monthTransactions
     .filter((t) => t.type === 'expense' && t.status === 'paid')
     .reduce((sum, t) => sum + t.amount, 0);
+
+  // Não gera resumo se não há nada a reportar
+  if (totalReceived === 0 && totalPaid === 0) return null;
 
   const monthLabel = `${names[month - 1]}/${year}`;
 

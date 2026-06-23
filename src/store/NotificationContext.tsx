@@ -36,6 +36,10 @@ function isSameDay(a: Date, b: Date): boolean {
   );
 }
 
+function isSameMonth(a: Date, b: Date): boolean {
+  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth();
+}
+
 export function NotificationProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const { preferences } = usePreferences();
@@ -87,18 +91,33 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
         ...checkExpenseDue(transactions, currency),
         ...checkIncomePending(transactions, currency),
         ...checkNegativeBalance(wallets, currency),
-        buildMonthlySummary(transactions, now.getMonth() + 1, now.getFullYear(), currency, monthNames),
       ];
+
+      // Resumo mensal só aparece nos primeiros 7 dias do mês, referente ao mês anterior fechado
+      if (now.getDate() <= 7) {
+        const prevMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        const summary = buildMonthlySummary(
+          transactions,
+          prevMonthDate.getMonth() + 1,
+          prevMonthDate.getFullYear(),
+          currency,
+          monthNames,
+        );
+        if (summary) candidates.push(summary);
+      }
 
       const existing = await getNotifications(user.uid);
 
       const toSave = candidates.filter(
         (candidate) =>
-          !existing.some(
-            (stored) =>
-              stored.type === candidate.type &&
-              isSameDay(stored.createdAt, candidate.createdAt),
-          ),
+          !existing.some((stored) => {
+            if (stored.type !== candidate.type) return false;
+            // Resumo mensal: apenas um por mês (não por dia)
+            if (candidate.type === 'monthly_summary') {
+              return isSameMonth(stored.createdAt, candidate.createdAt);
+            }
+            return isSameDay(stored.createdAt, candidate.createdAt);
+          }),
       );
 
       for (const notification of toSave) {
