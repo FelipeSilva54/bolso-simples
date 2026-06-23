@@ -209,7 +209,7 @@ export function WalletDetailScreen() {
     return () => cancelAnimationFrame(id);
   }, []);
 
-  const today = new Date();
+  const today = useRef(new Date()).current;
   const [period, setPeriod] = useState<Period>({
     mode: 'monthly',
     month: today.getMonth(),
@@ -297,7 +297,7 @@ export function WalletDetailScreen() {
   ).current;
 
   const { wallets } = useWallets();
-  const wallet = wallets.find((w) => w.id === walletId);
+  const wallet = useMemo(() => wallets.find((w) => w.id === walletId), [wallets, walletId]);
   const walletList = useMemo(() => (wallet ? [wallet] : []), [wallet]);
   const { balanceByWallet } = useWalletsBalance(walletList, { enabled: ready });
   const calculatedBalance = walletId ? balanceByWallet[walletId] ?? 0 : 0;
@@ -315,15 +315,15 @@ export function WalletDetailScreen() {
     [categories],
   );
 
-  const totalIncome = transactions
-    .filter((t) => t.type === 'income' && t.status === 'received')
-    .reduce((sum, t) => sum + t.amount, 0);
-
-  const totalExpense = transactions
-    .filter((t) => t.type === 'expense' && t.status === 'paid')
-    .reduce((sum, t) => sum + t.amount, 0);
-
-  const monthBalance = totalIncome - totalExpense;
+  const { totalIncome, totalExpense, monthBalance } = useMemo(() => {
+    let income = 0;
+    let expense = 0;
+    for (const tx of transactions) {
+      if (tx.type === 'income' && tx.status === 'received') income += tx.amount;
+      else if (tx.type === 'expense' && tx.status === 'paid') expense += tx.amount;
+    }
+    return { totalIncome: income, totalExpense: expense, monthBalance: income - expense };
+  }, [transactions]);
 
   const groupedTransactions = useMemo(
     () =>
@@ -353,19 +353,19 @@ export function WalletDetailScreen() {
     };
   }, [selectedTransactionId, transactions, categoriesById]);
 
-  const handleTodayPress = () => {
+  const handleTodayPress = useCallback(() => {
     setPeriod({
       mode: 'monthly',
       month: today.getMonth(),
       year: today.getFullYear(),
     });
-  };
+  }, [today]);
 
-  const handleMonthChange = (month: number, year: number) => {
+  const handleMonthChange = useCallback((month: number, year: number) => {
     setPeriod({ mode: 'monthly', month, year });
-  };
+  }, []);
 
-  const handleSelectPeriodMode = (mode: PeriodMode) => {
+  const handleSelectPeriodMode = useCallback((mode: PeriodMode) => {
     setPeriodSheetVisible(false);
     if (mode === 'monthly') {
       setPeriod({ mode: 'monthly', month: today.getMonth(), year: today.getFullYear() });
@@ -378,31 +378,39 @@ export function WalletDetailScreen() {
     } else if (mode === 'custom') {
       setDateRangePickerVisible(true);
     }
-  };
+  }, [today]);
 
-  const handleCustomRangeConfirm = (start: Date, end: Date) => {
+  const handleCustomRangeConfirm = useCallback((start: Date, end: Date) => {
     setPeriod({ mode: 'custom', start, end });
-  };
+  }, []);
 
-  const handlePrevDay = () => {
-    if (period.mode !== 'daily') return;
-    setPeriod({ mode: 'daily', date: addDays(period.date, -1) });
-  };
+  const handlePrevDay = useCallback(() => {
+    setPeriod((p) => {
+      if (p.mode !== 'daily') return p;
+      return { mode: 'daily', date: addDays(p.date, -1) };
+    });
+  }, []);
 
-  const handleNextDay = () => {
-    if (period.mode !== 'daily') return;
-    setPeriod({ mode: 'daily', date: addDays(period.date, 1) });
-  };
+  const handleNextDay = useCallback(() => {
+    setPeriod((p) => {
+      if (p.mode !== 'daily') return p;
+      return { mode: 'daily', date: addDays(p.date, 1) };
+    });
+  }, []);
 
-  const handlePrevYear = () => {
-    if (period.mode !== 'yearly') return;
-    setPeriod({ mode: 'yearly', year: period.year - 1 });
-  };
+  const handlePrevYear = useCallback(() => {
+    setPeriod((p) => {
+      if (p.mode !== 'yearly') return p;
+      return { mode: 'yearly', year: p.year - 1 };
+    });
+  }, []);
 
-  const handleNextYear = () => {
-    if (period.mode !== 'yearly') return;
-    setPeriod({ mode: 'yearly', year: period.year + 1 });
-  };
+  const handleNextYear = useCallback(() => {
+    setPeriod((p) => {
+      if (p.mode !== 'yearly') return p;
+      return { mode: 'yearly', year: p.year + 1 };
+    });
+  }, []);
 
   const handleTransactionPress = useCallback((id: string) => {
     setSelectedTransactionId(id);
@@ -417,15 +425,38 @@ export function WalletDetailScreen() {
     />
   ), [handleTransactionPress]);
 
-  const handleDetailClose = () => {
+  const handleDetailClose = useCallback(() => {
     setDetailSheetVisible(false);
     setSelectedTransactionId(null);
-  };
+  }, []);
 
-  const handleStatusChange = async (id: string, newStatus: TransactionStatus) => {
+  const handleStatusChange = useCallback(async (id: string, newStatus: TransactionStatus) => {
     if (!user || !walletId) return;
-    await updateTransaction(user.uid, walletId, id, { status: newStatus });
-  };
+    try {
+      await updateTransaction(user.uid, walletId, id, { status: newStatus });
+    } catch {
+      showToast(t('common.error'), 'error');
+    }
+  }, [user, walletId, showToast, t]);
+
+  const handleDeleteTransaction = useCallback(async (id: string) => {
+    if (!user || !walletId) return;
+    try {
+      await deleteTransaction(user.uid, walletId, id);
+      handleDetailClose();
+      showToast(t('wallet.transactionDeleted'));
+    } catch {
+      showToast(t('common.error'), 'error');
+    }
+  }, [user, walletId, handleDetailClose, showToast, t]);
+
+  const handleEditTransaction = useCallback((id: string) => {
+    handleDetailClose();
+    router.push({
+      pathname: '/(stack)/edit-transaction/[transactionId]' as never,
+      params: { transactionId: id, walletId },
+    });
+  }, [handleDetailClose, router, walletId]);
 
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
@@ -551,18 +582,6 @@ export function WalletDetailScreen() {
             expense={totalExpense}
             balance={monthBalance}
             hideBalance={hideBalance}
-            onIncomePress={() =>
-              router.push({
-                pathname: '/(stack)/transaction-list' as never,
-                params: { walletId, type: 'income' },
-              })
-            }
-            onExpensePress={() =>
-              router.push({
-                pathname: '/(stack)/transaction-list' as never,
-                params: { walletId, type: 'expense' },
-              })
-            }
           />
         </Animated.View>
 
@@ -623,30 +642,15 @@ export function WalletDetailScreen() {
             params: { walletId },
           })
         }
-        style={{
-          position: 'absolute',
-          bottom: spacing.xl,
-          right: spacing.lg,
-        }}
+        style={styles.fab}
       />
 
       <TransactionDetailSheet
         visible={detailSheetVisible}
         onClose={handleDetailClose}
         transaction={selectedTransaction}
-        onDelete={async (id) => {
-          if (!user || !walletId) return;
-          await deleteTransaction(user.uid, walletId, id);
-          handleDetailClose();
-          showToast(t('wallet.transactionDeleted'));
-        }}
-        onEdit={(id) => {
-          handleDetailClose();
-          router.push({
-            pathname: '/(stack)/edit-transaction/[transactionId]' as never,
-            params: { transactionId: id, walletId },
-          });
-        }}
+        onDelete={handleDeleteTransaction}
+        onEdit={handleEditTransaction}
         onStatusChange={handleStatusChange}
       />
 
@@ -731,5 +735,10 @@ const styles = StyleSheet.create({
   },
   list: {
     paddingBottom: 100,
+  },
+  fab: {
+    position: 'absolute',
+    bottom: spacing.xl,
+    right: spacing.lg,
   },
 });

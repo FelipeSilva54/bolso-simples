@@ -38,7 +38,9 @@ export function useCategories(): UseCategoriesResult {
 
     const unsubscribe = onSnapshot(getCategoriesRef(user.uid), (snapshot) => {
       if (snapshot.empty) {
-        seedDefaultCategories(user.uid).catch(console.warn);
+        seedDefaultCategories(user.uid).catch((e) => {
+          if (__DEV__) console.warn('seedDefaultCategories falhou:', e);
+        });
       }
 
       setRawCategories(

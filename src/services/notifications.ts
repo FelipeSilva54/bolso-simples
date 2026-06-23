@@ -1,6 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Notification } from '@/types/notification';
 
+const MAX_NOTIFICATIONS = 50;
+
 function storageKey(userId: string): string {
   return `notifications:${userId}`;
 }
@@ -30,7 +32,7 @@ export async function saveNotification(
 ): Promise<void> {
   try {
     const current = await readAll(userId);
-    await writeAll(userId, [notification, ...current]);
+    await writeAll(userId, [notification, ...current].slice(0, MAX_NOTIFICATIONS));
   } catch {
     // silently fail — notification persistence is non-critical
   }

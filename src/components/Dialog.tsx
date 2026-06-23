@@ -80,6 +80,7 @@ export function Dialog({
       transparent
       animationType="fade"
       statusBarTranslucent
+      navigationBarTranslucent
       onRequestClose={handleCancel}
     >
       <Pressable style={styles.backdrop} onPress={handleCancel}>

@@ -173,10 +173,10 @@ export function AddEditTransactionScreen() {
     [categoriesForType],
   );
 
-  const recurrenceOptions: SelectOption[] = RECURRENCE_OPTIONS.map((o) => ({
-    label: o.label,
-    value: o.value,
-  }));
+  const recurrenceOptions = useMemo<SelectOption[]>(
+    () => RECURRENCE_OPTIONS.map((o) => ({ label: o.label, value: o.value })),
+    [RECURRENCE_OPTIONS],
+  );
 
   const errors = {
     value:       submitAttempted && numericValue <= 0                                                                      ? t('transaction.validationValue')        : undefined,
@@ -226,21 +226,30 @@ export function AddEditTransactionScreen() {
           recurrenceType: paymentType === 'recurring' ? (recurrenceType ?? undefined) : undefined,
           date,
         });
-      } else if (paymentType === 'installment' && installmentsCount > 1) {
-        const perInstallment = numericValue / installmentsCount;
+        router.back();
+        showToast(t('transaction.edited'));
+        return;
+      }
+
+      if (paymentType === 'installment' && installmentsCount > 1) {
+        const totalCents = Math.round(numericValue * 100);
+        const perCents = Math.floor(totalCents / installmentsCount);
+        const remainder = totalCents - perCents * installmentsCount;
         const pendingStatus: TransactionStatus = type === 'expense' ? 'unpaid' : 'unreceived';
 
         const promises: Promise<string>[] = [];
         for (let i = 0; i < installmentsCount; i++) {
           const installmentDate = new Date(date);
           installmentDate.setMonth(installmentDate.getMonth() + i);
+          // Last installment absorbs the rounding remainder
+          const amount = (perCents + (i === installmentsCount - 1 ? remainder : 0)) / 100;
 
           promises.push(
             addTransaction(user.uid, walletId, {
               type,
               title: selectedCategory.name,
               description: observation,
-              amount: perInstallment,
+              amount,
               categoryId: selectedCategory.id,
               status: i === 0 ? statusFor(type, statusOn) : pendingStatus,
               isRecurring: false,
@@ -254,25 +263,21 @@ export function AddEditTransactionScreen() {
         router.back();
         showToast(t('transaction.added'));
         return;
-      } else {
-        await addTransaction(user.uid, walletId, {
-          type,
-          title: selectedCategory.name,
-          description: observation,
-          amount: numericValue,
-          categoryId: selectedCategory.id,
-          status: statusFor(type, statusOn),
-          isRecurring: paymentType === 'recurring',
-          recurrenceType: paymentType === 'recurring' ? (recurrenceType ?? undefined) : undefined,
-          date,
-        });
-        if (!isEditing) {
-          router.back();
-          showToast(t('transaction.added'));
-          return;
-        }
       }
+
+      await addTransaction(user.uid, walletId, {
+        type,
+        title: selectedCategory.name,
+        description: observation,
+        amount: numericValue,
+        categoryId: selectedCategory.id,
+        status: statusFor(type, statusOn),
+        isRecurring: paymentType === 'recurring',
+        recurrenceType: paymentType === 'recurring' ? (recurrenceType ?? undefined) : undefined,
+        date,
+      });
       router.back();
+      showToast(t('transaction.added'));
     } catch {
       Alert.alert(t('transaction.errorSaveTitle'), t('transaction.errorSave'));
     } finally {

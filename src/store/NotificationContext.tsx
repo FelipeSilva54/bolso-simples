@@ -15,6 +15,8 @@ import {
   checkNegativeBalance,
 } from '@/utils/notificationGenerator';
 import { useAuth } from '@/store/AuthContext';
+import { usePreferences } from '@/store/PreferencesContext';
+import { useLanguage } from '@/store/LanguageContext';
 
 type NotificationContextValue = {
   notifications: Notification[];
@@ -36,6 +38,8 @@ function isSameDay(a: Date, b: Date): boolean {
 
 export function NotificationProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
+  const { preferences } = usePreferences();
+  const { t } = useLanguage();
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   useEffect(() => {
@@ -48,7 +52,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     });
   }, [user]);
 
-  const unreadCount = notifications.filter((n) => !n.isRead).length;
+  const unreadCount = useMemo(() => notifications.filter((n) => !n.isRead).length, [notifications]);
 
   const markAsRead = useCallback(
     async (id: string) => {
@@ -71,12 +75,19 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     async (wallets: Wallet[], transactions: Transaction[]) => {
       if (!user) return;
 
+      const currency = preferences.currency;
+      const monthNames = [
+        t('date.months.jan'), t('date.months.feb'), t('date.months.mar'), t('date.months.apr'),
+        t('date.months.may'), t('date.months.jun'), t('date.months.jul'), t('date.months.aug'),
+        t('date.months.sep'), t('date.months.oct'), t('date.months.nov'), t('date.months.dec'),
+      ].map((m) => m.charAt(0).toUpperCase() + m.slice(1));
+
       const now = new Date();
       const candidates: Notification[] = [
-        ...checkExpenseDue(transactions),
-        ...checkIncomePending(transactions),
-        ...checkNegativeBalance(wallets),
-        buildMonthlySummary(transactions, now.getMonth() + 1, now.getFullYear()),
+        ...checkExpenseDue(transactions, currency),
+        ...checkIncomePending(transactions, currency),
+        ...checkNegativeBalance(wallets, currency),
+        buildMonthlySummary(transactions, now.getMonth() + 1, now.getFullYear(), currency, monthNames),
       ];
 
       const existing = await getNotifications(user.uid);
@@ -99,7 +110,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
         setNotifications(updated);
       }
     },
-    [user],
+    [user, preferences.currency, t],
   );
 
   const value = useMemo(

@@ -21,6 +21,9 @@ import { TextInput as FormInput } from '@/components/TextInput';
 import { useAuth } from '@/store/AuthContext';
 import { getWallet, updateWallet } from '@/services/wallets';
 import { useLanguage } from '@/store/LanguageContext';
+import { usePreferences } from '@/store/PreferencesContext';
+import { useToast } from '@/store/ToastContext';
+import { formatCurrency } from '@/utils/currency';
 
 const COLOR_PALETTE = [...walletColors] as string[];
 
@@ -35,23 +38,26 @@ export function EditWalletScreen() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const { t } = useLanguage();
+  const { preferences } = usePreferences();
+  const { showToast } = useToast();
 
   useEffect(() => {
     if (!user || !walletId) return;
-    getWallet(user.uid, walletId).then((wallet) => {
-      if (wallet) {
-        setName(wallet.name);
-        setSelectedColor(wallet.color);
-        setBalance(wallet.balance);
-      }
-      setLoading(false);
-    });
+    getWallet(user.uid, walletId)
+      .then((wallet) => {
+        if (wallet) {
+          setName(wallet.name);
+          setSelectedColor(wallet.color);
+          setBalance(wallet.balance);
+        }
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoading(false);
+      });
   }, [user, walletId]);
 
-  const formattedBalance = balance.toLocaleString('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-  });
+  const formattedBalance = formatCurrency(balance, preferences.currency);
 
   const canSave = name.trim().length > 0;
 
@@ -61,6 +67,7 @@ export function EditWalletScreen() {
     try {
       await updateWallet(user.uid, walletId, { name: name.trim(), color: selectedColor });
       router.back();
+      showToast(t('wallet.editSuccess'));
     } catch {
       Alert.alert(t('common.error'), t('wallet.walletErrorSave'));
     } finally {

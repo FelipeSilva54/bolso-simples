@@ -1,8 +1,54 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /users/{userId}/{document=**} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+
+    // Documento raiz do usuário
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // Carteiras: valida nome (1-50 chars) e cor (hex curto)
+    match /users/{userId}/wallets/{walletId} {
+      allow read, delete: if isOwner(userId);
+      allow create, update: if isOwner(userId)
+        && request.resource.data.name is string
+        && request.resource.data.name.size() >= 1
+        && request.resource.data.name.size() <= 50
+        && request.resource.data.color is string
+        && request.resource.data.color.size() <= 20;
+    }
+
+    // Transações: valida tipo, valor positivo (máx 1 bilhão), título e descrição
+    match /users/{userId}/wallets/{walletId}/transactions/{transactionId} {
+      allow read, delete: if isOwner(userId);
+      allow create, update: if isOwner(userId)
+        && request.resource.data.type in ['income', 'expense', 'transfer']
+        && request.resource.data.amount is number
+        && request.resource.data.amount > 0
+        && request.resource.data.amount <= 1000000000
+        && request.resource.data.title is string
+        && request.resource.data.title.size() >= 1
+        && request.resource.data.title.size() <= 100
+        && (
+          !('description' in request.resource.data)
+          || (request.resource.data.description is string
+              && request.resource.data.description.size() <= 500)
+        );
+    }
+
+    // Categorias: valida nome (1-50 chars), ícone e cor
+    match /users/{userId}/categories/{categoryId} {
+      allow read, delete: if isOwner(userId);
+      allow create, update: if isOwner(userId)
+        && request.resource.data.name is string
+        && request.resource.data.name.size() >= 1
+        && request.resource.data.name.size() <= 50
+        && request.resource.data.icon is string
+        && request.resource.data.color is string;
     }
   }
 }

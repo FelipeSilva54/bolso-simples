@@ -10,11 +10,11 @@ type SummaryCardProps = {
   expense: number;
   balance: number;
   hideBalance: boolean;
-  onIncomePress: () => void;
-  onExpensePress: () => void;
+  onIncomePress?: () => void;
+  onExpensePress?: () => void;
 };
 
-export function SummaryCard({
+export const SummaryCard = React.memo(function SummaryCard({
   income,
   expense,
   balance,
@@ -28,14 +28,17 @@ export function SummaryCard({
   const displayExpense = hideBalance ? '••••••' : formatCurrency(expense, preferences.currency);
   const displayBalance = hideBalance ? '••••••' : formatCurrency(balance, preferences.currency);
 
+  const IncomeWrapper = onIncomePress ? TouchableOpacity : View;
+  const ExpenseWrapper = onExpensePress ? TouchableOpacity : View;
+
   return (
     <View style={styles.container}>
-      <TouchableOpacity
+      <IncomeWrapper
         style={styles.column}
         onPress={onIncomePress}
         activeOpacity={0.7}
-        accessibilityRole="button"
-        accessibilityLabel={`${t('common.income')}: ${hideBalance ? t('common.hidden') : formatCurrency(income, preferences.currency)}`}
+        accessibilityRole={onIncomePress ? 'button' : undefined}
+        accessibilityLabel={`${t('common.income')}: ${displayIncome}`}
       >
         <Text style={[styles.value, styles.incomeColor]} numberOfLines={1}>
           {displayIncome}
@@ -43,16 +46,16 @@ export function SummaryCard({
         <Text style={styles.label} numberOfLines={1}>
           {t('common.income')}
         </Text>
-      </TouchableOpacity>
+      </IncomeWrapper>
 
       <View style={styles.divider} />
 
-      <TouchableOpacity
+      <ExpenseWrapper
         style={styles.column}
         onPress={onExpensePress}
         activeOpacity={0.7}
-        accessibilityRole="button"
-        accessibilityLabel={`${t('common.expense')}: ${hideBalance ? t('common.hidden') : formatCurrency(expense, preferences.currency)}`}
+        accessibilityRole={onExpensePress ? 'button' : undefined}
+        accessibilityLabel={`${t('common.expense')}: ${displayExpense}`}
       >
         <Text style={[styles.value, styles.expenseColor]} numberOfLines={1}>
           {displayExpense}
@@ -60,7 +63,7 @@ export function SummaryCard({
         <Text style={styles.label} numberOfLines={1}>
           {t('common.expense')}
         </Text>
-      </TouchableOpacity>
+      </ExpenseWrapper>
 
       <View style={styles.divider} />
 
@@ -74,7 +77,7 @@ export function SummaryCard({
       </View>
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { onSnapshot } from 'firebase/firestore';
 import { getTransactionsRef } from '@/services/transactions';
 import { useAuth } from '@/store/AuthContext';
@@ -81,11 +81,16 @@ export function useWalletsBalance(wallets: Wallet[], { enabled = true }: UseWall
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, walletIdsKey, enabled]);
 
-  const balanceByWallet: Record<string, number> = {};
-  for (const wallet of wallets) {
-    balanceByWallet[wallet.id] = wallet.balance + (transactionTotals[wallet.id] ?? 0);
-  }
-  const totalBalance = Object.values(balanceByWallet).reduce((sum, v) => sum + v, 0);
+  const { balanceByWallet, totalBalance } = useMemo(() => {
+    const byWallet: Record<string, number> = {};
+    for (const wallet of wallets) {
+      byWallet[wallet.id] = wallet.balance + (transactionTotals[wallet.id] ?? 0);
+    }
+    return {
+      balanceByWallet: byWallet,
+      totalBalance: Object.values(byWallet).reduce((sum, v) => sum + v, 0),
+    };
+  }, [wallets, transactionTotals]);
 
   return { balanceByWallet, totalBalance, loading };
 }

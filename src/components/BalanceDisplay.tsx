@@ -15,7 +15,7 @@ type BalanceDisplayProps = {
   onTodayPress?: () => void;
 };
 
-export function BalanceDisplay({
+export const BalanceDisplay = React.memo(function BalanceDisplay({
   variant,
   subtitle,
   balance,
@@ -56,7 +56,7 @@ export function BalanceDisplay({
 
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: {

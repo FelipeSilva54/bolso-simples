@@ -11,9 +11,20 @@ import {
   Timestamp,
   CollectionReference,
   DocumentData,
+  DocumentReference,
 } from 'firebase/firestore';
 import { db } from '@/services/firebase';
 import { Wallet } from '@/types/wallet';
+
+// Firestore batch limit is 500 ops. Split into safe chunks to avoid the limit.
+async function deleteDocsInChunks(refs: DocumentReference[]): Promise<void> {
+  const CHUNK = 450;
+  for (let i = 0; i < refs.length; i += CHUNK) {
+    const batch = writeBatch(db);
+    refs.slice(i, i + CHUNK).forEach((ref) => batch.delete(ref));
+    await batch.commit();
+  }
+}
 
 export function getWalletsRef(userId: string): CollectionReference<DocumentData> {
   return collection(db, 'users', userId, 'wallets');
@@ -57,29 +68,26 @@ export async function deleteWallet(userId: string, walletId: string): Promise<vo
   const txRef = collection(db, 'users', userId, 'wallets', walletId, 'transactions');
   const txSnap = await getDocs(txRef);
   if (!txSnap.empty) {
-    const batch = writeBatch(db);
-    txSnap.docs.forEach((d) => batch.delete(d.ref));
-    await batch.commit();
+    await deleteDocsInChunks(txSnap.docs.map((d) => d.ref));
   }
   await deleteDoc(doc(db, 'users', userId, 'wallets', walletId));
 }
 
 export async function clearAllUserData(userId: string): Promise<void> {
-  const batch = writeBatch(db);
-
-  const walletsRef = collection(db, 'users', userId, 'wallets');
-  const walletsSnap = await getDocs(walletsRef);
+  const walletsSnap = await getDocs(collection(db, 'users', userId, 'wallets'));
 
   for (const walletDoc of walletsSnap.docs) {
-    const txRef = collection(db, 'users', userId, 'wallets', walletDoc.id, 'transactions');
-    const txSnap = await getDocs(txRef);
-    txSnap.docs.forEach((txDoc) => batch.delete(txDoc.ref));
-    batch.delete(walletDoc.ref);
+    const txSnap = await getDocs(
+      collection(db, 'users', userId, 'wallets', walletDoc.id, 'transactions'),
+    );
+    if (!txSnap.empty) {
+      await deleteDocsInChunks(txSnap.docs.map((d) => d.ref));
+    }
+    await deleteDoc(walletDoc.ref);
   }
 
-  const categoriesRef = collection(db, 'users', userId, 'categories');
-  const categoriesSnap = await getDocs(categoriesRef);
-  categoriesSnap.docs.forEach((catDoc) => batch.delete(catDoc.ref));
-
-  await batch.commit();
+  const categoriesSnap = await getDocs(collection(db, 'users', userId, 'categories'));
+  if (!categoriesSnap.empty) {
+    await deleteDocsInChunks(categoriesSnap.docs.map((d) => d.ref));
+  }
 }

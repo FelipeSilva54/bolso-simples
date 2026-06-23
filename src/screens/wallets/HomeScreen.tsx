@@ -34,7 +34,7 @@ type SelectedWallet = { id: string; name: string } | null;
 export function HomeScreen() {
   const router = useRouter();
   const { user } = useAuth();
-  const { unreadCount } = useNotifications();
+  const { unreadCount, checkAndGenerateNotifications } = useNotifications();
   const { wallets, loading } = useWallets();
   const { t } = useLanguage();
 
@@ -59,6 +59,17 @@ export function HomeScreen() {
   const [hideBalance, setHideBalance] = useState(false);
   const [selectedWallet, setSelectedWallet] = useState<SelectedWallet>(null);
   const [walletToDelete, setWalletToDelete] = useState<SelectedWallet>(null);
+  const [deletingWallet, setDeletingWallet] = useState(false);
+
+  // Gera notificações com saldos calculados sempre que as carteiras mudam
+  useEffect(() => {
+    if (loading || wallets.length === 0) return;
+    const walletsWithBalance = wallets.map((w) => ({
+      ...w,
+      balance: balanceByWallet[w.id] ?? w.balance,
+    }));
+    checkAndGenerateNotifications(walletsWithBalance, []);
+  }, [wallets, balanceByWallet, loading]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useFocusEffect(
     React.useCallback(() => {
@@ -100,13 +111,15 @@ export function HomeScreen() {
 
   const handleDeleteConfirm = useCallback(async () => {
     if (!user || !walletToDelete) return;
-    const wallet = walletToDelete;
-    setWalletToDelete(null);
+    setDeletingWallet(true);
     try {
-      await deleteWallet(user.uid, wallet.id);
+      await deleteWallet(user.uid, walletToDelete.id);
       showToast(t('home.walletDeleted'));
+      setWalletToDelete(null);
     } catch {
       Alert.alert(t('common.error'), t('home.walletDeleteError'));
+    } finally {
+      setDeletingWallet(false);
     }
   }, [user, walletToDelete, showToast, t]);
 
@@ -199,8 +212,9 @@ export function HomeScreen() {
         description={t('home.deleteWalletDescription')}
         confirmLabel={t('common.delete')}
         cancelLabel={t('common.cancel')}
+        loading={deletingWallet}
         onConfirm={handleDeleteConfirm}
-        onCancel={() => setWalletToDelete(null)}
+        onCancel={() => { if (!deletingWallet) setWalletToDelete(null); }}
       />
 
     </SafeAreaView>

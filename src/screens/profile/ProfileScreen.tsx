@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Image,
   Share,
+  Linking,
   StyleSheet,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -129,6 +130,17 @@ export function ProfileScreen() {
     await Share.share({ message: t('profile.shareMessage') });
   };
 
+  const handleRate = async () => {
+    const marketUrl = 'market://details?id=com.bolsosimples.app';
+    const webUrl = 'https://play.google.com/store/apps/details?id=com.bolsosimples.app';
+    try {
+      const supported = await Linking.canOpenURL(marketUrl);
+      await Linking.openURL(supported ? marketUrl : webUrl);
+    } catch {
+      await Linking.openURL(webUrl).catch(() => {});
+    }
+  };
+
   const deleteAccountDescription = user?.isAnonymous
     ? t('profile.deleteAccountDialogDescAnonymous')
     : t('profile.deleteAccountDialogDescLoggedIn');
@@ -232,7 +244,7 @@ export function ProfileScreen() {
           <ListItem
             icon={Star as IconComponent}
             label={t('profile.rate')}
-            onPress={() => router.push('/(stack)/rate' as never)}
+            onPress={handleRate}
             accessibilityLabel={t('profile.rate')}
           />
           <ListItem

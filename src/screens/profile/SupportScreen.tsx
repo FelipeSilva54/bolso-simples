@@ -13,13 +13,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import * as Clipboard from 'expo-clipboard';
-import { Copy } from 'phosphor-react-native';
+import { CopySimple } from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
 import { Header } from '@/components/Header';
 import { Button } from '@/components/Button';
 import { useLanguage } from '@/store/LanguageContext';
 
-const PIX_KEY = 'seuemail@exemplo.com';
+const PIX_KEY = 'fe8e68dc-fc29-483d-ad38-0d9bd4d84221';
 
 const PRESET_VALUES = [5, 10, 20, 50];
 
@@ -141,7 +141,7 @@ export function SupportScreen() {
           variant="primary"
           size="lg"
           onPress={handleCopyPix}
-          leftIcon={<Copy size={20} color={colors.white} weight="regular" />}
+          leftIcon={<CopySimple size={20} color={colors.white} weight="regular" />}
           accessibilityLabel={t('support.copyPixA11y')}
         >
           {copied ? t('support.copied') : t('support.copyPix')}

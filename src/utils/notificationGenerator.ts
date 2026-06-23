@@ -35,12 +35,7 @@ function isPast(date: Date): boolean {
   return d < today;
 }
 
-const MONTH_NAMES = [
-  'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-  'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro',
-];
-
-export function checkExpenseDue(transactions: Transaction[]): Notification[] {
+export function checkExpenseDue(transactions: Transaction[], currency = 'BRL'): Notification[] {
   const now = new Date();
   return transactions
     .filter(
@@ -55,14 +50,14 @@ export function checkExpenseDue(transactions: Transaction[]): Notification[] {
         id: generateId(),
         type: 'expense_due' as const,
         title: 'Despesa a vencer',
-        body: `"${t.title}" de ${formatCurrency(t.amount)} vence ${when} (${formatDate(t.date)}).`,
+        body: `"${t.title}" de ${formatCurrency(t.amount, currency)} vence ${when} (${formatDate(t.date)}).`,
         isRead: false,
         createdAt: now,
       };
     });
 }
 
-export function checkIncomePending(transactions: Transaction[]): Notification[] {
+export function checkIncomePending(transactions: Transaction[], currency = 'BRL'): Notification[] {
   const now = new Date();
   return transactions
     .filter(
@@ -75,7 +70,7 @@ export function checkIncomePending(transactions: Transaction[]): Notification[] 
       id: generateId(),
       type: 'income_pending' as const,
       title: 'Receita pendente',
-      body: `"${t.title}" de ${formatCurrency(t.amount)} estava prevista para ${formatDate(t.date)} e ainda não foi recebida.`,
+      body: `"${t.title}" de ${formatCurrency(t.amount, currency)} estava prevista para ${formatDate(t.date)} e ainda não foi recebida.`,
       isRead: false,
       createdAt: now,
     }));
@@ -84,13 +79,22 @@ export function checkIncomePending(transactions: Transaction[]): Notification[] 
 export function buildMonthlySummary(
   transactions: Transaction[],
   month: number,
-  year: number
+  year: number,
+  currency = 'BRL',
+  monthNames?: string[],
 ): Notification {
   const now = new Date();
 
-  const monthTransactions = transactions.filter(
-    (t) => t.date.getMonth() + 1 === month && t.date.getFullYear() === year
-  );
+  const DEFAULT_MONTH_NAMES = [
+    'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+    'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro',
+  ];
+  const names = monthNames ?? DEFAULT_MONTH_NAMES;
+
+  const monthTransactions = transactions.filter((t) => {
+    const d = t.date instanceof Date ? t.date : (t.date as unknown as { toDate: () => Date }).toDate();
+    return d.getMonth() + 1 === month && d.getFullYear() === year;
+  });
 
   const totalReceived = monthTransactions
     .filter((t) => t.type === 'income' && t.status === 'received')
@@ -100,19 +104,19 @@ export function buildMonthlySummary(
     .filter((t) => t.type === 'expense' && t.status === 'paid')
     .reduce((sum, t) => sum + t.amount, 0);
 
-  const monthLabel = `${MONTH_NAMES[month - 1]}/${year}`;
+  const monthLabel = `${names[month - 1]}/${year}`;
 
   return {
     id: generateId(),
     type: 'monthly_summary',
     title: `Resumo de ${monthLabel}`,
-    body: `Você recebeu ${formatCurrency(totalReceived)} e pagou ${formatCurrency(totalPaid)} em ${monthLabel}.`,
+    body: `Você recebeu ${formatCurrency(totalReceived, currency)} e pagou ${formatCurrency(totalPaid, currency)} em ${monthLabel}.`,
     isRead: false,
     createdAt: now,
   };
 }
 
-export function checkNegativeBalance(wallets: Wallet[]): Notification[] {
+export function checkNegativeBalance(wallets: Wallet[], currency = 'BRL'): Notification[] {
   const now = new Date();
   return wallets
     .filter((w) => w.balance < 0)
@@ -120,7 +124,7 @@ export function checkNegativeBalance(wallets: Wallet[]): Notification[] {
       id: generateId(),
       type: 'negative_balance' as const,
       title: 'Saldo negativo',
-      body: `A carteira "${w.name}" está com saldo negativo de ${formatCurrency(w.balance)}.`,
+      body: `A carteira "${w.name}" está com saldo negativo de ${formatCurrency(w.balance, currency)}.`,
       isRead: false,
       createdAt: now,
     }));
