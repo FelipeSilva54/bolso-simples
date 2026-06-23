@@ -44,7 +44,11 @@ export default function LoginRoute() {
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
       <StatusBar style="light" translucent backgroundColor="transparent" />
-      <View style={styles.banner} />
+      <Image
+        source={require('@/assets/images/Capa-Login.webp')}
+        style={styles.banner}
+        resizeMode="cover"
+      />
 
       <View style={[styles.card, { paddingBottom: spacing.xxl + insets.bottom }]}>
         <Text style={styles.title}>{t('login.title')}</Text>
@@ -104,7 +108,6 @@ const styles = StyleSheet.create({
   },
   banner: {
     flex: 1,
-    backgroundColor: colors.primary,
   },
   card: {
     backgroundColor: colors.white,
