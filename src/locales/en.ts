@@ -307,15 +307,15 @@ export const en: Translations = {
     logoutDialogConfirm: 'Sign out',
     clearDataDialogTitle: 'Clear data?',
     clearDataDialogDescription:
-      'All your wallets, transactions, and categories will be permanently removed. This action cannot be undone.',
+      'All your wallets, transactions, and categories will be permanently removed. This action cannot be undone',
     clearDataDialogConfirm: 'Clear everything',
     clearDataSuccess: 'Data cleared successfully',
     clearDataError: 'Could not clear data. Please try again.',
     deleteAccountDialogTitle: 'Delete account',
     deleteAccountDialogDescAnonymous:
-      'Deleting your account will permanently erase all your wallets, transactions, and categories. Since you are using the app without an account, this data cannot be recovered.',
+      'Deleting your account will permanently erase all your wallets, transactions, and categories. Since you are using the app without an account, this data cannot be recovered',
     deleteAccountDialogDescLoggedIn:
-      'Deleting your account will permanently erase all your wallets, transactions, and categories. This action cannot be undone and does not affect your Google account.',
+      'Deleting your account will permanently erase all your wallets, transactions, and categories. This action cannot be undone and does not affect your Google account',
     deleteAccountDialogConfirm: 'Delete account',
     deleteAccountError: 'Could not delete the account. Please try again.',
   },
