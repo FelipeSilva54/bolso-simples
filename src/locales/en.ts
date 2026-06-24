@@ -271,7 +271,7 @@ export const en: Translations = {
     tagline: 'Simplifying personal finance management',
     version: 'Version 1.0.0',
     contactLabel: 'Contact email',
-    contactValue: 'bolsosimples@gmail.com',
+    contactValue: 'contato@bolsosimples.app.br',
     versionLabel: 'App version',
     versionValue: '1.0.0',
     termsLabel: 'Terms of use',

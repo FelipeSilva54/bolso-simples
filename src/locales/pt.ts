@@ -269,7 +269,7 @@ export const pt = {
     tagline: 'Simplificando a organização das finanças pessoais',
     version: 'Versão 1.0.0',
     contactLabel: 'E-mail de contato',
-    contactValue: 'bolsosimples@gmail.com',
+    contactValue: 'contato@bolsosimples.app.br',
     versionLabel: 'Versão do aplicativo',
     versionValue: '1.0.0',
     termsLabel: 'Termos de uso',
