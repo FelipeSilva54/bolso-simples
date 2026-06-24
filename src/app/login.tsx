@@ -67,11 +67,7 @@ export default function LoginRoute() {
 
         <AppText style={styles.subtitle}>
           {t('login.subtitleBase')}
-          <AppText style={styles.bold}>{t('login.featureBrazilian')}</AppText>
-          {', '}
-          <AppText style={styles.bold}>{t('login.featureFree')}</AppText>
-          {t('login.and')}
-          <AppText style={styles.bold}>{t('login.featureNoAds')}</AppText>
+          <AppText style={styles.bold}>{t('login.features')}</AppText>
         </AppText>
 
         <View style={styles.gapXl} />

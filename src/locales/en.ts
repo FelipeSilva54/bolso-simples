@@ -37,10 +37,7 @@ export const en: Translations = {
   login: {
     title: 'Hello! Welcome to Bolso Simples!',
     subtitleBase: 'Your pocket app for finances ',
-    featureBrazilian: '100% Brazilian',
-    featureFree: 'free',
-    featureNoAds: 'ad-free.',
-    and: ' and ',
+    features: 'simple, free and ad-free',
     signInGoogle: 'Sign in with Google',
     signInAnonymous: 'Continue without account',
     googleErrorTitle: 'Google sign-in failed',

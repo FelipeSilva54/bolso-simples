@@ -1,14 +1,20 @@
 import { useEffect, useState } from 'react';
 import { View, Image, StyleSheet } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import LottieView from 'lottie-react-native';
 import { useAuth } from '@/store/AuthContext';
-import { colors } from '@/constants';
+import { useLanguage } from '@/store/LanguageContext';
+import AppText from '@/components/AppText';
+import { colors, fontSize as fs, fontWeight as fw, spacing } from '@/constants';
 
 const MIN_LOADING_MS = 2000;
 
 export default function Index() {
   const { user, loading } = useAuth();
+  const { t } = useLanguage();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [minTimeDone, setMinTimeDone] = useState(false);
 
   useEffect(() => {
@@ -21,14 +27,37 @@ export default function Index() {
     router.replace(user ? '/(tabs)' : '/login');
   }, [loading, minTimeDone, user]);
 
+  const displayName = user?.isAnonymous ? t('common.visitor') : user?.email ?? null;
+
   return (
-    <View style={styles.container}>
-      <Image
-        source={require('@/assets/images/Logo-Icon.png')}
-        style={styles.logo}
-        resizeMode="contain"
-        accessibilityLabel="Logo Bolso Simples"
-      />
+    <View style={[styles.container, { paddingTop: insets.top }]}>
+      <View style={styles.logoContainer}>
+        <Image
+          source={require('@/assets/images/Logo-Vertical.png')}
+          style={styles.logo}
+          resizeMode="contain"
+          accessibilityLabel="Logo Bolso Simples"
+        />
+      </View>
+
+      <View style={styles.center}>
+        <LottieView
+          source={require('@/assets/images/wallet-loading.json')}
+          autoPlay
+          loop
+          style={styles.lottie}
+        />
+        <AppText style={styles.label}>{t('loading.syncing')}</AppText>
+      </View>
+
+      <View style={[styles.footer, { paddingBottom: insets.bottom + spacing.xl }]}>
+        {displayName && (
+          <>
+            <AppText style={styles.footerLabel}>{t('loading.signingAs')}</AppText>
+            <AppText style={styles.footerEmail}>{displayName}</AppText>
+          </>
+        )}
+      </View>
     </View>
   );
 }
@@ -37,11 +66,44 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
-    justifyContent: 'center',
+  },
+  logoContainer: {
     alignItems: 'center',
+    paddingTop: spacing.xs,
   },
   logo: {
-    width: 140,
-    height: 140,
+    width: 160,
+    height: 100,
+  },
+  center: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: spacing.xl,
+    marginBottom: spacing.xxxxl,
+  },
+  lottie: {
+    width: 200,
+    height: 200,
+  },
+  label: {
+    fontSize: fs.md,
+    fontWeight: fw.regular,
+    color: colors.primary,
+    textAlign: 'center',
+    marginTop: spacing.xl,
+  },
+  footer: {
+    alignItems: 'center',
+  },
+  footerLabel: {
+    fontSize: fs.sm,
+    color: colors.primary,
+    marginBottom: spacing.xs,
+  },
+  footerEmail: {
+    fontSize: fs.sm,
+    fontWeight: fw.semibold,
+    color: colors.content,
   },
 });
