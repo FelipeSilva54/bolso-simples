@@ -5,6 +5,7 @@ import {
   addDoc,
   updateDoc,
   deleteDoc,
+  deleteField,
   serverTimestamp,
   Timestamp,
   CollectionReference,
@@ -91,10 +92,21 @@ export async function updateTransaction(
   data: Partial<AddTransactionInput>,
 ): Promise<void> {
   const ref = doc(db, 'users', userId, 'wallets', walletId, 'transactions', transactionId);
-  await updateDoc(ref, {
-    ...data,
-    ...(data.date ? { date: Timestamp.fromDate(data.date) } : {}),
-  });
+
+  const { date, recurrenceType, ...rest } = data;
+  const update: Record<string, unknown> = {};
+
+  for (const [key, value] of Object.entries(rest)) {
+    if (value !== undefined) update[key] = value;
+  }
+
+  if (date) update.date = Timestamp.fromDate(date);
+
+  if ('recurrenceType' in data) {
+    update.recurrenceType = recurrenceType != null ? recurrenceType : deleteField();
+  }
+
+  await updateDoc(ref, update);
 }
 
 export async function deleteTransaction(

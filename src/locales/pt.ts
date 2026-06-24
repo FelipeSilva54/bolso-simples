@@ -33,9 +33,9 @@ export const pt = {
     signingAs: 'Você está entrando como:',
   },
   login: {
-    title: 'Olá, Seja bem-vindo ao Bolso Simples!',
-    subtitleBase: 'Seu app de bolso para finanças ',
-    features: 'simples, gratuito e sem anúncio',
+    title: 'Pronto para organizar suas finanças?',
+    subtitleBase: 'Acompanhe receitas, despesas e saldos em um só lugar. ',
+    features: 'Simples, gratuito e sem anúncios.',
     signInGoogle: 'Entrar com o Google',
     signInAnonymous: 'Entrar sem cadastro',
     googleErrorTitle: 'Erro ao entrar com Google',
