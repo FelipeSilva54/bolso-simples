@@ -10,20 +10,6 @@ const { getReactNativePersistence } = require('firebase/auth') as {
   getReactNativePersistence: (storage: typeof AsyncStorage) => Persistence;
 };
 
-const REQUIRED_VARS = [
-  'EXPO_PUBLIC_FIREBASE_API_KEY',
-  'EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN',
-  'EXPO_PUBLIC_FIREBASE_PROJECT_ID',
-  'EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET',
-  'EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID',
-  'EXPO_PUBLIC_FIREBASE_APP_ID',
-] as const;
-
-const missingVars = REQUIRED_VARS.filter((key) => !process.env[key]);
-if (missingVars.length > 0) {
-  throw new Error(`Firebase: variáveis de ambiente ausentes: ${missingVars.join(', ')}`);
-}
-
 const firebaseConfig = {
   apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN,
