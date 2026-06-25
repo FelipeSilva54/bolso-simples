@@ -16,10 +16,6 @@ import { seedDefaultCategories } from '@/services/categories';
 import { clearNotifications } from '@/services/notifications';
 import { clearAllUserData } from '@/services/wallets';
 
-GoogleSignin.configure({
-  webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
-});
-
 type AuthContextValue = {
   user: User | null;
   loading: boolean;
@@ -41,6 +37,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isGuestDetached, setIsGuestDetached] = useState(false);
   const router = useRouter();
   const segments = useSegments();
+
+  useEffect(() => {
+    GoogleSignin.configure({
+      webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
+    });
+  }, []);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {

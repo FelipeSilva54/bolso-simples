@@ -23,7 +23,7 @@
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "com.bolsosimples.app",
-      "versionCode": 4
+      "versionCode": 5
     },
     "web": {
       "output": "static",
@@ -52,8 +52,7 @@
       "@react-native-google-signin/google-signin"
     ],
     "experiments": {
-      "typedRoutes": true,
-      "reactCompiler": true
+      "typedRoutes": true
     },
     "extra": {
       "router": {

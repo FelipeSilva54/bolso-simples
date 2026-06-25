@@ -4,6 +4,8 @@ import type { Persistence } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+// getReactNativePersistence is only in @firebase/auth's RN bundle — not in the public TS types.
+// Using require() to access it without a type error; Metro resolves firebase/auth → @firebase/auth/dist/rn at runtime.
 const { getReactNativePersistence } = require('firebase/auth') as {
   getReactNativePersistence: (storage: typeof AsyncStorage) => Persistence;
 };
