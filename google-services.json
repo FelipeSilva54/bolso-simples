@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "552079077785-3i4scv2g7hdoisv9dksot3akpf5vcles.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bolsosimples.app",
+            "certificate_hash": "a70282cbc6e005a9c73c51591f5ee825a564ed76"
+          }
+        },
+        {
           "client_id": "552079077785-m742iptg6j2c7h269liohnpf1lop9smh.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
