@@ -268,7 +268,7 @@ export const pt = {
     appIconLabel: 'Ícone do Bolso Simples',
     tagline: 'Simplificando a organização das finanças pessoais',
     version: 'Versão 1.0.0',
-    contactLabel: 'E-mail de contato',
+    contactLabel: 'E-mail',
     contactValue: 'contato@bolsosimples.app.br',
     versionLabel: 'Versão do aplicativo',
     versionValue: '1.0.0',
@@ -277,7 +277,7 @@ export const pt = {
     privacyLabel: 'Política de privacidade',
     privacyA11y: 'Abrir política de privacidade no navegador',
     footer: 'Feito com ♥ no Brasil',
-    copyright: '© 2025 Bolso Simples',
+    copyright: '© 2026 Bolso Simples',
   },
   profile: {
     editProfile: 'Editar perfil',
@@ -290,7 +290,7 @@ export const pt = {
     sectionHelp: 'Informações e ajuda',
     about: 'Sobre',
     share: 'Compartilhar com um amigo',
-    shareMessage: 'Conheça o Bolso Simples, o app de finanças 100% brasileiro, gratuito e sem anúncios!',
+    shareMessage: 'Conheça o Bolso Simples, o app de finanças 100% brasileiro, gratuito e sem anúncios! 👉 https://play.google.com/store/apps/details?id=com.bolsosimples.app',
     rate: 'Avaliar aplicativo',
     logout: 'Sair do aplicativo',
     sectionOther: 'Outros',
@@ -304,7 +304,7 @@ export const pt = {
     clearDataDialogDescription:
       'Ao limpar os dados, todas as informações serão removidas deste dispositivo, mas sua conta permanecerá ativa',
     clearDataDialogConfirm: 'Limpar tudo',
-    clearDataSuccess: 'Dados limpados com sucesso',
+    clearDataSuccess: 'Dados apagados com sucesso',
     clearDataError: 'Não foi possível apagar os dados. Tente novamente.',
     deleteAccountDialogTitle: 'Deseja excluir a conta?',
     deleteAccountDialogDescAnonymous:

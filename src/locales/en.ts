@@ -292,7 +292,7 @@ export const en: Translations = {
     sectionHelp: 'Information & help',
     about: 'About',
     share: 'Share with a friend',
-    shareMessage: 'Check out Bolso Simples, the 100% Brazilian finance app, free and ad-free!',
+    shareMessage: 'Check out Bolso Simples, the 100% Brazilian finance app, free and ad-free! 👉 https://play.google.com/store/apps/details?id=com.bolsosimples.app',
     rate: 'Rate the app',
     logout: 'Sign out',
     sectionOther: 'Other',
