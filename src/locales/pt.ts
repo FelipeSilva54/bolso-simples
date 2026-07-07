@@ -337,16 +337,9 @@ export const pt = {
     title: 'Apoie o app',
     heroTitle: 'O Bolso Simples é gratuito e sem anúncios',
     heroSubtitle: 'Se o app te ajuda a organizar a vida financeira, considere contribuir com qualquer valor. Isso mantém o app vivo e em evolução.',
-    chooseValue: 'Escolha ou digite um valor',
-    otherValuePlaceholder: 'Ou digite outro valor',
-    pixLabel: 'CHAVE PIX',
-    pixHint: 'O Pix é gerado com o valor que você escolheu. Basta copiar e colar no seu banco.',
-    invalidValueTitle: 'Valor inválido',
-    invalidValueMsg: 'Escolha ou digite um valor para continuar.',
     copied: 'Copiado! ✓',
-    copyPix: 'Copiar Pix com valor',
-    copyPixA11y: 'Copiar chave Pix com valor para contribuição',
-    contributeA11yPrefix: 'Contribuir com R$ ',
+    copyPix: 'Copiar chave Pix',
+    copyPixA11y: 'Copiar chave Pix para contribuição',
   },
 };
 
