@@ -45,7 +45,9 @@ export function SupportScreen() {
           <AppText style={styles.heroTitle}>{t('support.heroTitle')}</AppText>
           <AppText style={styles.heroSubtitle}>{t('support.heroSubtitle')}</AppText>
         </View>
+      </ScrollView>
 
+      <View style={styles.footer}>
         <Button
           variant="primary"
           size="lg"
@@ -55,7 +57,7 @@ export function SupportScreen() {
         >
           {copied ? t('support.copied') : t('support.copyPix')}
         </Button>
-      </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }
@@ -66,9 +68,14 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   scroll: {
+    flexGrow: 1,
+    justifyContent: 'center',
     padding: spacing.lg,
-    paddingBottom: spacing.xxl,
-    gap: spacing.xl,
+  },
+  footer: {
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.lg,
+    paddingBottom: spacing.lg,
   },
 
   // Hero
@@ -77,8 +84,8 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   heroImage: {
-    width: 150,
-    height: 150,
+    width: 190,
+    height: 190,
     resizeMode: 'contain',
   },
   heroTitle: {

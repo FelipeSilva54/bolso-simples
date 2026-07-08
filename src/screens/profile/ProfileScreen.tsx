@@ -131,14 +131,11 @@ export function ProfileScreen() {
   };
 
   const handleRate = async () => {
-    const marketUrl = 'market://details?id=com.bolsosimples.app';
-    const webUrl = 'https://play.google.com/store/apps/details?id=com.bolsosimples.app';
-    try {
-      const supported = await Linking.canOpenURL(marketUrl);
-      await Linking.openURL(supported ? marketUrl : webUrl);
-    } catch {
-      await Linking.openURL(webUrl).catch(() => {});
-    }
+    // O esquema "market://" não é exclusivo da Play Store — lojas como a Mi
+    // App Mall da Xiaomi também se registram para ele, o que faz o Android
+    // exibir um seletor de app. O link https é um App Link verificado da
+    // Google, então abre direto na Play Store sem ambiguidade.
+    await Linking.openURL('https://play.google.com/store/apps/details?id=com.bolsosimples.app').catch(() => {});
   };
 
   const deleteAccountDescription = user?.isAnonymous
