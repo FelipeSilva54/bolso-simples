@@ -34,7 +34,7 @@ export const pt = {
   },
   login: {
     title: 'Pronto para organizar suas finanças?',
-    subtitleBase: 'Acompanhe receitas, despesas e saldos em um só lugar. ',
+    subtitleBase: 'Acompanhe receitas, despesas e saldo em um só lugar. ',
     features: 'Simples, gratuito e sem anúncios.',
     signInGoogle: 'Entrar com o Google',
     signInAnonymous: 'Entrar sem cadastro',
