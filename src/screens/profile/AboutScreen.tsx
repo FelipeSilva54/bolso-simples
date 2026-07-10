@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Linking,
 } from 'react-native';
+import * as Application from 'expo-application';
 import AppText from '@/components/AppText';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
@@ -15,6 +16,8 @@ import { ArrowSquareOut } from 'phosphor-react-native';
 import { colors, fontSize as fs, fontWeight as fw, spacing, radius } from '@/constants';
 import { Header } from '@/components/Header';
 import { useLanguage } from '@/store/LanguageContext';
+
+const APP_VERSION = Application.nativeApplicationVersion ?? '1.0.0';
 
 export function AboutScreen() {
   const router = useRouter();
@@ -48,7 +51,7 @@ export function AboutScreen() {
             <AppText style={styles.appNameBold}>simples</AppText>
           </AppText>
           <AppText style={styles.tagline}>{t('about.tagline')}</AppText>
-          <AppText style={styles.version}>{t('about.version')}</AppText>
+          <AppText style={styles.version}>{`${t('about.version')} ${APP_VERSION}`}</AppText>
         </View>
 
         {/* Seção de informações */}
@@ -60,7 +63,7 @@ export function AboutScreen() {
           <View style={styles.separator} />
           <View style={styles.infoRow}>
             <AppText style={styles.label}>{t('about.versionLabel')}</AppText>
-            <AppText style={styles.value}>{t('about.versionValue')}</AppText>
+            <AppText style={styles.value}>{APP_VERSION}</AppText>
           </View>
         </View>
 
